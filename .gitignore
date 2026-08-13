@@ -1,0 +1,28 @@
+# Yerel Python ve derleme çıktıları
+__pycache__/
+*.py[cod]
+.venv-build/
+build/
+dist/
+installer/
+
+# Hasta verileri ve yerel çalışma dosyaları
+data/
+work/
+___Skolyoz deneme hastaları/
+*.dcm
+*.dicom
+*.db
+*.sqlite
+*.sqlite3
+*.sfbak
+
+# Yerel dışa aktarımlar ve oturum kayıtları
+*.zip
+*oturum*.json
+
+# İşletim sistemi / düzenleyici dosyaları
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

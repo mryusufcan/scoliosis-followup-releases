@@ -1,0 +1,8 @@
+PySide6>=6.5.0
+pydicom>=2.4.0
+numpy>=1.24.0
+reportlab>=4.0.0
+pynetdicom>=2.1.0
+pyinstaller>=6.0.0
+requests>=2.31.0
+cryptography>=42.0.0
