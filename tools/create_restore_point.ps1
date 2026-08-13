@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Message = "Çalışan sürüm",
     [switch]$Portable
 )
