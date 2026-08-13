@@ -9,6 +9,30 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
+function Test-PortableRestoreArchive {
+    param([string]$Archive)
+
+    Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
+    try {
+        $zip = [System.IO.Compression.ZipFile]::OpenRead($Archive)
+        try {
+            foreach ($entry in $zip.Entries) {
+                $entryPath = $entry.FullName -replace '\\', '/'
+                if ($entryPath -match '(^|/)(data|logs|work|___Skolyoz deneme hastaları)(/|$)|(^|/)modular_app/data(/|$)|\.(dcm|dicom|db|sqlite|sqlite3|sfbak)$') {
+                    return $false
+                }
+            }
+            return $true
+        }
+        finally {
+            $zip.Dispose()
+        }
+    }
+    catch {
+        return $false
+    }
+}
+
 function Show-PortableRestorePoints {
     param([string]$Root)
     $directory = Join-Path $Root '.restore_points'
@@ -16,9 +40,21 @@ function Show-PortableRestorePoints {
         Write-Host "Henüz taşınabilir geri dönüş noktası oluşturulmadı."
         return
     }
+    $validPoints = 0
     Get-ChildItem -LiteralPath $directory -Filter 'restore-*.zip' -File |
         Sort-Object LastWriteTime -Descending |
-        ForEach-Object { $_.BaseName }
+        ForEach-Object {
+            if (Test-PortableRestoreArchive -Archive $_.FullName) {
+                $validPoints += 1
+                $_.BaseName
+            }
+            else {
+                Write-Host "Güvenlik nedeniyle geçersiz arşiv atlandı: $($_.Name)"
+            }
+        }
+    if ($validPoints -eq 0) {
+        Write-Host "Kullanılabilir geri dönüş noktası bulunamadı."
+    }
 }
 
 function Restore-PortableRestorePoint {
@@ -27,6 +63,9 @@ function Restore-PortableRestorePoint {
     $archive = Join-Path (Join-Path $Root '.restore_points') "$RestoreTag.zip"
     if (-not (Test-Path -LiteralPath $archive)) {
         throw "Taşınabilir geri dönüş noktası bulunamadı: $RestoreTag"
+    }
+    if (-not (Test-PortableRestoreArchive -Archive $archive)) {
+        throw "Bu arşiv güvenli değil veya bozuk; geri yükleme yapılmadı."
     }
     if (-not $SkipConfirmation) {
         $answer = Read-Host "Kod dosyaları $RestoreTag sürümüne geri alınacak. Devam etmek için EVET yazın"
