@@ -5,9 +5,12 @@ __pycache__/
 build/
 dist/
 installer/
+.restore_points/
 
 # Hasta verileri ve yerel çalışma dosyaları
 data/
+logs/
+modular_app/data/
 work/
 ___Skolyoz deneme hastaları/
 *.dcm
