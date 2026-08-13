@@ -106,7 +106,7 @@ if ($git -and (Test-Path (Join-Path $root '.git')) -and -not $Portable) {
     if (-not $Tag) {
         Write-Host "Önce kullanılabilir geri dönüş noktalarını listeleyin:"
         & git tag --list 'restore-*' --sort=-creatordate
-        Write-Host "`nKullanım: .\tools\restore_point.ps1 -Tag restore-YYYYMMDD_HHMMSS"
+        Write-Host "`nKullanım: .\tools\restore_point.ps1 -Tag restore-YYYYMMDD_HHMMSS-aciklama"
         exit 1
     }
 
@@ -132,7 +132,7 @@ else {
     if (-not $Tag) {
         Write-Host "Önce kullanılabilir geri dönüş noktalarını listeleyin:"
         Show-PortableRestorePoints -Root $root
-        Write-Host "`nKullanım: .\tools\restore_point.ps1 -Tag restore-YYYYMMDD_HHMMSS"
+        Write-Host "`nKullanım: .\tools\restore_point.ps1 -Tag restore-YYYYMMDD_HHMMSS-aciklama"
         exit 1
     }
     Restore-PortableRestorePoint -Root $root -RestoreTag $Tag -SkipConfirmation $Force

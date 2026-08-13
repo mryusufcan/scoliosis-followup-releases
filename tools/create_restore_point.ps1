@@ -7,11 +7,32 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
+function ConvertTo-RestoreFileLabel {
+    param([string]$Text)
+
+    # Açıklama Windows dosya adına güvenle eklenir. Türkçe karakterler ve
+    # boşluklar sadeleştirilir; böylece her bilgisayarda aynı şekilde açılır.
+    $source = ($Text -replace 'ı', 'i' -replace 'İ', 'I')
+    $decomposed = $source.Normalize([System.Text.NormalizationForm]::FormD)
+    $plain = New-Object System.Text.StringBuilder
+    foreach ($character in $decomposed.ToCharArray()) {
+        if ([Globalization.CharUnicodeInfo]::GetUnicodeCategory($character) -ne [Globalization.UnicodeCategory]::NonSpacingMark) {
+            [void]$plain.Append($character)
+        }
+    }
+    $label = [regex]::Replace($plain.ToString(), '[^A-Za-z0-9]+', '-').Trim('-').ToLowerInvariant()
+    if ([string]::IsNullOrWhiteSpace($label)) {
+        $label = 'calisan-surum'
+    }
+    return $label.Substring(0, [Math]::Min(48, $label.Length))
+}
+
 function New-PortableRestorePoint {
     param([string]$Root, [string]$CheckpointMessage)
 
     $stamp = Get-Date -Format 'yyyyMMdd_HHmmss'
-    $tag = "restore-$stamp"
+    $label = ConvertTo-RestoreFileLabel $CheckpointMessage
+    $tag = "restore-$stamp-$label"
     $restoreDirectory = Join-Path $Root '.restore_points'
     $stage = Join-Path $restoreDirectory ".stage-$stamp"
     $archive = Join-Path $restoreDirectory "$tag.zip"
@@ -69,7 +90,7 @@ if ($git -and (Test-Path (Join-Path $root '.git')) -and -not $Portable) {
     }
 
     $stamp = Get-Date -Format 'yyyyMMdd_HHmmss'
-    $tag = "restore-$stamp"
+    $tag = "restore-$stamp-$(ConvertTo-RestoreFileLabel $Message)"
     & git commit -m "Checkpoint: $Message"
     if ($LASTEXITCODE -ne 0) {
         throw "Geri dönüş noktası oluşturulamadı."
