@@ -39,7 +39,9 @@ Bu yazılım, klinik iş akışını ve görüntü değerlendirmesini destekleme
 ## Geliştirici
 
 **Yusuf Can ÖZDEMİR** 
+
 Radyoloji Teknikeri
+
 [https://bio.link/yusufcanozdemir](https://bio.link/yusufcanozdemir)
 
 ## Depo Hakkında
