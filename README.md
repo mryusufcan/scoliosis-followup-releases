@@ -1,5 +1,3 @@
-# scoliosis-followup-releases
-
 # Scoliosis Follow-Up
 
 DICOM görüntülerini görüntüleme, omurga parçalarını birleştirme ve skolyoz takip süreçlerini desteklemek amacıyla geliştirilmiş Windows uygulaması.
