@@ -1,5 +1,9 @@
 # Scoliosis Follow-Up
 
+![Lisans](https://img.shields.io/badge/Lisans-MIT-blue.svg)
+![Durum](https://img.shields.io/badge/Durum-Aktif-success.svg)
+
+
 DICOM görüntülerini görüntüleme, omurga parçalarını birleştirme ve skolyoz takip süreçlerini desteklemek amacıyla geliştirilmiş Windows uygulaması.
 
 ## İndir
