@@ -6,6 +6,7 @@ build/
 dist/
 installer/
 .restore_points/
+security_keys/
 
 # Hasta verileri ve yerel çalışma dosyaları
 data/

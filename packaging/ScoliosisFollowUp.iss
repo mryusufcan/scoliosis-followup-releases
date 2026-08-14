@@ -10,7 +10,7 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher={#AppPublisher}
 AppPublisherURL={#AppURL}
-DefaultDirName={localappdata}\Programs\Scoliosis Follow-Up
+DefaultDirName={autopf}\Scoliosis Follow-Up
 DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
 OutputDir=..\installer
@@ -18,7 +18,9 @@ OutputBaseFilename=ScoliosisFollowUp_Setup
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
-PrivilegesRequired=lowest
+; Kod dosyaları Program Files altında normal kullanıcılar tarafından
+; değiştirilemez. Hasta verileri yine %LOCALAPPDATA% altında tutulur.
+PrivilegesRequired=admin
 UninstallDisplayIcon={app}\{#AppExeName}
 
 [Languages]

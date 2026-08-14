@@ -35,6 +35,7 @@ from modular_app.ui.pacs_dialog import PacsDialog
 from modular_app.ui.license_dialog import LicenseDialog
 from modular_app.services.system_services import APP_VERSION, BackupError, check_for_update, configure_logging, export_diagnostic_bundle, export_encrypted_backup, restore_encrypted_backup
 from modular_app.services.license_policy import evaluate_license_gate
+from modular_app.security.integrity import verify_distribution_integrity
 
 BASE = Path(__file__).resolve().parent
 MODULAR_CHECKPOINT = BASE / "Scoliosis_FollowUp_OVERLAY_ALIGN_v9_PRESET_FIX_WW4000_WL2000.py"
@@ -1102,6 +1103,16 @@ def install_modules(AppClass):
 def main(checkpoint_class=None):
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
+
+    integrity = verify_distribution_integrity()
+    if not integrity.allowed:
+        QMessageBox.critical(
+            None,
+            "Uygulama bütünlüğü doğrulanamadı",
+            integrity.message + "\n\nUygulamayı resmi kurulum paketiyle yeniden yükleyin.",
+        )
+        return 3
+
     configure_logging(DB_PATH.parent)
 
     # main.py'deki açılış banner'ını modüler başlatıcıda da koru. Önce splash

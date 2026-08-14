@@ -1,7 +1,8 @@
 param(
     [switch]$Clean,
     [switch]$SkipTests,
-    [string]$CertificateThumbprint = ""
+    [string]$CertificateThumbprint = "",
+    [string]$IntegrityPrivateKey = ""
 )
 
 $ErrorActionPreference = 'Stop'
@@ -48,6 +49,18 @@ if (-not (Test-Path $venvPython)) {
 & $venvPython -m pip install --upgrade pip
 & $venvPython -m pip install -r "$root\requirements.txt"
 
+# Her dağıtım kendi Ed25519 bütünlük anahtarını kullanır. Özel anahtar sadece
+# paketleme bilgisayarında kalır; EXE'ye veya kurulum dosyasına eklenmez.
+$securityKeyDirectory = Join-Path $root 'security_keys'
+$integrityKey = if ($IntegrityPrivateKey) { $IntegrityPrivateKey } else { Join-Path $securityKeyDirectory 'integrity_private.pem' }
+$integrityPublicKey = Join-Path $root 'resources\security\integrity_public_key.pem'
+$integrityIdentity = Join-Path $root 'modular_app\security\integrity_identity.py'
+& $venvPython "$root\packaging\generate_integrity_key.py" `
+  --private "$integrityKey" `
+  --public "$integrityPublicKey" `
+  --identity "$integrityIdentity"
+if ($LASTEXITCODE -ne 0) { throw "Dağıtım bütünlük anahtarı oluşturulamadı." }
+
 if (-not $SkipTests) {
     & $venvPython .\tests\verify_environment.py
     & $venvPython .\tests\run_modular_tests.py
@@ -76,12 +89,22 @@ if ($Clean) {
   --collect-all requests `
   --collect-all cryptography `
   "$root\main.py"
+if ($LASTEXITCODE -ne 0) { throw "EXE paketleme başarısız oldu." }
 
 Sign-ApplicationFile "$root\dist\ScoliosisFollowUp\ScoliosisFollowUp.exe"
+
+# Manifest, EXE imzalandıktan sonra üretilir; böylece imzalı EXE dahil tüm
+# dağıtım dosyalarının özeti uygulama açılışında doğrulanır.
+& $venvPython "$root\packaging\generate_integrity_manifest.py" `
+  --root "$root\dist\ScoliosisFollowUp" `
+  --private-key "$integrityKey" `
+  --version "1.1.0"
+if ($LASTEXITCODE -ne 0) { throw "Dağıtım bütünlük manifest'i oluşturulamadı." }
 
 Write-Host "Hazır: $root\dist\ScoliosisFollowUp\ScoliosisFollowUp.exe"
 Write-Host "Dağıtım: dist\ScoliosisFollowUp klasörünün tamamını kopyalayın."
 Write-Host "Kullanıcı verileri: %LOCALAPPDATA%\ScoliosisFollowUp"
+Write-Host "Bütünlük: İmzalı runtime_integrity.json oluşturuldu."
 if ($CertificateThumbprint) {
     Write-Host "EXE, belirtilen sertifikayla imzalandı."
 }

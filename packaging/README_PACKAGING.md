@@ -44,6 +44,24 @@ EXE'nin yanında değil, şu klasörde tutulur:
 Bu nedenle yeni sürüm kurarken `dist` klasörünü değiştirmek hasta kayıtlarını
 silmez. Yedekleme için uygulamadaki şifreli veritabanı yedeği özelliğini kullanın.
 
+## Dağıtım güvenliği
+
+Paketleme betiği her EXE üretiminde `security_keys\integrity_private.pem`
+özel anahtarını oluşturur veya yeniden kullanır. Bu anahtar **yalnızca paketleme
+bilgisayarında** kalır; başka bilgisayara, Git deposuna veya müşteriye asla
+kopyalanmamalıdır. Kaybolmaması için güvenli bir parola kasasına ya da şifreli
+harici ortama yedekleyin.
+
+Paketin içine imzalı `runtime_integrity.json` dosyası eklenir. Uygulama
+açılırken EXE ve dağıtımdaki dosyalar doğrulanır; dosya değiştirilmişse
+uygulama açılmaz. Kurulum varsayılan olarak yönetici izniyle `Program Files`
+altına yapılır; normal kullanıcılar kod dosyalarını değiştiremez.
+
+Bu koruma, uygulama kodunun kopyalanmasını zorlaştırır ve kurcalamayı tespit
+eder; fiziksel olarak bilgisayarın yönetici yetkisine sahip saldırgana karşı
+mutlak koruma sağlamaz. Kurumsal dağıtımda ayrıca kod imzalama sertifikası
+kullanın.
+
 ## Kurulum sihirbazı (isteğe bağlı)
 
 Dağıtımı tek bir kurulum dosyasıyla yapmak için önce yukarıdaki EXE paketini
