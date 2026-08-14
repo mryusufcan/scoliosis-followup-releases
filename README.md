@@ -8,6 +8,8 @@ En güncel resmi kurulum dosyasına aşağıdaki bağlantıdan ulaşabilirsiniz:
 
 [Son sürümü indir](https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest)
 
+[![VirusTotal Security Check](https://img.shields.io/badge/VirusTotal-Scan%20Results-brightgreen?logo=virustotal)](https://www.virustotal.com/gui/file/32c6b4b994446bdb320636e189438a0953a4f861424a71e15d739c287d2c1f72/detection)
+
 Kurulum için `ScoliosisFollowUp_Setup.exe` dosyasını indirin ve çalıştırın.
 
 ## Temel Modüller
