@@ -14,7 +14,7 @@ Scoliosis Follow-Up, farklı tarihlerde elde edilen skolyoz grafilerinin tek bir
 <!-- Buraya ekran görüntülerimizi ekleyeceğiz -->
 
 ![Scoliosis Follow-Up](docs/images/main-screen.png)
-
+(assests/goruntuleyici.png)
 ---
 
 ## ✨ Öne Çıkan Özellikler
