@@ -81,10 +81,49 @@ footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--muted);t
 .copy-btn{border:1px solid var(--line);background:#132232;color:#bfe6ff;border-radius:8px;padding:6px 9px;cursor:pointer;font-size:11px}
 .copy-btn:hover{background:#193048;color:#fff}
 
+/* Tema desteği */
+:root{color-scheme:dark}
+body.theme-light{
+  --bg:#f3f7fb;
+  --panel:#ffffff;
+  --panel2:#edf4fb;
+  --text:#102030;
+  --muted:#5f7285;
+  --blue:#168de2;
+  --green:#159f72;
+  --line:#cfddea;
+  background:linear-gradient(180deg,#f8fbfe,#edf4fa 35%,#f5f8fb);
+  color:var(--text);
+}
+body.theme-light nav{background:rgba(255,255,255,.9)}
+body.theme-light .screen{background:#eef4f9;box-shadow:0 25px 70px #17324a22}
+body.theme-light .card,body.theme-light .download-panel{box-shadow:0 16px 40px #17324a14}
+body.theme-light .badge{background:#e7f4ff;border-color:#b7dfff;color:#147ec2}
+body.theme-light .pill{background:#e9f5ff;border-color:#c1def2;color:#24556f}
+body.theme-light .notice{background:#fff7d6;border-color:#e5c95b;color:#6a5a15}
+body.theme-light .notice strong{color:#554500}
+body.theme-light .meta-item{background:#f7fbfe}
+body.theme-light .github-btn{background:#e9eff5;color:#102030}
+body.theme-light .github-btn:hover{background:#dde7ef}
+body.theme-light footer{background:rgba(255,255,255,.5)}
+body.theme-light .step-number{background:#dff1ff;color:#1178ba}
+.theme-toggle{
+  width:40px;height:40px;border-radius:10px;border:1px solid var(--line);
+  background:var(--panel);color:var(--text);display:grid;place-items:center;
+  cursor:pointer;font-size:18px;transition:.2s ease;flex:0 0 auto;
+}
+.theme-toggle:hover{transform:translateY(-1px);border-color:#3f79a5}
+.theme-toggle:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.theme-toggle .sun{display:none}.theme-toggle .moon{display:inline}
+body.theme-light .theme-toggle .sun{display:inline}
+body.theme-light .theme-toggle .moon{display:none}
+body,nav,.card,.download-panel,.meta-item,.notice,.pill,.badge,.theme-toggle,footer{transition:background-color .22s ease,color .22s ease,border-color .22s ease,box-shadow .22s ease}
+@media(max-width:850px){.nav{gap:12px}.brand{font-size:14px}.theme-toggle{width:38px;height:38px}}
+
 </style>
 </head>
 <body>
-<nav><div class="wrap nav"><div class="brand">Scoliosis <span>Follow-Up</span></div><div class="links"><a href="#ozellikler">Özellikler</a><a href="#goruntuleyici">Görüntüleyici</a><a href="#takip">Takip</a><a href="#stitch">Birleştirme</a><a href="#rehber">Rehber</a><a href="#indir">İndir</a></div></div></nav>
+<nav><div class="wrap nav"><div class="brand">Scoliosis <span>Follow-Up</span></div><div style="display:flex;align-items:center;gap:12px"><div class="links"><a href="#ozellikler">Özellikler</a><a href="#goruntuleyici">Görüntüleyici</a><a href="#takip">Takip</a><a href="#stitch">Birleştirme</a><a href="#rehber">Rehber</a><a href="#indir">İndir</a></div><button class="theme-toggle" id="themeToggle" type="button" aria-label="Temayı değiştir" title="Temayı değiştir"><span class="sun">☀️</span><span class="moon">🌙</span></button></div></div></nav>
 
 <header class="hero"><div class="wrap">
 <span class="badge">Radyolojik görüntüleme ve skolyoz takip platformu</span>
@@ -199,4 +238,118 @@ footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--muted);t
     </div>
     <div class="meta-item">
       <b>SHA-256</b>
-      <div class="hash-wrap"><code id="hashValue">e0865fe55638e1c9a22
+      <div class="hash-wrap"><code id="hashValue">e0865fe55638e1c9a22062ab669717523ff67c0b9843a303abe03088ef6a02dc</code><button class="copy-btn" id="copyHash" type="button">Kopyala</button></div>
+    </div>
+  </div>
+
+  <p style="margin-top:18px;font-size:12px">
+    <a class="small-link" href="https://github.com/mryusufcan/scoliosis-followup-releases" target="_blank" rel="noopener">GitHub repository'yi görüntüle</a>
+  </p>
+</div>
+</div></section>
+
+</main>
+<footer>
+  <div class="wrap">
+    <p style="margin:0 0 6px;"><b style="color:#edf6ff;">Scoliosis Follow-Up</b></p>
+    <p style="margin:0 0 6px;">© 2026 Yusufcan Özdemir. Tüm hakları saklıdır.</p>
+    <p style="margin:0;font-size:12px;">Radyolojik görüntüleme, ölçüm ve skolyoz takip destek yazılımı.</p>
+  </div>
+</footer>
+
+
+
+
+<script>
+(function(){
+  const savedTheme = localStorage.getItem("theme");
+  const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+  const initialTheme = savedTheme || (prefersLight ? "light" : "dark");
+  if(initialTheme === "light") document.body.classList.add("theme-light");
+
+  const toggle = document.getElementById("themeToggle");
+  if(toggle){
+    const syncLabel = () => {
+      const light = document.body.classList.contains("theme-light");
+      toggle.setAttribute("aria-label", light ? "Koyu temaya geç" : "Açık temaya geç");
+      toggle.setAttribute("title", light ? "Koyu temaya geç" : "Açık temaya geç");
+    };
+    syncLabel();
+    toggle.addEventListener("click", () => {
+      const light = document.body.classList.toggle("theme-light");
+      localStorage.setItem("theme", light ? "light" : "dark");
+      syncLabel();
+    });
+  }
+})();
+</script>
+
+<script>
+(function() {
+  const api = "https://api.github.com/repos/mryusufcan/scoliosis-followup-releases/releases/latest";
+  const fallbackUrl = "https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.5.1/ScoliosisFollowUp_Setup_1.5.1.exe";
+  const latestReleaseUrl = "https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest";
+
+  const heroBtn = document.getElementById("heroDownload");
+  const downloadBtn = document.getElementById("directDownload");
+  const versionEl = document.getElementById("versionValue");
+  const fileEl = document.getElementById("fileValue");
+  const sizeEl = document.getElementById("sizeValue");
+  const hashEl = document.getElementById("hashValue");
+  const summaryEl = document.getElementById("releaseSummary");
+  const copyHash = document.getElementById("copyHash");
+
+  function formatBytes(bytes) {
+    if (!Number.isFinite(bytes)) return "194.6 MB";
+    return (bytes / 1024 / 1024).toFixed(1) + " MB";
+  }
+
+  function applyRelease(release) {
+    const exe = (release.assets || []).find(a => /\.exe$/i.test(a.name));
+    if (!exe) return;
+
+    const version = release.name || release.tag_name || "1.5.1";
+    heroBtn.href = exe.browser_download_url || fallbackUrl;
+    downloadBtn.href = exe.browser_download_url || fallbackUrl;
+    heroBtn.textContent = "↓ Son Sürümü İndir · " + version;
+    downloadBtn.textContent = "↓ Windows Kurulumunu İndir · " + version;
+
+    versionEl.textContent = version;
+    fileEl.textContent = exe.name || "ScoliosisFollowUp_Setup_1.5.1.exe";
+    sizeEl.textContent = formatBytes(exe.size);
+
+    if (exe.digest) {
+      hashEl.textContent = exe.digest.replace(/^sha256:/i, "");
+    }
+
+    summaryEl.innerHTML = "Windows için güncel kararlı sürüm: <strong>" + version + "</strong>.";
+  }
+
+  // API başarısız olsa bile sayfa tamamen kullanılabilir kalır.
+  fetch(api, {
+    headers: { "Accept": "application/vnd.github+json" },
+    cache: "no-store"
+  })
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(applyRelease)
+  .catch(() => {
+    heroBtn.href = fallbackUrl;
+    downloadBtn.href = fallbackUrl;
+  });
+
+  if (copyHash) {
+    copyHash.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(hashEl.textContent.trim());
+        const old = copyHash.textContent;
+        copyHash.textContent = "Kopyalandı";
+        setTimeout(() => copyHash.textContent = old, 1400);
+      } catch (_) {
+        copyHash.textContent = "Seçip kopyala";
+      }
+    });
+  }
+})();
+</script>
+
+</body></html>
