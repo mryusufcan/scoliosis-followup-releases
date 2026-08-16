@@ -1,6 +1,5 @@
 #  Scoliosis Follow-Up
 
-![Lisans](https://img.shields.io/badge/Lisans-MIT-blue.svg)
 ![Durum](https://img.shields.io/badge/Durum-Aktif-success.svg)
 
 **Skolyoz radyografilerinin görüntülenmesi, karşılaştırılması ve takip sürecinin değerlendirilmesi için geliştirilmiş masaüstü uygulaması.**
