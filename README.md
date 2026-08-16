@@ -1,5 +1,16 @@
 #  Scoliosis Follow-Up
 
+![Lisans](https://img.shields.io/badge/Lisans-MIT-blue.svg)
+![Durum](https://img.shields.io/badge/Durum-Aktif-success.svg)
+
+## 🛡️ Güvenlik
+
+Yayınlanan uygulama dosyası VirusTotal ile kontrol edilmiştir.
+
+✅ **VirusTotal:** 0 / 72 güvenlik sağlayıcısı tehdit tespit etti.
+
+[🔍 VirusTotal Tarama Raporunu Görüntüle](https://www.virustotal.com/gui/url/90b01d10f146b31b12e546270102b6e60769dead6695776c8d7ed014ee178dc0)
+
 **Skolyoz radyografilerinin görüntülenmesi, karşılaştırılması ve takip sürecinin değerlendirilmesi için geliştirilmiş masaüstü uygulaması.**
 
 Scoliosis Follow-Up, farklı tarihlerde elde edilen skolyoz grafilerinin tek bir çalışma ortamında incelenmesini ve hastanın zaman içerisindeki değişiminin görsel olarak takip edilmesini kolaylaştırmak amacıyla geliştirilmiştir.
