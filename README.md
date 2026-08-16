@@ -11,9 +11,14 @@ Scoliosis Follow-Up, farklı tarihlerde elde edilen skolyoz grafilerinin tek bir
 
 ## 📸 Uygulamadan Görüntüler
 
-<!-- Buraya ekran görüntülerimizi ekleyeceğiz -->
+### 🩻 DICOM Görüntüleyici
+![DICOM Görüntüleyici](assets/goruntuleyici.png)
 
-![Scoliosis Follow-Up](assests/goruntuleyici.png)
+### 📈 Skolyoz Takip
+![Skolyoz Takip](assets/skolyoz-takip.png)
+
+### 🧩 DICOM Birleştirme
+![DICOM Birleştirme](assets/dicom-birlestirme.png)
 
 ---
 
