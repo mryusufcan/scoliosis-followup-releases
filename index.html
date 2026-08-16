@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Scoliosis Follow-Up — DICOM görüntüleme, skolyoz takip, Cobb ölçümü, karşılaştırma ve omurga birleştirme için masaüstü yazılımı.">
+<title>Scoliosis Follow-Up | DICOM, Cobb ve Skolyoz Takip</title>
+<style>
+:root{--bg:#08111b;--panel:#0f1b28;--panel2:#132437;--text:#edf6ff;--muted:#9db0c3;--blue:#39a9ff;--green:#25c38a;--line:#23384b;--max:1180px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#07101a,#0a1520 35%,#08111b);color:var(--text);line-height:1.65}
+a{color:inherit}.wrap{width:min(var(--max),calc(100% - 36px));margin:auto}
+nav{position:sticky;top:0;z-index:20;background:rgba(7,16,26,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{height:68px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{font-weight:800}.brand span{color:var(--blue)}
+.links{display:flex;gap:20px;font-size:14px;color:var(--muted)}.links a{text-decoration:none}.links a:hover{color:#fff}
+.hero{padding:92px 0 70px;text-align:center}.badge{display:inline-block;padding:7px 12px;border:1px solid #24577c;border-radius:99px;background:#0d2132;color:#72c8ff;font-size:13px}
+h1{font-size:clamp(42px,7vw,78px);line-height:1.03;margin:22px auto 20px;max-width:1000px;letter-spacing:-2.5px}
+.grad{background:linear-gradient(90deg,#42b7ff,#35e0b1);-webkit-background-clip:text;color:transparent}
+.lead{max-width:820px;margin:auto;color:#b7c7d6;font-size:19px}.hero-actions{margin-top:30px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;padding:12px 18px;border-radius:9px;text-decoration:none;font-weight:700;border:1px solid var(--line)}.primary{background:var(--blue);color:#03121e;border-color:transparent}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:45px auto 0;max-width:900px}.stat{padding:18px;background:rgba(15,27,40,.8);border:1px solid var(--line);border-radius:14px}.stat b{display:block;font-size:24px;color:#fff}.stat span{font-size:12px;color:var(--muted)}
+section{padding:74px 0}.section-head{text-align:center;margin-bottom:38px}.section-head h2{font-size:36px;margin:0 0 10px}.section-head p{color:var(--muted);max-width:720px;margin:auto}
+.screen{background:#07101a;border:1px solid #2b4358;border-radius:16px;padding:8px;box-shadow:0 25px 70px #0008;margin:28px 0}.screen img{display:block;width:100%;border-radius:10px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:15px;padding:22px}.card h3{margin:4px 0 8px;font-size:18px}.card p,.card li{color:var(--muted);font-size:14px}.icon{font-size:24px}
+.feature-section{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}.feature-section:nth-child(even) .copy{order:2}.copy h2{font-size:34px;margin:0 0 10px}.copy p{color:var(--muted)}ul{padding-left:20px}
+.pillbox{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.pill{padding:7px 10px;background:#10283a;border:1px solid #21435d;border-radius:99px;color:#bfe6ff;font-size:12px}
+.workflow{counter-reset:s}.step{display:grid;grid-template-columns:52px 1fr;gap:14px;margin:14px 0}.step:before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#12344b;color:#69c8ff;font-weight:800}
+.notice{padding:22px;border:1px solid #725d20;background:#2a2412;border-radius:14px;color:#eadb9b}.notice strong{color:#ffe88b}
+footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--muted);text-align:center}
+@media(max-width:850px){.grid,.stats,.feature-section{grid-template-columns:1fr}.links{display:none}.feature-section:nth-child(even) .copy{order:initial}h1{letter-spacing:-1px}}
+</style>
+</head>
+<body>
+<nav><div class="wrap nav"><div class="brand">Scoliosis <span>Follow-Up</span></div><div class="links"><a href="#ozellikler">Özellikler</a><a href="#goruntuleyici">Görüntüleyici</a><a href="#takip">Takip</a><a href="#stitch">Birleştirme</a><a href="#rehber">Rehber</a></div></div></nav>
+
+<header class="hero"><div class="wrap">
+<span class="badge">Radyolojik görüntüleme ve skolyoz takip platformu</span>
+<h1>Skolyoz takibini <span class="grad">görüntüle, ölç, karşılaştır.</span></h1>
+<p class="lead">Scoliosis Follow-Up; DICOM görüntüleme, Cobb açısı ölçümü, seri tetkik karşılaştırması, overlay analizi ve servikal–dorsal–lomber görüntü birleştirmeyi tek masaüstü uygulamasında bir araya getirir.</p>
+<div class="hero-actions"><a class="btn primary" href="#goruntuleyici">Uygulamayı Keşfet</a><a class="btn" href="#rehber">Kullanım Rehberi</a></div>
+<div class="stats"><div class="stat"><b>3</b><span>ANA ÇALIŞMA MODÜLÜ</span></div><div class="stat"><b>DICOM</b><span>DOĞRUDAN GÖRÜNTÜLEME</span></div><div class="stat"><b>Cobb</b><span>AÇI ÖLÇÜMÜ</span></div><div class="stat"><b>Overlay</b><span>SERİ KARŞILAŞTIRMA</span></div></div>
+</div></header>
+
+<main>
+<section id="ozellikler"><div class="wrap">
+<div class="section-head"><h2>Tek uygulamada kapsamlı çalışma alanı</h2><p>Görüntüyü açmaktan takip raporuna kadar skolyoz iş akışının farklı aşamalarını ortak bir arayüzde yönetmek üzere tasarlanmıştır.</p></div>
+<div class="grid">
+<div class="card"><div class="icon">🩻</div><h3>DICOM Görüntüleyici</h3><p>DICOM/görüntü açma, görüntüyü sığdırma, zoom, parlaklık ve Window/Level kontrolleri.</p></div>
+<div class="card"><div class="icon">📐</div><h3>Cobb Açısı</h3><p>Görüntü üzerinde manuel Cobb açısı ölçümü ve takip sürecinde ölçümlerin değerlendirilmesi.</p></div>
+<div class="card"><div class="icon">↔️</div><h3>Mesafe Ölçümü</h3><p>Görüntü üzerinde mesafe ölçüm araçları; geri al/ileri al ve ölçüm temizleme desteği.</p></div>
+<div class="card"><div class="icon">🌓</div><h3>Overlay / Mukayese</h3><p>İki tetkiki yan yana veya üst üste çakıştırarak zaman içindeki değişimi görsel olarak inceleme.</p></div>
+<div class="card"><div class="icon">🧩</div><h3>Omurga Birleştirme</h3><p>Servikal, dorsal ve lomber parçaları otomatik hizalama veya manuel düzeltmeyle tek görüntüye dönüştürme.</p></div>
+<div class="card"><div class="icon">📋</div><h3>Hasta Takibi</h3><p>Tetkik geçmişi, Cobb geçmişi/trendi, takip özeti, karşılaştırma oturumları, notlar ve takip planlama araçları.</p></div>
+<div class="card"><div class="icon">🏷️</div><h3>Omur Etiketleri</h3><p>Görüntü üzerinde vertebra seviyelerini işaretleme ve ilgili notları görüntüleme.</p></div>
+<div class="card"><div class="icon">📄</div><h3>Raporlama</h3><p>Yetkili kullanıcılar için takip verisini PDF raporu ve CSV çıktısı olarak dışa aktarma.</p></div>
+<div class="card"><div class="icon">🛡️</div><h3>Yerel Veri & Güvenlik</h3><p>Yerel veri sağlık kontrolü, lisans yönetimi, güncelleme denetimi, tanı paketi ve hata günlüğü araçları.</p></div>
+</div></div></section>
+
+<section id="goruntuleyici"><div class="wrap feature-section">
+<div class="copy"><span class="badge">01 · Görüntüleyici</span><h2>Radyografiyi çalışma alanının merkezine alın</h2>
+<p>Görüntüleyici sekmesi günlük inceleme ve ölçüm işlemlerinin ana çalışma alanıdır.</p>
+<ul><li>DICOM ve desteklenen görüntü dosyalarını açma</li><li>Açılan görüntüleri hasta/tetkik/seri yapısında listeleme</li><li>Zoom ve görüntüyü sığdırma</li><li>Yumuşak, Orijinal ve Sert pencere seçenekleri</li><li>Parlaklık ve Window/Level kontrolü</li><li>Cobb açısı ve mesafe ölçümü</li><li>Geri al / ileri al ve ölçümleri temizleme</li><li>Anotasyon ve işaretleme araçları</li><li>DICOM bilgi görüntüleme</li><li>Döndürme/çevirme gibi görüntü araçları</li></ul>
+<div class="pillbox"><span class="pill">DICOM</span><span class="pill">Cobb</span><span class="pill">W/L</span><span class="pill">Zoom</span><span class="pill">Anotasyon</span></div></div>
+<div class="screen"><img src="assets/goruntuleyici.png" alt="Scoliosis Follow-Up DICOM Görüntüleyici ekranı"></div>
+</div></section>
+
+<section id="takip"><div class="wrap feature-section">
+<div class="copy"><span class="badge">02 · Skolyoz Takip</span><h2>İki tarihi sadece açmayın; doğrudan karşılaştırın</h2>
+<p>Takip çalışma alanı, farklı tarihlerde çekilmiş grafilerin değişimini gözle görülür hale getirmek için yan yana mukayese ve overlay yaklaşımını kullanır.</p>
+<ul><li>Hasta / tetkik / seri tabanlı çalışma listesi</li><li>Yan yana mukayese</li><li>Üst üste (Overlay) çakıştırma</li><li>Overlay saydamlık kontrolü</li><li>X/Y konum ve zoom ayarı</li><li>Overlay sıfırlama</li><li>Karşılaştırma üzerinde Cobb ölçümü</li><li>Takip özeti üzerinden iki tetkiki doğrudan Overlay moduna gönderme</li></ul>
+<div class="pillbox"><span class="pill">Yan Yana</span><span class="pill">Overlay</span><span class="pill">Saydamlık</span><span class="pill">Seri Takip</span></div></div>
+<div class="screen"><img src="assets/skolyoz-takip.png" alt="Scoliosis Follow-Up skolyoz takip ve overlay ekranı"></div>
+</div></section>
+
+<section id="stitch"><div class="wrap feature-section">
+<div class="copy"><span class="badge">03 · DICOM Omurga Birleştirme</span><h2>Servikal, dorsal ve lomber görüntüleri tek çalışma alanında birleştirin</h2>
+<p>Uzun omurga görüntüsü oluşturmak için bölgesel görüntüler seçilebilir; sistem otomatik hizalamayı destekler ve gerektiğinde kullanıcıya manuel düzeltme imkânı verir.</p>
+<ul><li>Servikal, dorsal ve lomber parça yükleme</li><li>Görüntüleyici dosya seçicisiyle ortak seçim akışı</li><li>2 veya 3 parçalı çalışma</li><li>Kenar korelasyonuna dayalı otomatik hizalama</li><li>Manuel nokta modu ve konum düzeltme</li><li>Pozlama eşitleme / histogram matching seçeneği</li><li>Sonucu PNG ve Secondary Capture DICOM olarak kaydetme</li><li>Kaynak PatientID kontrolüyle yanlış hasta geçmişine bağlanmayı önleme</li><li>Uygun sonuçları hasta geçmişi ve ortak DICOM havuzuna ekleme</li></ul></div>
+<div class="screen"><img src="assets/dicom-birlestirme.png" alt="Scoliosis Follow-Up DICOM omurga birleştirme ekranı"></div>
+</div></section>
+
+<section><div class="wrap"><div class="section-head"><h2>Takip ve klinik organizasyon araçları</h2><p>Uygulama yalnızca görüntü açan bir viewer değil; seri takip verisini düzenlemek için ek modüller de içerir.</p></div>
+<div class="grid">
+<div class="card"><h3>Tetkik Zaman Çizelgesi</h3><p>Hastanın kayıtlı tetkiklerini kronolojik olarak incelemeye yönelik yapı.</p></div>
+<div class="card"><h3>Cobb Geçmişi & Trend</h3><p>Kaydedilmiş Cobb ölçümlerini geçmiş ve eğilim açısından takip etmeye yönelik araçlar.</p></div>
+<div class="card"><h3>Takip Özeti</h3><p>Hasta bazlı tetkikleri özetleme, seçili tetkiki açma ve iki tetkiki overlay karşılaştırmasına gönderme.</p></div>
+<div class="card"><h3>Karşılaştırma Oturumları</h3><p>Overlay çalışma ayarlarını ve karşılaştırma oturumlarını hasta takibiyle ilişkilendirme.</p></div>
+<div class="card"><h3>Kalite & Takip</h3><p>Kalite kontrol, takip uyarıları, takip planı ve görüntü notları için ayrı araçlar.</p></div>
+<div class="card"><h3>Hasta ve Kullanıcı Yönetimi</h3><p>Hasta kartı/yönetimi, kullanıcı yönetimi ve işlem geçmişi gibi organizasyon bileşenleri.</p></div>
+</div></div></section>
+
+<section id="rehber"><div class="wrap"><div class="section-head"><h2>Hızlı kullanım rehberi</h2><p>Temel bir skolyoz takip çalışması birkaç adımda yürütülebilir.</p></div>
+<div style="max-width:820px;margin:auto">
+<div class="step"><div><h3>Görüntüleri açın</h3><p>DICOM veya görüntü dosyalarını Görüntüleyici ya da Skolyoz Takip sekmesinden çalışma alanına ekleyin.</p></div></div>
+<div class="step"><div><h3>Görüntüyü hazırlayın</h3><p>Zoom, W/L, parlaklık ve gerekirse görüntü dönüşümlerini kullanarak inceleme görünümünü ayarlayın.</p></div></div>
+<div class="step"><div><h3>Cobb ölçümünü yapın</h3><p>Cobb Açısı Ölç aracını kullanarak ilgili son plaklara göre manuel ölçümünüzü oluşturun.</p></div></div>
+<div class="step"><div><h3>Önceki tetkikle karşılaştırın</h3><p>İki tarihi seçip Yan Yana veya Overlay moduna geçin; saydamlık ve hizalama kontrolleriyle değişimi inceleyin.</p></div></div>
+<div class="step"><div><h3>Gerekirse uzun omurga oluşturun</h3><p>Servikal, dorsal ve lomber görüntüleri Omurga Birleştirme alanına yükleyip otomatik hizalayın; sonucu kontrol ederek kaydedin.</p></div></div>
+<div class="step"><div><h3>Takip çıktısını oluşturun</h3><p>Yetkili kullanıcı rolünde hasta takip verisini PDF raporu veya CSV olarak dışa aktarın.</p></div></div>
+</div></div></section>
+
+<section><div class="wrap">
+<div class="section-head"><h2>Teknik ve operasyonel özellikler</h2></div>
+<div class="grid">
+<div class="card"><h3>Windows Masaüstü</h3><p>PySide6 tabanlı masaüstü arayüz; hasta verileri için yerel uygulama veri alanı.</p></div>
+<div class="card"><h3>PACS Entegrasyonu</h3><p>Uygulama mimarisinde PACS iletişimi için ayrı çalışma modülü bulunur.</p></div>
+<div class="card"><h3>Yedekleme & Tanı</h3><p>Yerel veritabanı sağlık kontrolü, şifreli yedek/geri yükleme altyapısı, tanı paketi ve uygulama günlüğü.</p></div>
+<div class="card"><h3>Lisans & Güncelleme</h3><p>Lisans durum kontrolü, lisans yönetimi ve sürüm/güncelleme denetimi.</p></div>
+<div class="card"><h3>Dağıtım Bütünlüğü</h3><p>Dağıtım bütünlüğü doğrulaması uygulama başlatma mimarisine entegredir.</p></div>
+<div class="card"><h3>Deneysel AI</h3><p>Yerel Cobb önerisi ve eğitim verisi hazırlama bileşenleri bulunur. AI çıktısı taslak niteliğindedir ve manuel doğrulama gerektirir.</p></div>
+</div>
+<div class="notice" style="margin-top:28px"><strong>Önemli:</strong> Scoliosis Follow-Up bir görüntüleme, ölçüm ve takip destek yazılımıdır. Yazılım çıktıları tek başına tanı veya tedavi kararı olarak değerlendirilmemeli; klinik karar yetkili sağlık profesyonelinin değerlendirmesine dayanmalıdır. Özellikle deneysel AI Cobb önerileri kayıtlı manuel ölçüm yerine geçmez.</div>
+</div></section>
+</main>
+<footer><div class="wrap"><b>Scoliosis Follow-Up</b><br>Skolyoz takip · DICOM görüntüleme · Cobb ölçümü · Overlay · Omurga birleştirme<br><small>© 2026 Yusuf Can Özdemir. Tüm hakları saklıdır.</small></div></footer>
+</body></html>
