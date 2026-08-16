@@ -160,7 +160,7 @@ Yayınlanan uygulama dosyası VirusTotal ile kontrol edilmiştir.
 
 ## 👨‍💻 Geliştirici
 
-**Yusufcan**
+**Yusufcan ÖZDEMİR**
 
 Radyoloji iş akışlarından edinilen saha deneyimi doğrultusunda geliştirilen Scoliosis Follow-Up, özellikle skolyoz görüntüleme ve takip süreçlerini daha pratik bir çalışma ortamında bir araya getirmeyi hedeflemektedir.
 
