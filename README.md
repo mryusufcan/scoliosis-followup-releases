@@ -1,4 +1,4 @@
-# 🩻 Scoliosis Follow-Up
+#  Scoliosis Follow-Up
 
 **Skolyoz radyografilerinin görüntülenmesi, karşılaştırılması ve takip sürecinin değerlendirilmesi için geliştirilmiş masaüstü uygulaması.**
 
