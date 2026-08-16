@@ -50,6 +50,12 @@ footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--muted);t
 .btn .svg-icon{display:inline-block;width:18px;height:18px;vertical-align:-4px;margin-right:7px}
 .section-head .svg-icon{display:inline-block;width:28px;height:28px;vertical-align:-6px;margin-right:8px}
 
+
+.hash-wrap{display:flex;align-items:flex-start;gap:8px}
+.hash-wrap code{flex:1;min-width:0}
+.copy-btn{border:1px solid var(--line);background:#132232;color:#bfe6ff;border-radius:8px;padding:6px 9px;cursor:pointer;font-size:11px}
+.copy-btn:hover{background:#193048;color:#fff}
+
 </style>
 </head>
 <body>
@@ -60,7 +66,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--muted);t
 <h1>Skolyoz takibini <span class="grad">görüntüle, ölç, karşılaştır.</span></h1>
 <p class="lead">Scoliosis Follow-Up; DICOM görüntüleme, Cobb açısı ölçümü, seri tetkik karşılaştırması, overlay analizi ve servikal–dorsal–lomber görüntü birleştirmeyi tek masaüstü uygulamasında bir araya getirir.</p>
 <div class="hero-actions">
-<a id="heroDownload" class="btn primary" href="https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest"><svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg> Son Sürümü İndir</a>
+<a id="heroDownload" class="btn primary" href="https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.5.1/ScoliosisFollowUp_Setup_1.5.1.exe"><svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg> Son Sürümü İndir</a>
 <a class="btn github-btn" href="https://github.com/mryusufcan/scoliosis-followup-releases" target="_blank" rel="noopener">GitHub</a>
 <a class="btn" href="#rehber">Kullanım Rehberi</a>
 </div>
@@ -145,30 +151,30 @@ footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--muted);t
 </div>
 
 <div class="download-panel">
-  <h3><svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5 10 4v7H3zM11 3.8 21 2v9h-10zM3 12h7v7l-7-1.5zM11 12h10v10l-10-1.8z"/></svg> Scoliosis Follow-Up for Windows</h3>
-  <p id="releaseSummary">Güncel sürüm bilgisi GitHub'dan alınıyor…</p>
+  <h3 style="display:flex;align-items:center;justify-content:center;gap:10px"><svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5 10 4v7H3zM11 3.8 21 2v9h-10zM3 12h7v7l-7-1.5zM11 12h10v10l-10-1.8z"/></svg>Scoliosis Follow-Up for Windows</h3>
+  <p id="releaseSummary">Windows için güncel kararlı sürüm: <strong>1.5.1</strong>.</p>
 
   <div class="download-actions">
-    <a id="directDownload" class="btn primary" href="https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest"><svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg> Windows Kurulumunu İndir</a>
+    <a id="directDownload" class="btn primary" href="https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.5.1/ScoliosisFollowUp_Setup_1.5.1.exe"><svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg> Windows Kurulumunu İndir</a>
     <a class="btn github-btn" href="https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest" target="_blank" rel="noopener"><svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4 1.2-4-2-5-2m10 4v-3.1c0-.9.3-1.5.8-2-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.2 11.2 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.4 5.8.4.4.8 1.1.8 2.2V21"/></svg> Tüm Sürüm Dosyaları</a>
   </div>
 
   <div class="meta-grid">
     <div class="meta-item">
       <b>Güncel sürüm</b>
-      <span id="versionValue">Kontrol ediliyor…</span>
+      <span id="versionValue">1.5.1</span>
     </div>
     <div class="meta-item">
       <b>Dosya</b>
-      <span id="fileValue">Kontrol ediliyor…</span>
+      <span id="fileValue">ScoliosisFollowUp_Setup_1.5.1.exe</span>
     </div>
     <div class="meta-item">
       <b>Boyut</b>
-      <span id="sizeValue">Kontrol ediliyor…</span>
+      <span id="sizeValue">194.6 MB</span>
     </div>
     <div class="meta-item">
       <b>SHA-256</b>
-      <code id="hashValue">Kontrol ediliyor…</code>
+      <div class="hash-wrap"><code id="hashValue">e0865fe55638e1c9a22062ab669717523ff67c0b9843a303abe03088ef6a02dc</code><button class="copy-btn" id="copyHash" type="button">Kopyala</button></div>
     </div>
   </div>
 
@@ -181,10 +187,15 @@ footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--muted);t
 </main>
 <footer><div class="wrap"><b>Scoliosis Follow-Up</b><br>Skolyoz takip · DICOM görüntüleme · Cobb ölçümü · Overlay · Omurga birleştirme<br><small>© 2026 Yusuf Can Özdemir. Tüm hakları saklıdır.</small></div></footer>
 
+
+
+
 <script>
 (function() {
   const api = "https://api.github.com/repos/mryusufcan/scoliosis-followup-releases/releases/latest";
-  const fallback = "https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest";
+  const fallbackUrl = "https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.5.1/ScoliosisFollowUp_Setup_1.5.1.exe";
+  const latestReleaseUrl = "https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest";
+
   const heroBtn = document.getElementById("heroDownload");
   const downloadBtn = document.getElementById("directDownload");
   const versionEl = document.getElementById("versionValue");
@@ -192,56 +203,58 @@ footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--muted);t
   const sizeEl = document.getElementById("sizeValue");
   const hashEl = document.getElementById("hashValue");
   const summaryEl = document.getElementById("releaseSummary");
+  const copyHash = document.getElementById("copyHash");
 
   function formatBytes(bytes) {
-    if (!Number.isFinite(bytes)) return "—";
-    const mb = bytes / 1024 / 1024;
-    return mb.toFixed(1) + " MB";
+    if (!Number.isFinite(bytes)) return "194.6 MB";
+    return (bytes / 1024 / 1024).toFixed(1) + " MB";
   }
 
-  fetch(api, {headers: {Accept: "application/vnd.github+json"}})
-    .then(r => {
-      if (!r.ok) throw new Error("GitHub API: " + r.status);
-      return r.json();
-    })
-    .then(release => {
-      const exe = (release.assets || []).find(a => /\.exe$/i.test(a.name));
-      const version = release.name || release.tag_name || "Güncel sürüm";
+  function applyRelease(release) {
+    const exe = (release.assets || []).find(a => /\.exe$/i.test(a.name));
+    if (!exe) return;
 
-      versionEl.textContent = version;
+    const version = release.name || release.tag_name || "1.5.1";
+    heroBtn.href = exe.browser_download_url || fallbackUrl;
+    downloadBtn.href = exe.browser_download_url || fallbackUrl;
+    heroBtn.textContent = "↓ Son Sürümü İndir · " + version;
+    downloadBtn.textContent = "↓ Windows Kurulumunu İndir · " + version;
 
-      if (!exe) {
-        summaryEl.textContent = version + " yayınlandı. Kurulum dosyaları için sürüm sayfasını açabilirsiniz.";
-        heroBtn.href = fallback;
-        downloadBtn.href = fallback;
-        fileEl.textContent = "Release sayfasını görüntüle";
-        sizeEl.textContent = "—";
-        hashEl.textContent = "—";
-        return;
+    versionEl.textContent = version;
+    fileEl.textContent = exe.name || "ScoliosisFollowUp_Setup_1.5.1.exe";
+    sizeEl.textContent = formatBytes(exe.size);
+
+    if (exe.digest) {
+      hashEl.textContent = exe.digest.replace(/^sha256:/i, "");
+    }
+
+    summaryEl.innerHTML = "Windows için güncel kararlı sürüm: <strong>" + version + "</strong>.";
+  }
+
+  // API başarısız olsa bile sayfa tamamen kullanılabilir kalır.
+  fetch(api, {
+    headers: { "Accept": "application/vnd.github+json" },
+    cache: "no-store"
+  })
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(applyRelease)
+  .catch(() => {
+    heroBtn.href = fallbackUrl;
+    downloadBtn.href = fallbackUrl;
+  });
+
+  if (copyHash) {
+    copyHash.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(hashEl.textContent.trim());
+        const old = copyHash.textContent;
+        copyHash.textContent = "Kopyalandı";
+        setTimeout(() => copyHash.textContent = old, 1400);
+      } catch (_) {
+        copyHash.textContent = "Seçip kopyala";
       }
-
-      heroBtn.href = exe.browser_download_url;
-      downloadBtn.href = exe.browser_download_url;
-      heroBtn.setAttribute("download", "");
-      downloadBtn.setAttribute("download", "");
-
-      heroBtn.textContent = "<svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg> Son Sürümü İndir · " + version;
-      downloadBtn.textContent = "<svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg> Windows Kurulumunu İndir · " + version;
-
-      fileEl.textContent = exe.name;
-      sizeEl.textContent = formatBytes(exe.size);
-      hashEl.textContent = (exe.digest || "GitHub tarafından sağlanmadı").replace(/^sha256:/i, "");
-      summaryEl.textContent = version + " sürümünün Windows kurulum dosyasını doğrudan indirebilirsiniz.";
-    })
-    .catch(() => {
-      summaryEl.textContent = "Sürüm bilgisi şu anda otomatik alınamadı. GitHub Releases üzerinden devam edebilirsiniz.";
-      heroBtn.href = fallback;
-      downloadBtn.href = fallback;
-      versionEl.textContent = "GitHub Releases";
-      fileEl.textContent = "Sürüm sayfasını aç";
-      sizeEl.textContent = "—";
-      hashEl.textContent = "—";
     });
+  }
 })();
 </script>
 
