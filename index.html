@@ -26,16 +26,20 @@ section{padding:74px 0}.section-head{text-align:center;margin-bottom:38px}.secti
 .workflow{counter-reset:s}.step{display:grid;grid-template-columns:52px 1fr;gap:14px;margin:14px 0}.step:before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#12344b;color:#69c8ff;font-weight:800}
 .notice{padding:22px;border:1px solid #725d20;background:#2a2412;border-radius:14px;color:#eadb9b}.notice strong{color:#ffe88b}
 footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--muted);text-align:center}
-.download-panel{max-width:920px;margin:auto;padding:28px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;text-align:center}
-.download-panel h3{font-size:25px;margin:0 0 8px}.download-panel p{color:var(--muted);margin:0 auto 20px;max-width:700px}
-.download-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:20px 0}
-.download-actions .btn{min-width:190px}.download-actions .primary:hover{filter:brightness(1.08)}
-.security-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px;text-align:left}
-.security-item{padding:16px;border:1px solid var(--line);border-radius:12px;background:#0b1723}
-.security-item b{display:block;color:#fff;margin-bottom:4px}.security-item span{color:var(--muted);font-size:13px}
+.download-panel{max-width:930px;margin:auto;padding:30px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;text-align:center;box-shadow:0 22px 55px #0005}
+.download-panel h3{font-size:26px;margin:0 0 8px}
+.download-panel p{color:var(--muted);margin:0 auto 18px;max-width:720px}
+.download-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:22px 0 18px}
+.download-actions .btn{min-width:205px}
 .github-btn{background:#17212b;color:#fff}.github-btn:hover{background:#202d39}
+.meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px;text-align:left}
+.meta-item{padding:16px;border:1px solid var(--line);border-radius:12px;background:#0b1723;min-width:0}
+.meta-item b{display:block;color:#fff;margin-bottom:5px;font-size:13px}
+.meta-item span,.meta-item code{color:var(--muted);font-size:12px;word-break:break-word}
+.ok{color:#6ee7b7!important}
+.small-link{color:#72c8ff!important;text-decoration:none}.small-link:hover{text-decoration:underline}
 
-@media(max-width:850px){.grid,.stats,.feature-section,.security-row{grid-template-columns:1fr}.links{display:none}.feature-section:nth-child(even) .copy{order:initial}h1{letter-spacing:-1px}}
+@media(max-width:850px){.grid,.stats,.feature-section,.meta-grid{grid-template-columns:1fr}.links{display:none}.feature-section:nth-child(even) .copy{order:initial}h1{letter-spacing:-1px}}
 </style>
 </head>
 <body>
@@ -46,8 +50,8 @@ footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--muted);t
 <h1>Skolyoz takibini <span class="grad">görüntüle, ölç, karşılaştır.</span></h1>
 <p class="lead">Scoliosis Follow-Up; DICOM görüntüleme, Cobb açısı ölçümü, seri tetkik karşılaştırması, overlay analizi ve servikal–dorsal–lomber görüntü birleştirmeyi tek masaüstü uygulamasında bir araya getirir.</p>
 <div class="hero-actions">
-<a class="btn primary" href="https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest">⬇️ Son Sürümü İndir</a>
-<a class="btn github-btn" href="https://github.com/mryusufcan/scoliosis-followup-releases">GitHub</a>
+<a id="heroDownload" class="btn primary" href="https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest">⬇️ Son Sürümü İndir</a>
+<a class="btn github-btn" href="https://github.com/mryusufcan/scoliosis-followup-releases" target="_blank" rel="noopener">GitHub</a>
 <a class="btn" href="#rehber">Kullanım Rehberi</a>
 </div>
 <div class="stats"><div class="stat"><b>3</b><span>ANA ÇALIŞMA MODÜLÜ</span></div><div class="stat"><b>DICOM</b><span>DOĞRUDAN GÖRÜNTÜLEME</span></div><div class="stat"><b>Cobb</b><span>AÇI ÖLÇÜMÜ</span></div><div class="stat"><b>Overlay</b><span>SERİ KARŞILAŞTIRMA</span></div></div>
@@ -124,6 +128,111 @@ footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--muted);t
 <div class="notice" style="margin-top:28px"><strong>Önemli:</strong> Scoliosis Follow-Up bir görüntüleme, ölçüm ve takip destek yazılımıdır. Yazılım çıktıları tek başına tanı veya tedavi kararı olarak değerlendirilmemeli; klinik karar yetkili sağlık profesyonelinin değerlendirmesine dayanmalıdır. Özellikle deneysel AI Cobb önerileri kayıtlı manuel ölçüm yerine geçmez.</div>
 </div></section>
 
+<section id="indir"><div class="wrap">
+<div class="section-head">
+  <h2>İndirme & Güvenlik</h2>
+  <p>En güncel Windows kurulum dosyası GitHub Releases üzerinden otomatik olarak bulunur.</p>
+</div>
+
+<div class="download-panel">
+  <h3>🪟 Scoliosis Follow-Up for Windows</h3>
+  <p id="releaseSummary">Güncel sürüm bilgisi GitHub'dan alınıyor…</p>
+
+  <div class="download-actions">
+    <a id="directDownload" class="btn primary" href="https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest">⬇️ Windows Kurulumunu İndir</a>
+    <a class="btn github-btn" href="https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest" target="_blank" rel="noopener">📦 Tüm Sürüm Dosyaları</a>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-item">
+      <b>🏷️ Güncel sürüm</b>
+      <span id="versionValue">Kontrol ediliyor…</span>
+    </div>
+    <div class="meta-item">
+      <b>📦 Dosya</b>
+      <span id="fileValue">Kontrol ediliyor…</span>
+    </div>
+    <div class="meta-item">
+      <b>💾 Boyut</b>
+      <span id="sizeValue">Kontrol ediliyor…</span>
+    </div>
+    <div class="meta-item">
+      <b>#️⃣ SHA-256</b>
+      <code id="hashValue">Kontrol ediliyor…</code>
+    </div>
+  </div>
+
+  <p style="margin-top:18px;font-size:12px">
+    <a class="small-link" href="https://github.com/mryusufcan/scoliosis-followup-releases" target="_blank" rel="noopener">GitHub repository'yi görüntüle</a>
+  </p>
+</div>
+</div></section>
+
 </main>
 <footer><div class="wrap"><b>Scoliosis Follow-Up</b><br>Skolyoz takip · DICOM görüntüleme · Cobb ölçümü · Overlay · Omurga birleştirme<br><small>© 2026 Yusuf Can Özdemir. Tüm hakları saklıdır.</small></div></footer>
+
+<script>
+(function() {
+  const api = "https://api.github.com/repos/mryusufcan/scoliosis-followup-releases/releases/latest";
+  const fallback = "https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest";
+  const heroBtn = document.getElementById("heroDownload");
+  const downloadBtn = document.getElementById("directDownload");
+  const versionEl = document.getElementById("versionValue");
+  const fileEl = document.getElementById("fileValue");
+  const sizeEl = document.getElementById("sizeValue");
+  const hashEl = document.getElementById("hashValue");
+  const summaryEl = document.getElementById("releaseSummary");
+
+  function formatBytes(bytes) {
+    if (!Number.isFinite(bytes)) return "—";
+    const mb = bytes / 1024 / 1024;
+    return mb.toFixed(1) + " MB";
+  }
+
+  fetch(api, {headers: {Accept: "application/vnd.github+json"}})
+    .then(r => {
+      if (!r.ok) throw new Error("GitHub API: " + r.status);
+      return r.json();
+    })
+    .then(release => {
+      const exe = (release.assets || []).find(a => /\.exe$/i.test(a.name));
+      const version = release.name || release.tag_name || "Güncel sürüm";
+
+      versionEl.textContent = version;
+
+      if (!exe) {
+        summaryEl.textContent = version + " yayınlandı. Kurulum dosyaları için sürüm sayfasını açabilirsiniz.";
+        heroBtn.href = fallback;
+        downloadBtn.href = fallback;
+        fileEl.textContent = "Release sayfasını görüntüle";
+        sizeEl.textContent = "—";
+        hashEl.textContent = "—";
+        return;
+      }
+
+      heroBtn.href = exe.browser_download_url;
+      downloadBtn.href = exe.browser_download_url;
+      heroBtn.setAttribute("download", "");
+      downloadBtn.setAttribute("download", "");
+
+      heroBtn.textContent = "⬇️ Son Sürümü İndir · " + version;
+      downloadBtn.textContent = "⬇️ Windows Kurulumunu İndir · " + version;
+
+      fileEl.textContent = exe.name;
+      sizeEl.textContent = formatBytes(exe.size);
+      hashEl.textContent = (exe.digest || "GitHub tarafından sağlanmadı").replace(/^sha256:/i, "");
+      summaryEl.textContent = version + " sürümünün Windows kurulum dosyasını doğrudan indirebilirsiniz.";
+    })
+    .catch(() => {
+      summaryEl.textContent = "Sürüm bilgisi şu anda otomatik alınamadı. GitHub Releases üzerinden devam edebilirsiniz.";
+      heroBtn.href = fallback;
+      downloadBtn.href = fallback;
+      versionEl.textContent = "GitHub Releases";
+      fileEl.textContent = "Sürüm sayfasını aç";
+      sizeEl.textContent = "—";
+      hashEl.textContent = "—";
+    });
+})();
+</script>
+
 </body></html>
