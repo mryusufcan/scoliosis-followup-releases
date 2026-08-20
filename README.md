@@ -1,6 +1,6 @@
 # Scoliosis Follow-Up
 
-![Sürüm](https://img.shields.io/badge/Sürüm-1.6.0-blue.svg)
+![Sürüm](https://img.shields.io/badge/Sürüm-1.7.0-blue.svg)
 ![Durum](https://img.shields.io/badge/Durum-Aktif-success.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)
 
@@ -10,6 +10,10 @@ Scoliosis Follow-Up; farklı tarihlerde elde edilen skolyoz grafilerini tek bir 
 
 > ⚠️ **Scoliosis Follow-Up klinik karar destek veya otomatik tanı sistemi değildir.**  
 > Görüntüleme, ölçüm, teknik değerlendirme ve takip süreçlerini desteklemek amacıyla geliştirilmiş bir yazılımdır.
+
+[![Scoliosis Follow-Up 1.7.0 İndir](https://img.shields.io/badge/Windows-1.7.0%20İndir-0078D6?style=for-the-badge&logo=windows)](https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.7.0/ScoliosisFollowUp_Setup_1.7.0.exe)
+
+[Sürüm notlarını görüntüle](https://github.com/mryusufcan/scoliosis-followup-releases/releases/tag/1.7.0)
 
 ---
 
@@ -127,7 +131,7 @@ Birleştirme sonucu kullanıcı tarafından doğrulanmadan final çıktı olarak
 
 ## 🔍 Teknik Görüntü Kalite Kontrolü
 
-**1.6.0 ile teknik görüntü kalite kontrol modülü eklendi.**
+Teknik görüntü kalite kontrol modülü aktif görüntü ve takip çiftleri için kullanılabilir.
 
 Aktif görüntü veya seçili takip çifti için aşağıdaki kontroller yapılabilir:
 
@@ -316,9 +320,9 @@ Son kararlı sürümü GitHub üzerindeki **Releases** bölümünden indirebilir
 
 ---
 
-# 🆕 Sürüm 1.6.0
+# 🆕 Sürüm 1.7.0
 
-Scoliosis Follow-Up **1.6.0**, görüntüleme, takip, ölçüm, kalite kontrolü ve uygulama altyapısında kapsamlı geliştirmeler içerir.
+Scoliosis Follow-Up **1.7.0**, görüntüleme, takip, ölçüm, birleştirme, raporlama ve proje altyapısında kapsamlı geliştirmeler içerir.
 
 ### Öne çıkan yenilikler
 
@@ -340,8 +344,14 @@ Scoliosis Follow-Up **1.6.0**, görüntüleme, takip, ölçüm, kalite kontrolü
 - Project Control Center restore noktası oluşturma
 - Performans ve stabilite geliştirmeleri
 - Güncellenmiş yayın doğrulama altyapısı
+- DICOM picker ve başlangıçta DICOM açma iş akışı geliştirmeleri
+- Overlay/Blink karşılaştırma ve otomatik hizalama güvenlik kontrolleri
+- Hasta takip merkezi, eğri bazlı trendler ve karşılaştırma oturumları
+- PDF/CSV raporlarının takip verileriyle güçlendirilmesi
+- Deneysel AI landmark araçları, model paket doğrulaması ve uzman onay akışı
+- Sadeleştirilmiş Project Control Center ve güvenli proje arşivleme araçları
 
-1.6.0 sürümü yayın öncesinde otomatik test paketi ile doğrulanmaktadır.
+1.7.0 sürümü yayın öncesinde **169 otomatik test**, yerel paket kabul denetimi, installer SHA-256 kontrolü ve imzalı güncelleme doğrulamasıyla test edilmiştir.
 
 ---
 
@@ -382,10 +392,10 @@ Odaklanılan başlıca alanlar:
 
 Yayınlanan kurulum paketleri dağıtım öncesinde yerel bütünlük ve güvenlik kontrollerinden geçirilmektedir.
 
-VirusTotal sonucu sürüme özgüdür. **1.6.0 installer yayınlandıktan sonra yeni dosya ayrıca taranmalı ve aşağıdaki bağlantı 1.6.0 sonucuyla güncellenmelidir.**
+VirusTotal sonucu sürüme özgüdür. **1.7.0 installer için yapılacak tarama sonucu ayrıca doğrulanmalı ve aşağıdaki bağlantı güncellenmelidir.**
 
 <!--
-1.6.0 taramasından sonra etkinleştir:
+1.7.0 taramasından sonra etkinleştir:
 
 ✅ VirusTotal: 0 / XX güvenlik sağlayıcısı tehdit tespit etti.
 
