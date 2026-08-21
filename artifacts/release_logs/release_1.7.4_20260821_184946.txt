@@ -1,0 +1,7 @@
+Version: 1.7.4
+Created: 2026-08-21T18:49:46
+Release: C:\Users\yusuf\Desktop\Scoliosis Follow Up\releases\1.7.4
+Tests: OK
+Build: OK
+Installer: OK
+Local verification: OK

@@ -216,6 +216,15 @@ def evaluate_license_gate(
             expires_at=expires_at,
         )
 
+    if online:
+        # Sunucu bu cihazda etkin lisans olmadığını kesin olarak bildirdiyse
+        # eski lisans bitişi ve çevrimdışı tolerans kaydı artık geçerli değildir.
+        # Aksi halde arayüz gelecekteki eski bir tarihi gösterebilir ve sonraki
+        # çevrimdışı açılış yanlışlıkla grace süresine girebilir.
+        expires_at = None
+        repository.set_setting("license/expires_at", "")
+        repository.set_setting("license/last_online_validation_at", "")
+
     repository.set_setting(
         "license/last_status",
         "unlicensed" if online else "offline",

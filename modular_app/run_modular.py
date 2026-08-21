@@ -544,8 +544,12 @@ def install_modules(AppClass):
         def check_license_status(self):
             """Lisans durumunu, çevrimdışı toleransı ve deneme süresini denetler."""
             result = evaluate_license_gate(self.exam_repository)
-            expiry = result.expires_at or "Tanımlı değil"
-            message = f"{result.message}\n\nLisans son kullanım tarihi: {expiry}"
+            expiry_line = (
+                f"\n\nLisans son kullanım tarihi: {result.expires_at}"
+                if result.expires_at
+                else ""
+            )
+            message = f"{result.message}{expiry_line}"
             if result.allowed:
                 QMessageBox.information(self, "Lisans kontrolü", message)
             else:

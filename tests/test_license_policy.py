@@ -94,6 +94,23 @@ class LicensePolicyTests(unittest.TestCase):
         self.assertFalse(result.allowed)
         self.assertEqual(result.mode, "trial_online_required")
 
+    def test_online_unlicensed_response_clears_stale_license_cache(self):
+        self.repo.values["license/expires_at"] = "2027-08-16T23:59:59+03:00"
+        self.repo.values["license/last_online_validation_at"] = self.start.isoformat()
+
+        result = evaluate_license_gate(
+            self.repo,
+            checker=lambda: license_status(False, True),
+            trial_checker=lambda: trial_status(self.start, self.start),
+            now=self.start,
+        )
+
+        self.assertTrue(result.allowed)
+        self.assertEqual(result.mode, "trial")
+        self.assertIsNone(result.expires_at)
+        self.assertEqual(self.repo.values["license/expires_at"], "")
+        self.assertEqual(self.repo.values["license/last_online_validation_at"], "")
+
     def test_server_starts_trial_and_preserves_start_date(self):
         result = evaluate_license_gate(
             self.repo,

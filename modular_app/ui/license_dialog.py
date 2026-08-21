@@ -42,19 +42,17 @@ class LicenseDialog(QDialog):
 
     def check(self) -> bool:
         try:
-            from license_app import check_license_status
-            result = check_license_status()
-            active = bool(result.active)
-            detail = result.message
+            from modular_app.services.license_policy import evaluate_license_gate
+            result = evaluate_license_gate(self.repo)
+            allowed = bool(result.allowed)
+            detail = str(result.message)
         except Exception as exc:
-            active, detail = False, f"Lisans denetlenemedi: {exc}"
+            allowed, detail = False, f"Lisans denetlenemedi: {exc}"
             result = None
-        expiry = getattr(result, "expires_at", None) or self.repo.get_setting("license/expires_at", "")
-        expiry_line = f"\nLisans son kullanım tarihi: {expiry}" if expiry else "\nLisans son kullanım tarihi: Tanımlı değil"
-        self.status.setText(
-            ("Lisans bu bilgisayar için etkin." if active else f"Etkin lisans doğrulanamadı. {detail}") + expiry_line
-        )
-        return active
+        expiry = getattr(result, "expires_at", None)
+        expiry_line = f"\nLisans son kullanım tarihi: {expiry}" if expiry else ""
+        self.status.setText(detail + expiry_line)
+        return allowed
 
     def accept_if_active(self):
         if self.check():

@@ -1,6 +1,7 @@
 import platform
 import subprocess
 import hashlib
+import os
 import requests
 import sys
 import tkinter as tk
@@ -22,8 +23,16 @@ HWID_TIMEOUT_SECONDS = 2
 def get_hwid():
     """Bilgisayarın donanım bileşenlerinden benzersiz bir HWID üretir."""
     try:
+        windows_dir = os.environ.get("WINDIR", r"C:\Windows")
+        bundled_wmic = os.path.join(
+            windows_dir,
+            "System32",
+            "wbem",
+            "WMIC.exe",
+        )
+        wmic_command = bundled_wmic if os.path.isfile(bundled_wmic) else "wmic"
         result = subprocess.run(
-            ["wmic", "baseboard", "get", "serialnumber"],
+            [wmic_command, "baseboard", "get", "serialnumber"],
             capture_output=True,
             check=False,
             text=True,
