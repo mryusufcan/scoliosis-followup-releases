@@ -1,6 +1,6 @@
 # Scoliosis Follow-Up
 
-![Sürüm](https://img.shields.io/badge/Sürüm-1.7.0-blue.svg)
+![Sürüm](https://img.shields.io/badge/Sürüm-1.7.1-blue.svg)
 ![Durum](https://img.shields.io/badge/Durum-Aktif-success.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)
 
@@ -11,9 +11,9 @@ Scoliosis Follow-Up; farklı tarihlerde elde edilen skolyoz grafilerini tek bir 
 > ⚠️ **Scoliosis Follow-Up klinik karar destek veya otomatik tanı sistemi değildir.**  
 > Görüntüleme, ölçüm, teknik değerlendirme ve takip süreçlerini desteklemek amacıyla geliştirilmiş bir yazılımdır.
 
-[![Scoliosis Follow-Up 1.7.0 İndir](https://img.shields.io/badge/Windows-1.7.0%20İndir-0078D6?style=for-the-badge&logo=windows)](https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.7.0/ScoliosisFollowUp_Setup_1.7.0.exe)
+[![Scoliosis Follow-Up 1.7.1 İndir](https://img.shields.io/badge/Windows-1.7.1%20İndir-0078D6?style=for-the-badge&logo=windows)](https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.7.1/ScoliosisFollowUp_Setup_1.7.1.exe)
 
-[Sürüm notlarını görüntüle](https://github.com/mryusufcan/scoliosis-followup-releases/releases/tag/1.7.0)
+[Sürüm notlarını görüntüle](https://github.com/mryusufcan/scoliosis-followup-releases/releases/tag/1.7.1)
 
 ---
 
@@ -320,12 +320,18 @@ Son kararlı sürümü GitHub üzerindeki **Releases** bölümünden indirebilir
 
 ---
 
-# 🆕 Sürüm 1.7.0
+# 🆕 Sürüm 1.7.1
 
-Scoliosis Follow-Up **1.7.0**, görüntüleme, takip, ölçüm, birleştirme, raporlama ve proje altyapısında kapsamlı geliştirmeler içerir.
+Scoliosis Follow-Up **1.7.1**, yapay zekâ yardımcısını Docker gerektirmeden tamamen yerel çalıştıran taşınabilir ONNX motorunu ve güvenli uzman onay akışını içerir.
 
 ### Öne çıkan yenilikler
 
+- Docker gerektirmeyen yerel Mazurowski ONNX AI Cobb taslağı
+- Görüntüyü bilgisayar dışına göndermeyen çevrimdışı AI analizi
+- AI sonucunda otomatik kayıt engeli ve Hekim rolüyle zorunlu uzman onayı
+- Arayüzü kilitlemeyen arka plan AI analizi
+- Güven eşiği, DICOM uygunluğu ve çizgi geometrisi kontrolleri
+- Omurga çevresinde okunabilir AI tanjant çizgileri
 - Yenilenmiş profesyonel kullanıcı arayüzü
 - Görüntüleyici ve takip araçlarında yeni ikon sistemi
 - PixelSpacing destekli gerçek mm/cm mesafe ölçümü
@@ -351,7 +357,9 @@ Scoliosis Follow-Up **1.7.0**, görüntüleme, takip, ölçüm, birleştirme, ra
 - Deneysel AI landmark araçları, model paket doğrulaması ve uzman onay akışı
 - Sadeleştirilmiş Project Control Center ve güvenli proje arşivleme araçları
 
-1.7.0 sürümü yayın öncesinde **169 otomatik test**, yerel paket kabul denetimi, installer SHA-256 kontrolü ve imzalı güncelleme doğrulamasıyla test edilmiştir.
+1.7.1 sürümü yayın öncesinde **174 otomatik test**, gerçek anonim DICOM üzerinde yerel ONNX çalışma kontrolü, paket kabul denetimi, installer SHA-256 kontrolü ve imzalı güncelleme doğrulamasıyla test edilmiştir.
+
+> Yerel AI Cobb sonucu deneysel bir taslaktır. Tanı koymaz, otomatik ölçüm kaydı oluşturmaz ve yetkili hekim görüntü üzerindeki çizgileri doğrulamadan kaydedilemez. ONNX çıktısı eski Linux/MMCV ortamıyla piksel düzeyinde birebir olmayabilir.
 
 ---
 
@@ -392,10 +400,10 @@ Odaklanılan başlıca alanlar:
 
 Yayınlanan kurulum paketleri dağıtım öncesinde yerel bütünlük ve güvenlik kontrollerinden geçirilmektedir.
 
-VirusTotal sonucu sürüme özgüdür. **1.7.0 installer için yapılacak tarama sonucu ayrıca doğrulanmalı ve aşağıdaki bağlantı güncellenmelidir.**
+VirusTotal sonucu sürüme özgüdür. **1.7.1 installer için yapılacak tarama sonucu ayrıca doğrulanmalı ve aşağıdaki bağlantı güncellenmelidir.**
 
 <!--
-1.7.0 taramasından sonra etkinleştir:
+1.7.1 taramasından sonra etkinleştir:
 
 ✅ VirusTotal: 0 / XX güvenlik sağlayıcısı tehdit tespit etti.
 
