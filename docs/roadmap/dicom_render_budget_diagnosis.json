@@ -1,0 +1,97 @@
+{
+  "rows": [
+    {
+      "path": "IM00002",
+      "size_bytes": 5289572,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "read_ms": 3.826500033028424,
+      "render_ms": 1123.1987999635749,
+      "rendered": true
+    },
+    {
+      "path": "IM00002",
+      "size_bytes": 5289572,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "read_ms": 4.866099974606186,
+      "render_ms": 1081.005699990783,
+      "rendered": true
+    },
+    {
+      "path": "IM00002",
+      "size_bytes": 5289572,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "read_ms": 5.055399960838258,
+      "render_ms": 1083.7625000276603,
+      "rendered": true
+    },
+    {
+      "path": "IM00003",
+      "size_bytes": 5393998,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "read_ms": 4.284600028768182,
+      "render_ms": 1086.4119000034407,
+      "rendered": true
+    },
+    {
+      "path": "IM00003",
+      "size_bytes": 5393998,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "read_ms": 4.824200004804879,
+      "render_ms": 1084.1868999996223,
+      "rendered": true
+    },
+    {
+      "path": "IM00003",
+      "size_bytes": 5393998,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "read_ms": 5.1577999838627875,
+      "render_ms": 1091.2329999846406,
+      "rendered": true
+    },
+    {
+      "path": "IM00004",
+      "size_bytes": 4324330,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "read_ms": 4.0568000404164195,
+      "render_ms": 1082.845900033135,
+      "rendered": true
+    },
+    {
+      "path": "IM00004",
+      "size_bytes": 4324330,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "read_ms": 5.476300022564828,
+      "render_ms": 1076.352300005965,
+      "rendered": true
+    },
+    {
+      "path": "IM00004",
+      "size_bytes": 4324330,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "read_ms": 4.9931000103242695,
+      "render_ms": 1079.9102000310086,
+      "rendered": true
+    }
+  ],
+  "read_mean_ms": 4.726755562134915,
+  "render_mean_ms": 1087.6563555599812,
+  "render_max_ms": 1123.1987999635749
+}

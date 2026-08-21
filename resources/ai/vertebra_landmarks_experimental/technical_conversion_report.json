@@ -1,0 +1,107 @@
+{
+  "format": "ScoliosisFollowUpLandmarkTechnicalConversionV1",
+  "model_version": "vertebra-landmark-68-onnx-candidate-20260820",
+  "model_sha256": "f3e1e6b319064a2288a792678d92dabf1e56e8004813fff3b372be1c214c440f",
+  "onnx_export": {
+    "source_commit": "b9fc05c215ea2b006564a3feb509634183a63f82",
+    "checkpoint": "C:\\Users\\yusuf\\Desktop\\Scoliosis Follow Up\\.quarantine\\landmark_lab\\weights_quarantine\\model_last.pth",
+    "checkpoint_sha256": "6a779e01b9a41601334e0a9541278fc557a95bd650c6c8de311204821509d19b",
+    "checkpoint_loaded_with_weights_only": true,
+    "onnx": "C:\\Users\\yusuf\\Desktop\\Scoliosis Follow Up\\.quarantine\\landmark_lab\\onnx_candidate\\vertebra_landmarks_68.onnx",
+    "onnx_sha256": "f3e1e6b319064a2288a792678d92dabf1e56e8004813fff3b372be1c214c440f",
+    "onnx_size_bytes": 96820263,
+    "onnx_opset": 17,
+    "input": {
+      "name": "image",
+      "shape": [
+        1,
+        3,
+        1024,
+        512
+      ],
+      "dtype": "float32"
+    },
+    "outputs": {
+      "hm": [
+        1,
+        1,
+        256,
+        128
+      ],
+      "reg": [
+        1,
+        2,
+        256,
+        128
+      ],
+      "wh": [
+        1,
+        8,
+        256,
+        128
+      ]
+    },
+    "network_pretrained_download_disabled": true,
+    "dicom_accessed": false,
+    "model_integrated_into_application": false,
+    "clinical_result_generated": false
+  },
+  "onnx_equivalence": {
+    "passed": true,
+    "head_max_abs_tolerance": 0.0002,
+    "landmark_max_abs_tolerance": 0.0005,
+    "tolerance_rationale": "Landmark koordinatları decoder sonrası down_ratio=4 ile piksel uzayına ölçeklenir.",
+    "device": "cpu",
+    "input": {
+      "shape": [
+        1,
+        3,
+        1024,
+        512
+      ],
+      "kind": "deterministic_synthetic"
+    },
+    "head_differences": {
+      "hm": {
+        "shape": [
+          1,
+          1,
+          256,
+          128
+        ],
+        "max_abs": 1.3105454854667187e-07,
+        "mean_abs": 2.39398314505479e-08
+      },
+      "reg": {
+        "shape": [
+          1,
+          2,
+          256,
+          128
+        ],
+        "max_abs": 2.86102294921875e-06,
+        "mean_abs": 4.242065188009292e-07
+      },
+      "wh": {
+        "shape": [
+          1,
+          8,
+          256,
+          128
+        ],
+        "max_abs": 0.00012969970703125,
+        "mean_abs": 1.4223804100765847e-05
+      }
+    },
+    "decoder_17x11_max_abs": 8.392333984375e-05,
+    "landmark_68x2_max_abs": 0.000335693359375,
+    "torch_landmark_count": 68,
+    "onnx_landmark_count": 68,
+    "dicom_accessed": false,
+    "model_integrated_into_application": false,
+    "clinical_result_generated": false
+  },
+  "patient_data_accessed": false,
+  "clinical_result_generated": false,
+  "active_application_installation": false
+}

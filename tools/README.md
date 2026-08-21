@@ -10,3 +10,11 @@ Yeni kayıtlarda yazdığınız kısa açıklama dosya adına eklenir. Örneğin
 `deneme` açıklaması `restore-20260813_224000-deneme.zip` olarak görünür.
 
 Geri yüklemeden önce uygulamayı kapatın. Hasta verileri, DICOM görüntüleri ve yerel veritabanı geri yükleme işleminden etkilenmez.
+
+## Dağıtım kabul denetimi
+
+`release_acceptance.ps1`, oluşturulmuş EXE/kurulum paketi ile imzalı
+güncelleme bildirimini salt okunur olarak denetler. Kullanım bilgisi:
+`docs\RELEASE_ACCEPTANCE.md`.
+
+Yeni başlayanlar için tüm akışın anlatımı: `docs\ACEMI_KULLANICI_REHBERI.md`.

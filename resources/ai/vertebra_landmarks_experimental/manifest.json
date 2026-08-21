@@ -1,0 +1,42 @@
+{
+  "format": "ScoliosisFollowUpAIModelV2",
+  "task": "vertebra_landmark_detection",
+  "model_version": "vertebra-landmark-68-onnx-candidate-20260820",
+  "model_file": "vertebra_landmarks_68.onnx",
+  "sha256": "f3e1e6b319064a2288a792678d92dabf1e56e8004813fff3b372be1c214c440f",
+  "input_width": 512,
+  "input_height": 1024,
+  "confidence_threshold": 0.2,
+  "output_schema": "decoder_rows_17x11",
+  "onnx_opset": 17,
+  "input_name": "image",
+  "output_name": "hm,reg,wh",
+  "source_repository": "https://github.com/yijingru/Vertebra-Landmark-Detection",
+  "source_commit": "b9fc05c215ea2b006564a3feb509634183a63f82",
+  "source_license": "MIT",
+  "weights_license": "not_declared",
+  "dataset_license": "not_declared",
+  "model_card": {
+    "intended_use": "Yalnızca laboratuvar ortamında 17 vertebra adayı ve 68 landmark taslağının teknik üretimi.",
+    "validation_summary": "PyTorch/ONNX sentetik eşdeğerlik testi başarılıdır; hasta bazlı doğrulama yapılmamıştır.",
+    "known_failure_modes": [
+      "DICOM ön işleme adaptörü bu pakete dahil değildir.",
+      "Ağırlık ve eğitim verisi lisansları kaynak depoda açıkça belirtilmemiştir.",
+      "Landmark doğruluğu gerçek hasta verisi üzerinde değerlendirilmemiştir.",
+      "Cobb açı önerisi, klinik karar veya otomatik kayıt üretmez."
+    ],
+    "supported_views": [
+      "AP",
+      "PA"
+    ],
+    "supported_modalities": [
+      "DX",
+      "CR"
+    ],
+    "excluded_conditions": [
+      "Klinik kullanım",
+      "Otomatik ölçüm kaydı",
+      "Hasta bazlı doğrulama raporu olmadan uzman incelemesi"
+    ]
+  }
+}

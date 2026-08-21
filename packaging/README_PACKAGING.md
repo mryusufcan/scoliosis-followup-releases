@@ -65,7 +65,7 @@ kullanın.
 ## Kurulum sihirbazı (isteğe bağlı)
 
 Dağıtımı tek bir kurulum dosyasıyla yapmak için önce yukarıdaki EXE paketini
-oluşturun, sonra **Inno Setup 6** kurun ve şunu çalıştırın:
+oluşturun, sonra **Inno Setup 7 (veya 6)** kurun ve şunu çalıştırın:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\packaging\build_installer.ps1
@@ -86,6 +86,26 @@ powershell -ExecutionPolicy Bypass -File .\packaging\build_installer.ps1 -Certif
 
 Bu seçenek için Windows SDK içindeki `signtool.exe` gerekir. Sertifika veya
 Windows SDK yoksa parametreyi vermeyin; imzasız paket normal şekilde oluşur.
+
+## İmzalı güncelleme bildirimi (isteğe bağlı)
+
+Uygulama güncellemeyi kendisi indirmez veya kurmaz; yalnızca HTTPS üzerinde
+yayınlanan imzalı bir bildirimi doğrular ve kullanıcıya indirme adresini gösterir.
+Yeni kurulum dosyasını yayınladıktan sonra, özel bütünlük anahtarını kullanarak
+bildirimi oluşturun:
+
+```powershell
+.\.venv-build\Scripts\python.exe .\packaging\generate_update_feed.py `
+  --version "1.4.0" `
+  --url "https://ornek-alanadiniz.com/ScoliosisFollowUp_Setup.exe" `
+  --installer .\installer\ScoliosisFollowUp_Setup.exe `
+  --private-key .\security_keys\integrity_private.pem `
+  --output .\update.json
+```
+
+`update.json` dosyasını HTTPS ile erişilebilen bir adreste yayınlayın ve bu
+adresi uygulamadaki **Help → Güncellemeleri Denetle** alanına girin. Özel anahtar
+veya kurulum dosyası dışında hiçbir hasta verisi bu işleme dahil edilmez.
 
 ## Sorun giderme
 

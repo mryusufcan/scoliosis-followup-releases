@@ -37,8 +37,9 @@ function New-PortableRestorePoint {
     $stage = Join-Path $restoreDirectory ".stage-$stamp"
     $archive = Join-Path $restoreDirectory "$tag.zip"
     $excludedRoots = @(
-        '.git', '.restore_points', '.venv-build', '__pycache__', 'build', 'dist',
-        'installer', 'data', 'logs', 'work', '___Skolyoz deneme hastaları'
+        '.git', '.restore_points', '.venv', '.venv-build', '.quarantine', '__pycache__',
+        'artifacts', 'build', 'dist', 'installer', 'project_archives', 'releases',
+        'security_keys', 'data', 'dev_data', 'logs', 'work', '___Skolyoz deneme hastaları'
     )
     $excludedExtensions = @('.dcm', '.dicom', '.db', '.sqlite', '.sqlite3', '.sfbak', '.zip')
 
@@ -64,7 +65,8 @@ function New-PortableRestorePoint {
             "Etiket: $tag",
             "Tarih: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
             "Açıklama: $CheckpointMessage",
-            "Hasta verileri, DICOM'lar ve yerel veritabanı dahil edilmemiştir."
+            "Hasta verileri, DICOM'lar, derleme çıktıları ve özel imzalama anahtarı dahil edilmemiştir.",
+            "Özel imzalama anahtarını ayrı ve şifreli bir yerde saklayın."
         ) | Set-Content -LiteralPath (Join-Path $stage 'CHECKPOINT.txt') -Encoding UTF8
         Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $archive -CompressionLevel Optimal -Force
     }

@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QTableWidget, QTableWidgetItem, QVBoxLayout,
 )
 from modular_app.database.exam_repository import ExamRepository
+from modular_app.ui.ui_clarity import configure_action, create_context_banner
 
 
 class ExamTimelineDialog(QDialog):
@@ -21,15 +22,21 @@ class ExamTimelineDialog(QDialog):
         self.patient_id = str(patient_id or "")
         self._rows: list[dict] = []
         self.setWindowTitle("Tetkik Geçmişi")
+        self.setObjectName("workflowDialog")
         self.resize(920, 520)
-        self.setStyleSheet("background:#242424;color:#ecf0f1;")
 
         root = QVBoxLayout(self)
         root.setContentsMargins(10, 10, 10, 10)
         root.setSpacing(8)
 
-        title = QLabel(f"<b>Tetkik Geçmişi</b>  |  {patient_name or 'Hasta'}  |  ID: {self.patient_id}")
-        title.setStyleSheet("font-size:13px;padding:3px;")
+        context_banner, self.context_label = create_context_banner(
+            "Tetkik Geçmişi",
+            f"{patient_name or 'Hasta'} · ID: {self.patient_id} · Bir tetkik seçin ve karşılaştırmaya gönderin.",
+            object_name="workflowContextBanner",
+        )
+        root.addWidget(context_banner)
+        title = QLabel(f"<b>{patient_name or 'Hasta'}</b>  |  PatientID: {self.patient_id}")
+        title.setObjectName("dialogSubtitle")
         root.addWidget(title)
 
         self.demo_mode = QCheckBox("Demo modu: diğer hastaların tetkiklerini de göster")
@@ -40,6 +47,7 @@ class ExamTimelineDialog(QDialog):
         filters = QHBoxLayout()
         self.date_filter = QLineEdit()
         self.date_filter.setPlaceholderText("Tarih ara (YYYYMMDD)")
+        self.date_filter.setToolTip("Örneğin 20260818 yazarak belirli tarihi filtreleyin")
         self.region_filter = QComboBox()
         self.region_filter.addItem("Tüm bölgeler")
         self.modality_filter = QComboBox()
@@ -68,11 +76,18 @@ class ExamTimelineDialog(QDialog):
         bottom = QHBoxLayout()
         # Seçim ana görüntü listesini değiştirmeden, üst penceredeki
         # karşılaştırma köprüsüne iletilir.
-        self.open_btn = QPushButton("Overlay / Mukayeseye Gönder")
+        self.open_btn = QPushButton("Seçili Tetkiki Karşılaştırmaya Gönder")
+        configure_action(
+            self.open_btn,
+            label="Seçili tetkiki karşılaştırmaya gönder",
+            role="primary",
+            tooltip="Seçili tetkiki ana çalışma alanında karşılaştırma için aç",
+        )
         self.open_btn.clicked.connect(self._emit_selected)
         self.open_btn.setEnabled(False)
         self.table.itemSelectionChanged.connect(lambda: self.open_btn.setEnabled(self.table.currentRow() >= 0))
         close_btn = QPushButton("Kapat")
+        configure_action(close_btn, label="Pencereyi kapat", role="quiet", tooltip="Bu pencereyi kapat")
         close_btn.clicked.connect(self.close)
         bottom.addStretch()
         bottom.addWidget(self.open_btn)

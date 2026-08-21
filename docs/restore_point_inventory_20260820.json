@@ -1,0 +1,400 @@
+{
+  "generated_at": "2026-08-20T13:39:16",
+  "total_mib": 1812.58,
+  "total_files": 24575,
+  "restore_point_count": 56,
+  "restore_points": [
+    {
+      "name": "gitignore_cleanup_20260820",
+      "modified": "2026-08-20T13:33:48",
+      "bytes": 514,
+      "mib": 0.0,
+      "files": 1
+    },
+    {
+      "name": "packaging_onnxruntime_20260820_133103",
+      "modified": "2026-08-20T13:31:03",
+      "bytes": 9885,
+      "mib": 0.01,
+      "files": 3
+    },
+    {
+      "name": "startup_dicom_smoke_20260820_132429",
+      "modified": "2026-08-20T13:24:29",
+      "bytes": 212827,
+      "mib": 0.2,
+      "files": 5
+    },
+    {
+      "name": "compact_viewer_tree_20260820_132121",
+      "modified": "2026-08-20T13:21:21",
+      "bytes": 61550,
+      "mib": 0.06,
+      "files": 4
+    },
+    {
+      "name": "manual_cobb_acute_angle_20260820_130858",
+      "modified": "2026-08-20T13:08:58",
+      "bytes": 55137,
+      "mib": 0.05,
+      "files": 5
+    },
+    {
+      "name": "experimental_landmark_cobb_20260820_130310",
+      "modified": "2026-08-20T13:03:10",
+      "bytes": 181068,
+      "mib": 0.17,
+      "files": 9
+    },
+    {
+      "name": "experimental_landmark_app_20260820_122524",
+      "modified": "2026-08-20T12:25:25",
+      "bytes": 183474,
+      "mib": 0.17,
+      "files": 11
+    },
+    {
+      "name": "dicom_landmark_pipeline_20260820_121428",
+      "modified": "2026-08-20T12:14:29",
+      "bytes": 13900,
+      "mib": 0.01,
+      "files": 7
+    },
+    {
+      "name": "byte_weighted_cache_20260820_120323",
+      "modified": "2026-08-20T12:03:23",
+      "bytes": 110645,
+      "mib": 0.11,
+      "files": 5
+    },
+    {
+      "name": "landmark_v2_active_gate_20260820_115531",
+      "modified": "2026-08-20T11:55:31",
+      "bytes": 195273,
+      "mib": 0.19,
+      "files": 14
+    },
+    {
+      "name": "landmark_onnx_conversion_20260820_115255",
+      "modified": "2026-08-20T11:52:55",
+      "bytes": 26375,
+      "mib": 0.03,
+      "files": 8
+    },
+    {
+      "name": "viewer_cache_state_optimization_20260820_114908",
+      "modified": "2026-08-20T11:49:08",
+      "bytes": 18872,
+      "mib": 0.02,
+      "files": 2
+    },
+    {
+      "name": "landmark_lab_final_20260820_114729",
+      "modified": "2026-08-20T11:47:29",
+      "bytes": 27684,
+      "mib": 0.03,
+      "files": 9
+    },
+    {
+      "name": "landmark_contract_20260820_114630",
+      "modified": "2026-08-20T11:46:31",
+      "bytes": 22181,
+      "mib": 0.02,
+      "files": 7
+    },
+    {
+      "name": "render_pipeline_optimization_20260820_114614",
+      "modified": "2026-08-20T11:46:14",
+      "bytes": 124952,
+      "mib": 0.12,
+      "files": 6
+    },
+    {
+      "name": "landmark_lab_adapter_20260820_114227",
+      "modified": "2026-08-20T11:45:51",
+      "bytes": 1682796025,
+      "mib": 1604.84,
+      "files": 23984
+    },
+    {
+      "name": "cobb_save_dialog_20260820_112315",
+      "modified": "2026-08-20T11:23:15",
+      "bytes": 39792,
+      "mib": 0.04,
+      "files": 2
+    },
+    {
+      "name": "ai_model_candidate_review_final_20260820_110256",
+      "modified": "2026-08-20T11:02:56",
+      "bytes": 150134,
+      "mib": 0.14,
+      "files": 7
+    },
+    {
+      "name": "ai_model_candidate_review_20260820_105046",
+      "modified": "2026-08-20T10:50:46",
+      "bytes": 149107,
+      "mib": 0.14,
+      "files": 6
+    },
+    {
+      "name": "windows_cobb_save_acceptance_20260820_105045",
+      "modified": "2026-08-20T10:50:45",
+      "bytes": 3377,
+      "mib": 0.0,
+      "files": 1
+    },
+    {
+      "name": "ai_model_acceptance_final_20260820_102922",
+      "modified": "2026-08-20T10:29:22",
+      "bytes": 46236,
+      "mib": 0.04,
+      "files": 14
+    },
+    {
+      "name": "ai_model_acceptance_20260820_101537",
+      "modified": "2026-08-20T10:15:37",
+      "bytes": 44441,
+      "mib": 0.04,
+      "files": 13
+    },
+    {
+      "name": "codec_fixture_extension_20260820_101512",
+      "modified": "2026-08-20T10:15:12",
+      "bytes": 10407,
+      "mib": 0.01,
+      "files": 1
+    },
+    {
+      "name": "viewer_cobb_persistent_save_20260820_101125",
+      "modified": "2026-08-20T10:11:25",
+      "bytes": 127106,
+      "mib": 0.12,
+      "files": 5
+    },
+    {
+      "name": "ai_model_acceptance_20260820_100932",
+      "modified": "2026-08-20T10:09:32",
+      "bytes": 35950,
+      "mib": 0.03,
+      "files": 5
+    },
+    {
+      "name": "ai_model_inspector_20260820_095423",
+      "modified": "2026-08-20T09:54:23",
+      "bytes": 153187,
+      "mib": 0.15,
+      "files": 3
+    },
+    {
+      "name": "ai_provenance_v2_20260820_091948",
+      "modified": "2026-08-20T09:19:48",
+      "bytes": 64716,
+      "mib": 0.06,
+      "files": 3
+    },
+    {
+      "name": "ai_model_v2_20260820_091516",
+      "modified": "2026-08-20T09:15:16",
+      "bytes": 23441,
+      "mib": 0.02,
+      "files": 4
+    },
+    {
+      "name": "cobb_e2e_test_20260820_091341",
+      "modified": "2026-08-20T09:13:41",
+      "bytes": 1103,
+      "mib": 0.0,
+      "files": 1
+    },
+    {
+      "name": "dicom_preload_real_integration_20260819_010500",
+      "modified": "2026-08-20T01:35:17",
+      "bytes": 79022,
+      "mib": 0.08,
+      "files": 3
+    },
+    {
+      "name": "packaging_script_pyqtgraph_20260819_004004",
+      "modified": "2026-08-19T00:40:04",
+      "bytes": 6795,
+      "mib": 0.01,
+      "files": 1
+    },
+    {
+      "name": "packaging_pyqtgraph_20260819_003930",
+      "modified": "2026-08-19T00:39:30",
+      "bytes": 2876,
+      "mib": 0.0,
+      "files": 1
+    },
+    {
+      "name": "packaging_pyqtgraph_gate_20260819_001500",
+      "modified": "2026-08-19T00:29:17",
+      "bytes": 521,
+      "mib": 0.0,
+      "files": 1
+    },
+    {
+      "name": "longitudinal_main_integration_20260819_002729",
+      "modified": "2026-08-19T00:27:29",
+      "bytes": 151633,
+      "mib": 0.14,
+      "files": 3
+    },
+    {
+      "name": "longitudinal_panel_20260819_001952",
+      "modified": "2026-08-19T00:19:52",
+      "bytes": 67379,
+      "mib": 0.06,
+      "files": 5
+    },
+    {
+      "name": "measurement_status_boolean_20260819_000400",
+      "modified": "2026-08-19T00:18:22",
+      "bytes": 38871,
+      "mib": 0.04,
+      "files": 4
+    },
+    {
+      "name": "longitudinal_service_20260819_001252",
+      "modified": "2026-08-19T00:12:52",
+      "bytes": 73854,
+      "mib": 0.07,
+      "files": 4
+    },
+    {
+      "name": "cobb_ux_safety_20260818_235800",
+      "modified": "2026-08-18T23:58:06",
+      "bytes": 99225,
+      "mib": 0.09,
+      "files": 5
+    },
+    {
+      "name": "icon_tooltip_contrast_20260818_232228",
+      "modified": "2026-08-18T23:22:28",
+      "bytes": 149856,
+      "mib": 0.14,
+      "files": 8
+    },
+    {
+      "name": "compact_navigation_20260818_230729",
+      "modified": "2026-08-18T23:07:29",
+      "bytes": 173068,
+      "mib": 0.17,
+      "files": 2
+    },
+    {
+      "name": "compact_toolbar_20260818_230224",
+      "modified": "2026-08-18T23:02:24",
+      "bytes": 90180,
+      "mib": 0.09,
+      "files": 3
+    },
+    {
+      "name": "toolbar_text_actions_20260818_225415",
+      "modified": "2026-08-18T22:54:15",
+      "bytes": 172732,
+      "mib": 0.16,
+      "files": 2
+    },
+    {
+      "name": "dicom_selector_theme_20260818_224539",
+      "modified": "2026-08-18T22:45:39",
+      "bytes": 83776,
+      "mib": 0.08,
+      "files": 2
+    },
+    {
+      "name": "dicom_selector_theme_20260818_224525",
+      "modified": "2026-08-18T22:45:25",
+      "bytes": 52646,
+      "mib": 0.05,
+      "files": 1
+    },
+    {
+      "name": "light_dark_theme_20260818_222534",
+      "modified": "2026-08-18T22:25:34",
+      "bytes": 164961,
+      "mib": 0.16,
+      "files": 3
+    },
+    {
+      "name": "ui_clarity_flow_20260818_220342",
+      "modified": "2026-08-18T22:03:42",
+      "bytes": 270462,
+      "mib": 0.26,
+      "files": 7
+    },
+    {
+      "name": "e2_02_ui_smoke_20260818_215303",
+      "modified": "2026-08-18T21:53:03",
+      "bytes": 19299,
+      "mib": 0.02,
+      "files": 3
+    },
+    {
+      "name": "e2_02_test_runner_20260818_214936",
+      "modified": "2026-08-18T21:49:36",
+      "bytes": 814,
+      "mib": 0.0,
+      "files": 1
+    },
+    {
+      "name": "e2_02_menu_integration_20260818_214741",
+      "modified": "2026-08-18T21:47:41",
+      "bytes": 128902,
+      "mib": 0.12,
+      "files": 2
+    },
+    {
+      "name": "e2_02_longitudinal_center_20260818_214647",
+      "modified": "2026-08-18T21:46:47",
+      "bytes": 74622,
+      "mib": 0.07,
+      "files": 6
+    },
+    {
+      "name": "roadmap_contracts_20260818_213019",
+      "modified": "2026-08-18T21:30:19",
+      "bytes": 723,
+      "mib": 0.0,
+      "files": 1
+    },
+    {
+      "name": "performance_optimization_20260818_205305",
+      "modified": "2026-08-18T20:53:05",
+      "bytes": 308719,
+      "mib": 0.29,
+      "files": 8
+    },
+    {
+      "name": "ui_navigation_cards_toolbar_20260818_202225",
+      "modified": "2026-08-18T20:22:25",
+      "bytes": 123003,
+      "mib": 0.12,
+      "files": 5
+    },
+    {
+      "name": "ui_dark_theme_20260818_201203",
+      "modified": "2026-08-18T20:12:03",
+      "bytes": 156753,
+      "mib": 0.15,
+      "files": 2
+    },
+    {
+      "name": "manual_20260818_000432_v1.6.0",
+      "modified": "2026-08-18T00:04:34",
+      "bytes": 106649818,
+      "mib": 101.71,
+      "files": 176
+    },
+    {
+      "name": "manual_20260817_232019_v1.5.1",
+      "modified": "2026-08-17T23:20:20",
+      "bytes": 106598751,
+      "mib": 101.66,
+      "files": 171
+    }
+  ]
+}

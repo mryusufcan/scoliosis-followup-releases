@@ -1,0 +1,142 @@
+[
+  {
+    "path": "dev_data\\dicom_samples\\SE00001\\IM00002",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 2393,
+    "columns": 3056
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00001\\IM00003",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 2393,
+    "columns": 3056
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00001\\IM00004",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 2393,
+    "columns": 3056
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00001\\IM00005",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 3082,
+    "columns": 1528
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00002\\IM00003",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 960,
+    "columns": 960
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00002\\IM00005",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 2757,
+    "columns": 3056
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00002\\IM00006",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 2393,
+    "columns": 3056
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00002\\IM00007",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 2757,
+    "columns": 3056
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00002\\IM00008",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 7257,
+    "columns": 3056
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00002\\IM00009",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 3081,
+    "columns": 1528
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00003\\IM00009",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 2757,
+    "columns": 3056
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00003\\IM00010",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 2757,
+    "columns": 3056
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00003\\IM00011",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 2757,
+    "columns": 3056
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00003\\IM00012",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 7257,
+    "columns": 3056
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE00999\\IM00001",
+    "transfer_syntax": "1.2.840.10008.1.2.1",
+    "frames": 1,
+    "rows": 0,
+    "columns": 0
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE01000\\IM00011",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 2100,
+    "columns": 2970
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE01000\\IM00013",
+    "transfer_syntax": "1.2.840.10008.1.2.4.70",
+    "frames": 1,
+    "rows": 2100,
+    "columns": 2970
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE10000\\IM00004",
+    "transfer_syntax": "1.2.840.10008.1.2.1",
+    "frames": 1,
+    "rows": 0,
+    "columns": 0
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE10000\\IM00012",
+    "transfer_syntax": "1.2.840.10008.1.2.1",
+    "frames": 1,
+    "rows": 0,
+    "columns": 0
+  },
+  {
+    "path": "dev_data\\dicom_samples\\SE10000\\IM00014",
+    "transfer_syntax": "1.2.840.10008.1.2.1",
+    "frames": 1,
+    "rows": 0,
+    "columns": 0
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "format": "ScoliosisFollowUpAIValidationReportV1",
+  "model_version": "vertebra-landmark-68-onnx-candidate-20260820",
+  "model_sha256": "f3e1e6b319064a2288a792678d92dabf1e56e8004813fff3b372be1c214c440f",
+  "patient_level_split": false,
+  "reviewed_by": "Automated technical conversion only; no clinical reviewer",
+  "data_governance": "No patient data was accessed. Patient-level validation evidence is not available.",
+  "intended_status": "technical_conversion_only",
+  "acceptance_note": "This report intentionally blocks expert_review_poc acceptance until required patient-level validation metrics and rights evidence are supplied."
+}

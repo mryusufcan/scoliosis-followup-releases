@@ -1,0 +1,34 @@
+{
+  "python": "C:\\Users\\yusuf\\Desktop\\Scoliosis Follow Up\\.venv-build\\Scripts\\python.exe",
+  "pydicom": "3.0.2",
+  "path": "IM00002",
+  "rows": [
+    {
+      "read_ms": 3.726600029040128,
+      "decode_ms": 1004.4742000172846,
+      "shape": [
+        2393,
+        3056
+      ],
+      "dtype": "uint16"
+    },
+    {
+      "read_ms": 4.259900015313178,
+      "decode_ms": 1003.8369999965653,
+      "shape": [
+        2393,
+        3056
+      ],
+      "dtype": "uint16"
+    },
+    {
+      "read_ms": 4.003200039733201,
+      "decode_ms": 1008.1095000496134,
+      "shape": [
+        2393,
+        3056
+      ],
+      "dtype": "uint16"
+    }
+  ]
+}

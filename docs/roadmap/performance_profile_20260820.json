@@ -1,0 +1,90 @@
+{
+  "kind": "real_dicom_render_pipeline_profile",
+  "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.2",
+  "pydicom": "3.0.2",
+  "repeats": 3,
+  "files": [
+    {
+      "path": "dev_data\\dicom_samples\\SE00001\\IM00002",
+      "shape": [
+        2393,
+        3056
+      ],
+      "source_dtype": "uint16",
+      "source_nbytes": 14626016,
+      "window_center": 966.0,
+      "window_width": 1740.0,
+      "decode_ms": {
+        "mean_ms": 1099.909,
+        "p95_ms": 1110.687,
+        "max_ms": 1110.844
+      },
+      "process_dicom_array_ms": {
+        "mean_ms": 31.817,
+        "p95_ms": 32.711,
+        "max_ms": 32.848
+      },
+      "qimage_detach_ms": {
+        "mean_ms": 2.549,
+        "p95_ms": 2.713,
+        "max_ms": 2.731
+      },
+      "pipeline_peak_tracemalloc_bytes": 36566650
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00001\\IM00003",
+      "shape": [
+        2393,
+        3056
+      ],
+      "source_dtype": "uint16",
+      "source_nbytes": 14626016,
+      "window_center": 925.0,
+      "window_width": 1457.0,
+      "decode_ms": {
+        "mean_ms": 1010.845,
+        "p95_ms": 1012.271,
+        "max_ms": 1012.447
+      },
+      "process_dicom_array_ms": {
+        "mean_ms": 29.652,
+        "p95_ms": 29.965,
+        "max_ms": 29.995
+      },
+      "qimage_detach_ms": {
+        "mean_ms": 2.356,
+        "p95_ms": 2.616,
+        "max_ms": 2.632
+      },
+      "pipeline_peak_tracemalloc_bytes": 36566516
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00001\\IM00004",
+      "shape": [
+        2393,
+        3056
+      ],
+      "source_dtype": "uint16",
+      "source_nbytes": 14626016,
+      "window_center": 525.0,
+      "window_width": 726.0,
+      "decode_ms": {
+        "mean_ms": 991.737,
+        "p95_ms": 992.055,
+        "max_ms": 992.09
+      },
+      "process_dicom_array_ms": {
+        "mean_ms": 29.874,
+        "p95_ms": 30.424,
+        "max_ms": 30.499
+      },
+      "qimage_detach_ms": {
+        "mean_ms": 2.649,
+        "p95_ms": 2.897,
+        "max_ms": 2.927
+      },
+      "pipeline_peak_tracemalloc_bytes": 36566516
+    }
+  ]
+}

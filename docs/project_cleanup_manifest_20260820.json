@@ -1,0 +1,27 @@
+{
+  "generated_at_utc": "2026-08-20T10:20:00Z",
+  "root": "C:\\Users\\yusuf\\Desktop\\Scoliosis Follow Up",
+  "policy": "Yalnızca yeniden üretilebilir paketleme çıktıları ve Python önbellekleri temizlenir; kaynak kod, kullanıcı/test verileri, DICOM örnekleri, restore point'ler, quarantine ve release arşivleri korunur.",
+  "measured_before_cleanup_mib": 6539.23,
+  "targets": [
+    {"path": "dist", "reason": "PyInstaller onedir çıktısı; releases/1.6.0 altında dağıtım arşivi korunuyor", "measured_mib": 996.75},
+    {"path": "installer", "reason": "Yeniden üretilebilir installer; releases/1.6.0 altında kopyası korunuyor", "measured_mib": 223.47},
+    {"path": "build", "reason": "PyInstaller geçici çalışma çıktısı; temizlik sırasında zaten yoktu", "measured_mib": 49.65},
+    {"path": "__pycache__", "reason": "Python bytecode önbelleği", "measured_mib": 0.10},
+    {"path": "*.pyc / *.pyo", "reason": "Yeniden üretilebilir Python bytecode önbellekleri", "measured_mib": 0}
+  ],
+  "preserved": [
+    ".restore_points",
+    ".quarantine",
+    ".venv-build",
+    "dev_data",
+    "resources",
+    "modular_app",
+    "tests",
+    "packaging",
+    "docs",
+    "releases",
+    "security_keys"
+  ],
+  "note": "Bu kayıt temizleme öncesi planı ve ölçümü belgelemek içindir. Kaynak dosyalarında değişiklik yapılmamıştır."
+}

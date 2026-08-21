@@ -8,9 +8,9 @@ from modular_app.database.exam_repository import ExamRepository
 class PatientCardDialog(QDialog):
     """Local follow-up card; it never changes the source DICOM tags."""
 
-    def __init__(self, repository: ExamRepository, patient_id: str, patient_name: str, actor: str = "", parent=None):
+    def __init__(self, repository: ExamRepository, patient_id: str, patient_name: str, actor: str = "", editable: bool = True, parent=None):
         super().__init__(parent)
-        self.repo, self.patient_id, self.actor = repository, str(patient_id), str(actor)
+        self.repo, self.patient_id, self.actor, self.editable = repository, str(patient_id), str(actor), bool(editable)
         self.setWindowTitle("Hasta Kartı")
         self.resize(620, 480)
         self.setStyleSheet("background:#242424;color:#ecf0f1;")
@@ -36,12 +36,15 @@ class PatientCardDialog(QDialog):
         buttons = QHBoxLayout()
         save = QPushButton("Kartı Kaydet")
         save.clicked.connect(self.save)
+        save.setEnabled(self.editable)
         close = QPushButton("Kapat")
         close.clicked.connect(self.reject)
         buttons.addStretch(); buttons.addWidget(save); buttons.addWidget(close)
         root.addLayout(buttons)
 
     def save(self):
+        if not self.editable:
+            return
         profile = {
             "diagnosis": self.diagnosis.text().strip(),
             "referring_physician": self.physician.text().strip(),

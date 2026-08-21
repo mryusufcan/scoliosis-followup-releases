@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$Clean,
     [switch]$SkipTests,
     [string]$CertificateThumbprint = "",
@@ -8,6 +8,10 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
+$releaseVersion = (Get-Content -LiteralPath (Join-Path $root 'VERSION') -Raw).Trim()
+if ($releaseVersion -notmatch '^\d+\.\d+\.\d+$') {
+    throw "VERSION dosyasında geçerli bir sürüm bulunamadı. Örnek: 1.3.0"
+}
 
 function Find-Python {
     $python = Get-Command python -ErrorAction SilentlyContinue
@@ -62,8 +66,33 @@ $integrityIdentity = Join-Path $root 'modular_app\security\integrity_identity.py
 if ($LASTEXITCODE -ne 0) { throw "Dağıtım bütünlük anahtarı oluşturulamadı." }
 
 if (-not $SkipTests) {
-    & $venvPython .\tests\verify_environment.py
-    & $venvPython .\tests\run_modular_tests.py
+  $testLogDirectory = Join-Path $root 'build'
+  New-Item -ItemType Directory -Force -Path $testLogDirectory | Out-Null
+  $testLog = Join-Path $testLogDirectory 'test-results.txt'
+  Remove-Item -LiteralPath $testLog -Force -ErrorAction SilentlyContinue
+
+  function Invoke-LoggedPython([string]$label, [string[]]$arguments) {
+    # Python'ın stderr çıktısı (örneğin üçüncü taraf uyarıları), PowerShell 7'de
+    # NativeCommandError olarak yorumlanabiliyor. Süreci doğrudan başlatıp iki
+    # akışı dosyaya yönlendirmek, yalnızca gerçek çıkış koduyla karar vermemizi
+    # sağlar; hata/uyarı metni de test-results.txt içinde korunur.
+    $stdout = Join-Path $testLogDirectory "$label.stdout.txt"
+    $stderr = Join-Path $testLogDirectory "$label.stderr.txt"
+    Remove-Item -LiteralPath $stdout, $stderr -Force -ErrorAction SilentlyContinue
+    $process = Start-Process -FilePath $venvPython -ArgumentList $arguments -WorkingDirectory $root `
+      -NoNewWindow -Wait -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+    foreach ($stream in @($stdout, $stderr)) {
+      if (Test-Path -LiteralPath $stream) {
+        Get-Content -LiteralPath $stream | Tee-Object -FilePath $testLog -Append | Out-Host
+      }
+    }
+    return [int]$process.ExitCode
+  }
+
+  $environmentExitCode = Invoke-LoggedPython 'environment' @('.\tests\verify_environment.py')
+  if ($environmentExitCode -ne 0) { throw "Paketleme ortamı doğrulaması başarısız oldu. Ayrıntılar: $testLog" }
+  $testExitCode = Invoke-LoggedPython 'tests' @('.\tests\run_modular_tests.py')
+  if ($testExitCode -ne 0) { throw "Otomatik testler başarısız olduğu için EXE oluşturulmadı. Ayrıntılar: $testLog" }
 }
 
 if ($Clean) {
@@ -73,21 +102,31 @@ if ($Clean) {
 # --onedir, PySide6/DICOM/PACS gibi yerel DLL kullanan bu uygulama için en
 # güvenilir dağıtım biçimidir. EXE ile birlikte oluşan klasör tek parça olarak
 # teslim edilmelidir; hedef bilgisayarda Python kurulumu gerekmez.
+# PyInstaller'in PySide6/pydicom/Qt hook'lari yalnizca gercek importlari
+# toplar. Bu paketlerde --collect-all kullanmak Qt WebEngine, 3D, QML,
+# gelistirme araclari ve test verilerini gereksiz yere dagitima ekler.
+$specDirectory = Join-Path $root 'build\spec'
+New-Item -ItemType Directory -Force -Path $specDirectory | Out-Null
 & $venvPython -m PyInstaller --noconfirm --clean --windowed --onedir `
   --name "ScoliosisFollowUp" `
+  --specpath "$specDirectory" `
+  --icon "$root\resources\branding\ScoliosisFollowUp.ico" `
   --paths "$root" `
-  --add-data "$root\logo.png;." `
+  --add-data "$root\VERSION;." `
+  --add-data "$root\resources\branding\logo.png;." `
   --add-data "$root\resources;resources" `
   --hidden-import license_app `
+  --hidden-import cv2 `
   --collect-submodules modular_app `
   --collect-submodules pacs `
   --collect-submodules dicom `
-  --collect-all PySide6 `
-  --collect-all pydicom `
-  --collect-all pynetdicom `
-  --collect-all reportlab `
-  --collect-all requests `
-  --collect-all cryptography `
+  --collect-submodules anonymization `
+  --collect-submodules ai `
+  --collect-all pylibjpeg `
+  --collect-all libjpeg `
+  --collect-all openjpeg `
+  --collect-all rle `
+  --collect-all jpeg_ls `
   "$root\main.py"
 if ($LASTEXITCODE -ne 0) { throw "EXE paketleme başarısız oldu." }
 
@@ -98,7 +137,7 @@ Sign-ApplicationFile "$root\dist\ScoliosisFollowUp\ScoliosisFollowUp.exe"
 & $venvPython "$root\packaging\generate_integrity_manifest.py" `
   --root "$root\dist\ScoliosisFollowUp" `
   --private-key "$integrityKey" `
-  --version "1.1.0"
+  --version "$releaseVersion"
 if ($LASTEXITCODE -ne 0) { throw "Dağıtım bütünlük manifest'i oluşturulamadı." }
 
 Write-Host "Hazır: $root\dist\ScoliosisFollowUp\ScoliosisFollowUp.exe"
@@ -108,3 +147,4 @@ Write-Host "Bütünlük: İmzalı runtime_integrity.json oluşturuldu."
 if ($CertificateThumbprint) {
     Write-Host "EXE, belirtilen sertifikayla imzalandı."
 }
+

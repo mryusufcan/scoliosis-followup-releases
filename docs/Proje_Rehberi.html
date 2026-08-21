@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scoliosis Follow-Up Proje Rehberi</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--text:#e6edf3;--muted:#9da7b3;--blue:#58a6ff;--green:#3fb950;--amber:#d29922;--red:#f85149}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:15px/1.65 "Segoe UI",Arial,sans-serif}
+.wrap{max-width:1100px;margin:auto;padding:38px 24px 80px} h1{font-size:38px;margin:0 0 8px} h2{margin-top:42px;border-bottom:1px solid var(--line);padding-bottom:10px;color:var(--blue)}
+.lead{font-size:18px;color:var(--muted);max-width:850px} .note{background:#10233d;border-left:4px solid var(--blue);padding:14px 18px;border-radius:6px}
+pre{white-space:pre;overflow:auto;background:#090c10;border:1px solid var(--line);padding:20px;border-radius:10px;color:#c9d1d9;font:13px/1.5 Consolas,monospace}
+table{width:100%;border-collapse:collapse;background:var(--panel)} td{padding:12px;border:1px solid var(--line);vertical-align:top} td:first-child{width:25%;color:var(--green)}
+.step{display:flex;gap:16px;background:var(--panel);border:1px solid var(--line);padding:14px;margin:10px 0;border-radius:9px} .step span{display:grid;place-items:center;min-width:34px;height:34px;border-radius:50%;background:var(--blue);color:#07111e;font-weight:800} .step p{margin:3px 0;color:var(--muted)}
+.warn{background:#2d1b10;border:1px solid #6e4b1f;padding:16px 22px;border-radius:10px} .warn li{margin:8px 0}
+code{background:#21262d;padding:2px 6px;border-radius:4px} .flow{font-family:Consolas,monospace;background:#111820;padding:18px;border-radius:9px;border:1px solid var(--line)}
+.small{color:var(--muted);font-size:13px} @media print{body{background:white;color:#111} .wrap{max-width:none} pre,.flow{background:#f5f5f5;color:#111} .step,table{background:white}}
+</style></head>
+<body><main class="wrap">
+<h1>Scoliosis Follow-Up</h1>
+<p class="lead">Proje ağacı, çalışma prensibi, geliştirme düzeni, test, paketleme ve yayın rehberi. Amaç: birkaç ay sonra projeyi açtığında bile “hangi dosyaya dokunacağım?” sorusunun cevabını 30 saniyede bulmak.</p>
+<div class="note"><b>Temel kural:</b> Çalışan görüntüleme çekirdeğini koru; yeni işlevleri mümkün olduğunca modüler katmana ekle. Paketleme dosyaları uygulama mantığının yeri değildir.</div>
+
+<h2>1. Mimariyi 60 saniyede anla</h2>
+<p>Scoliosis Follow-Up artık tek bir dev Python dosyasından ibaret değil. Temel görüntüleme arayüzü/checkpoint korunuyor; modular_app/run_modular.py bu temel sınıfın üzerine veritabanı, hasta takibi, zaman çizelgesi, PACS, lisans, güvenlik, yedekleme ve AI gibi modülleri bağlıyor. Bu yüzden yeni özellik eklerken ilk soru “hangi dosyaya kod yazayım?” değil, “bu özellik hangi katmana ait?” olmalı.</p>
+<div class="flow">main.py / checkpoint → modular_app.run_modular → güvenlik + DB preflight → ExamRepository → UI / timeline / services / AI → ana pencere</div>
+<p>Uygulama açılırken ana giriş noktası temel uygulama sınıfını yükler, modüler katmanı kurar, dağıtım bütünlüğünü kontrol eder, yerel SQLite veritabanının sağlığını doğrular ve sonra pencereyi açar. Modüler başlatıcı ExamRepository üzerinden ortak veri katmanını kullanır. Görüntüleyici, Skolyoz Takip, geçmiş tetkikler ve AI tarafı aynı aktif DICOM/görüntü seçimini mümkün olduğunca ortak kullanır.</p>
+
+<h2>2. Proje ağacı</h2>
+<pre>app devam v2\
+│
+├─ main.py                         # Ana giriş / temel uygulama
+├─ VERSION                         # Tek gerçek sürüm numarası
+├─ requirements.txt                # Python bağımlılıkları
+├─ update.json                     # Güncelleme metadatası (üretilen)
+├─ ScoliosisFollowUp.spec          # PyInstaller tanımı
+│
+├─ modular_app\
+│  ├─ run_modular.py               # Modülleri ana uygulamaya bağlayan katman
+│  ├─ database\
+│  │  └─ exam_repository.py        # Hasta/tetkik/ayar/audit veri erişimi
+│  ├─ timeline\
+│  │  ├─ exam_timeline.py
+│  │  ├─ comparison_sessions.py
+│  │  ├─ cobb_history.py
+│  │  ├─ cobb_trend.py
+│  │  ├─ follow_up_summary.py
+│  │  ├─ patient_manager.py
+│  │  ├─ patient_card.py
+│  │  ├─ follow_up_alerts.py
+│  │  ├─ follow_up_schedule.py
+│  │  ├─ quality_check.py
+│  │  ├─ audit_history.py
+│  │  ├─ user_manager.py
+│  │  ├─ vertebra_labels.py
+│  │  └─ image_notes.py
+│  ├─ ui\
+│  │  ├─ pacs_dialog.py
+│  │  ├─ license_dialog.py
+│  │  ├─ ai_assistant_dialog.py
+│  │  ├─ ai_training_dialog.py
+│  │  └─ user_guide_dialog.py
+│  ├─ services\
+│  │  ├─ system_services.py        # update, backup, log, DB health vb.
+│  │  └─ license_policy.py
+│  └─ security\
+│     └─ integrity.py              # Dağıtım bütünlük kontrolü
+│
+├─ ai\
+│  ├─ model_runtime.py             # Yerel Cobb model çalışma katmanı
+│  └─ training_dataset.py          # Eğitim veri akışı
+│
+├─ resources\
+│  └─ ai\vertebra_cobb\            # Yerel AI model kaynakları
+│
+├─ packaging\
+│  ├─ build_windows.ps1            # PyInstaller/EXE üretimi
+│  ├─ build_installer.ps1          # Setup üretimi
+│  ├─ generate_update_feed.py      # İmzalı update.json
+│  └─ verify_release.py            # Yayın doğrulama
+│
+├─ scripts\
+│  └─ release\
+│     ├─ Tek_Tik_Yayin.py
+│     ├─ Yayin_Paketini_Dogrula.bat
+│     ├─ GitHub_Yayinini_Dogrula.bat
+│     └─ Guncelleme_JSON_Olustur.bat
+│
+├─ tools\
+│  ├─ safe_cleanup.ps1
+│  ├─ create_restore_point.ps1
+│  ├─ restore_point.ps1
+│  └─ release_acceptance.ps1
+│
+├─ tests\
+│  ├─ run_modular_tests.py
+│  ├─ test_extended_workflows.py
+│  ├─ test_real_dicom_samples.py
+│  └─ test_release_metadata.py
+│
+├─ installer\                      # Üretilen Setup EXE
+├─ dist\                           # PyInstaller çıktısı
+├─ build\                          # Geçici build çıktısı
+├─ releases\                       # Yayına hazır sürüm paketleri
+├─ artifacts\                      # Log / tanılama / yayın kayıtları
+└─ security_keys\
+   └─ integrity_private.pem        # GİZLİ - GitHub&#x27;a yüklenmez</pre>
+<p class="small">Not: Bu ağaç mevcut proje dosyaları ve konuşmalarda görülen yapı temel alınarak hazırlanmıştır. Bazı yardımcı dosyaların isimleri sürümler arasında değişebilir; klasörlerin sorumlulukları esas alınmalıdır.</p>
+
+<h2>3. Hangi özellik nereye yazılır?</h2>
+<table><tr><td><b>Görüntüleme davranışı</b></td><td>Temel viewer / Skolyoz Takip / stitching kodu. Overlay, blink, W/L, zoom, Cobb, birleştirme gibi görüntü davranışları burada ele alınır.</td></tr><tr><td><b>Hasta/tetkik verisi</b></td><td>modular_app/database ve timeline. Yeni bir takip kaydı, not, ölçüm geçmişi veya hasta ekranı ekliyorsan burası.</td></tr><tr><td><b>Yeni pencere/dialog</b></td><td>modular_app/ui veya konu timeline ile ilgiliyse modular_app/timeline.</td></tr><tr><td><b>Sistem özelliği</b></td><td>modular_app/services. Backup, update, log, DB health, dışa aktarma gibi işler.</td></tr><tr><td><b>Güvenlik/lisans</b></td><td>modular_app/security ve services/license_policy.py.</td></tr><tr><td><b>AI</b></td><td>ai/ hesaplama/model; modular_app/ui/ ise kullanıcıya gösterilen AI pencereleri.</td></tr><tr><td><b>Paketleme/yayın</b></td><td>packaging/ ve scripts/release/. Uygulama özelliği yazılmaz.</td></tr><tr><td><b>Test</b></td><td>tests/. Her önemli değişikliğin karşılığında test eklenmeli veya mevcut test güncellenmeli.</td></tr></table>
+
+<h2>4. Günlük geliştirme akışı</h2>
+<div class='step'><span>1</span><div><b>Geri dönüş noktası oluştur</b><p>Büyük değişiklikten önce restore point/backup al. Çalışan sürümü ezerek geliştirme yapma.</p></div></div><div class='step'><span>2</span><div><b>Doğru katmanı seç</b><p>UI mı, veri mi, görüntüleme mi, servis mi? Özelliği ilgili modüle koy.</p></div></div><div class='step'><span>3</span><div><b>Geliştirme modunda çalıştır</b><p>Önce Python üzerinden çalıştır. EXE üretip hata ayıklamaya çalışma; bu gereksiz yavaşlatır.</p></div></div><div class='step'><span>4</span><div><b>Küçük test yap</b><p>Değiştirdiğin özelliğin normal akışını, iptal akışını ve hatalı veri akışını dene.</p></div></div><div class='step'><span>5</span><div><b>Otomatik testleri çalıştır</b><p>tests altındaki testler geçmeden yayın aşamasına geçme.</p></div></div><div class='step'><span>6</span><div><b>Hızlı EXE gerekiyorsa üret</b><p>Sadece paketlenmiş davranışı kontrol etmek için hızlı deneme EXE kullan.</p></div></div><div class='step'><span>7</span><div><b>Sürüm yayınlanacaksa VERSION artır</b><p>Sürüm numarasını tek merkezden yönet. update.json elle yamalanmamalı.</p></div></div><div class='step'><span>8</span><div><b>Tek Tık Yayın çalıştır</b><p>Test -&gt; EXE -&gt; installer -&gt; imzalı update.json -&gt; yerel doğrulama -&gt; releases paketi.</p></div></div><div class='step'><span>9</span><div><b>GitHub&#x27;a yalnız yayın dosyalarını yükle</b><p>Setup ve update.json. integrity_private.pem kesinlikle yüklenmez.</p></div></div><div class='step'><span>10</span><div><b>Yükleme sonrası uzaktan doğrula</b><p>GitHub_Yayinini_Dogrula.bat ile latest/update.json ve paket eşleşmesini kontrol et.</p></div></div>
+
+<h2>5. Görüntüleme tarafında çalışma prensibi</h2>
+<p><b>Skolyoz Takip:</b> seçilen görüntüler ortak çalışma havuzuna alınır. Side-by-side iki görüntüyü ayrı gösterir; Overlay aynı koordinat alanında üst üste bindirir; Blink iki görüntü arasında zamanlı geçiş yapar. Cobb ve mesafe ölçümleri görüntü koordinatlarına bağlı tutulmalıdır.</p>
+<p><b>Stitching:</b> servikal-dorsal-lomber parçalar yüklenir. Servikal referans/sabit parça mantığı korunur. Otomatik hizalama ilk tahmini verir; manuel 2+2 anatomik nokta ile küçük rotasyon ve öteleme düzeltmesi yapılabilir. DICOM/pixmap/gray/mask ve auto-align cache'leri performans için önemlidir.</p>
+<p><b>Hasta takibi:</b> DICOM metadata içinden PatientID, PatientName, StudyDate, Modality, BodyPartExamined, StudyDescription/SeriesDescription ve SOPInstanceUID gibi alanlar okunur. ExamRepository bu bilgileri takip, geçmiş, Cobb trendi, notlar, audit ve diğer modüller arasında ortaklaştırır.</p>
+
+<h2>6. Bir özellik ekleme örneği</h2>
+<p>Diyelim ki “hastanın son iki Cobb ölçümü arasındaki değişimi göster” özelliği ekleyeceksin:</p>
+<ol>
+<li>Ölçüm verisini <code>ExamRepository</code> üzerinden al.</li>
+<li>Hesabı timeline/service tarafında yap; görüntüleyici çekirdeğine SQL veya dosya erişimi gömme.</li>
+<li>Yeni pencere gerekiyorsa <code>modular_app/timeline</code> altında dialog oluştur.</li>
+<li><code>run_modular.py</code> içinde yalnız entegrasyon/sinyal bağlantısını yap.</li>
+<li>Hasta seçilmemiş, tek ölçüm var, dosya kayıp gibi hata durumlarını test et.</li>
+<li>Test ekle; sonra uygulamayı Python ile çalıştırıp gerçek DICOM akışını dene.</li>
+</ol>
+
+<h2>7. Sürüm ve yayın sistemi</h2>
+<div class="flow">VERSION artır
+   ↓
+otomatik testler
+   ↓
+build_windows.ps1 → dist
+   ↓
+build_installer.ps1 → installer\ScoliosisFollowUp_Setup.exe
+   ↓
+generate_update_feed.py → imzalı update.json
+   ↓
+Yayin_Paketini_Dogrula.bat → YEREL doğrulama
+   ↓
+releases\&lt;version&gt;\
+   ↓
+GitHub Release'e Setup + update.json yükle
+   ↓
+GitHub_Yayinini_Dogrula.bat → UZAK doğrulama</div>
+<p><b>Önemli:</b> Yerel paket hazırlanırken GitHub'daki eski <code>latest</code> sürümünün eşleşmesi beklenmez. Çünkü yeni sürüm henüz yüklenmemiştir. Uzak doğrulama, yükleme bittikten sonra yapılır.</p>
+
+<h2>8. Dosya türlerine göre “dokun / dokunma”</h2>
+<table>
+<tr><td><b>Kaynak kod</b></td><td>main.py, modular_app/, ai/, packaging/, scripts/, tools/, tests/ — kontrollü olarak düzenlenebilir.</td></tr>
+<tr><td><b>Tek kaynak değer</b></td><td>VERSION — yayın sürümünün ana kaynağı olmalı.</td></tr>
+<tr><td><b>Üretilen çıktılar</b></td><td>dist/, build/, installer/, releases/, update.json — mümkün olduğunca scriptlerle üret; elle yamalama yapma.</td></tr>
+<tr><td><b>Gizli materyal</b></td><td>security_keys/integrity_private.pem — sadece geliştirme/yayın makinesinde kalır.</td></tr>
+<tr><td><b>Kullanıcı verisi</b></td><td>Yerel DB ve yedekler — kaynak koddan ayrı düşün; silme/restore işlemleri kontrollü yapılmalı.</td></tr>
+</table>
+
+<h2>9. Kırmızı çizgiler</h2>
+<div class="warn"><ul><li>security_keys/integrity_private.pem dosyasını GitHub&#x27;a, ZIP&#x27;e veya kullanıcı paketine koyma.</li><li>dist, build, installer ve update.json dosyalarını kaynak kod sanıp elle düzenleme; bunlar üretim çıktılarıdır.</li><li>main.py / checkpoint ile modular_app/run_modular.py görevlerini birbirine karıştırma.</li><li>ExamRepository varken aynı hasta/tetkik bilgisini ayrı JSON dosyalarında ikinci kez tutma.</li><li>Overlay karşılaştırmasında seçim sırasını rastgele değiştirme: referans ve karşılaştırma sırası davranışı etkileyebilir.</li><li>DICOM metadata okuması ile pixel data işlemesini gereksiz yere aynı yerde yapma; performans için metadata gerektiğinde stop_before_pixels yaklaşımı korunmalı.</li><li>Her tuş hareketinde DICOM&#x27;u yeniden okumak gibi pahalı işlemler yapma; mevcut cache/debounce yaklaşımını bozma.</li><li>Yayın hazırlarken GitHub&#x27;daki eski latest sürümünü yerel paketin ön koşulu yapma. Yerel doğrulama önce, uzak doğrulama yüklemeden sonra.</li></ul></div>
+
+<h2>10. Hata çıktığında hangi sırayla bak?</h2>
+<ol>
+<li><b>Traceback'in ilk gerçek proje satırını bul.</b> Son satır hata tipidir; birkaç satır yukarısı hangi fonksiyonun patladığını söyler.</li>
+<li><b>Python'da mı, EXE'de mi?</b> Python'da da bozuksa uygulama kodu; yalnız EXE'de bozuksa paketleme/spec/resource yolu düşün.</li>
+<li><b>Dosya yolu mu?</b> Geliştirme yolu ile PyInstaller yolu farklı olabilir.</li>
+<li><b>DB mi?</b> Önce health/preflight ve backup; veritabanını rastgele silme.</li>
+<li><b>DICOM mu?</b> Metadata okuma, pixel decoding ve multi-frame durumlarını ayır.</li>
+<li><b>Performans mı?</b> Cache'in temizlenme yerlerini, render tekrarlarını, timer/debounce akışını kontrol et.</li>
+<li><b>Yayın mı?</b> Test → build → installer → update.json → yerel doğrulama zincirinde hangi adımın hata verdiğini izole et.</li>
+</ol>
+
+<h2>11. Ben olsam projeyi bundan sonra böyle geliştiririm</h2>
+<p>Yeni büyük özellikleri doğrudan ana checkpoint dosyasına yığmam. Görüntü motorunda gerçekten değişiklik gerekiyorsa çekirdeğe dokunurum; hasta yönetimi, raporlama, takip, lisans, güncelleme, AI ve yardımcı pencereleri modüler tarafta tutarım. Bir sonraki mimari temizlik aşamasında görüntüleyici ve stitching kodunu da ayrı sınıf/modüllere çıkarmak, <code>run_modular.py</code>'nin entegrasyon yükünü azaltmak iyi hedef olur.</p>
+
+<p class="small">Hazırlanma tarihi: 15 Ağustos 2026 · Scoliosis Follow-Up geliştirme rehberi</p>
+</main></body></html>

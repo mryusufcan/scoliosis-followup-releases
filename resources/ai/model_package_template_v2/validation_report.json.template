@@ -1,0 +1,15 @@
+{
+  "format": "ScoliosisFollowUpAIValidationReportV1",
+  "model_version": "replace-with-version",
+  "model_sha256": "replace-with-manifest-sha256",
+  "intended_status": "expert_review_poc",
+  "patient_level_split": true,
+  "reviewed_by": "replace-with-reviewer-or-team",
+  "data_governance": "Kimliksizleştirme, izin ve veri kullanım koşulları özeti.",
+  "metrics": {
+    "landmark_error_px_median": null,
+    "cobb_mae_degrees": null
+  },
+  "known_limitations": ["Yerel doğrulama sonuçları girilmeden model kabul edilmez."],
+  "notes": "Bu rapor modelin klinik karar verebildiği anlamına gelmez; uzman onayı her zaman zorunludur."
+}

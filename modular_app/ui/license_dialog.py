@@ -22,7 +22,7 @@ class LicenseDialog(QDialog):
         self.key.setEchoMode(QLineEdit.EchoMode.Password)
         form.addRow("Ad soyad", self.name); form.addRow("E-posta", self.email); form.addRow("Lisans anahtarı", self.key)
         root.addLayout(form)
-        policy_note = QLabel("Açılış lisans denetimi aktiftir. Etkin lisans doğrulanamazsa çevrimdışı/lisanssız kullanım en fazla 6 saat sürer.")
+        policy_note = QLabel("Açılış lisans denetimi aktiftir. Etkin lisans çevrimdışı en fazla 6 saat kullanılabilir; ilk lisanssız deneme süresi 14 gündür.")
         policy_note.setWordWrap(True)
         policy_note.setStyleSheet("color:#f1c40f; padding:4px 0;")
         root.addWidget(policy_note)

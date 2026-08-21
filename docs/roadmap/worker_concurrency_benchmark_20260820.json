@@ -1,0 +1,141 @@
+{
+  "kind": "real_dicom_worker_concurrency_benchmark",
+  "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+  "cpu_count": 16,
+  "files": [
+    "dev_data\\dicom_samples\\SE00001\\IM00002",
+    "dev_data\\dicom_samples\\SE00001\\IM00003",
+    "dev_data\\dicom_samples\\SE00001\\IM00004",
+    "dev_data\\dicom_samples\\SE00001\\IM00005",
+    "dev_data\\dicom_samples\\SE00002\\IM00003",
+    "dev_data\\dicom_samples\\SE00002\\IM00005",
+    "dev_data\\dicom_samples\\SE00002\\IM00006",
+    "dev_data\\dicom_samples\\SE00002\\IM00007"
+  ],
+  "measurement_note": "Gerçek DICOM decode; QImage/QPixmap yok; sonuç array'leri benchmark sonunda serbest bırakılır.",
+  "results": [
+    {
+      "workers": 1,
+      "files": 8,
+      "decoded": 8,
+      "failures": [],
+      "wall_ms": 8527.174,
+      "cpu_ms": 8515.625,
+      "cpu_to_wall": 0.999,
+      "throughput_files_per_s": 0.938,
+      "throughput_megapixels_per_s": 6.067,
+      "decoded_array_bytes_retained_by_results": 103467424,
+      "wall_ms_mean": 8295.144,
+      "wall_ms_min": 8063.114,
+      "repeats": [
+        {
+          "workers": 1,
+          "files": 8,
+          "decoded": 8,
+          "failures": [],
+          "wall_ms": 8063.114,
+          "cpu_ms": 8046.875,
+          "cpu_to_wall": 0.998,
+          "throughput_files_per_s": 0.992,
+          "throughput_megapixels_per_s": 6.416,
+          "decoded_array_bytes_retained_by_results": 103467424
+        },
+        {
+          "workers": 1,
+          "files": 8,
+          "decoded": 8,
+          "failures": [],
+          "wall_ms": 8527.174,
+          "cpu_ms": 8515.625,
+          "cpu_to_wall": 0.999,
+          "throughput_files_per_s": 0.938,
+          "throughput_megapixels_per_s": 6.067,
+          "decoded_array_bytes_retained_by_results": 103467424
+        }
+      ],
+      "speedup_vs_one_worker": 1.0
+    },
+    {
+      "workers": 2,
+      "files": 8,
+      "decoded": 8,
+      "failures": [],
+      "wall_ms": 8348.347,
+      "cpu_ms": 8406.25,
+      "cpu_to_wall": 1.007,
+      "throughput_files_per_s": 0.958,
+      "throughput_megapixels_per_s": 6.197,
+      "decoded_array_bytes_retained_by_results": 103467424,
+      "wall_ms_mean": 8413.863,
+      "wall_ms_min": 8348.347,
+      "repeats": [
+        {
+          "workers": 2,
+          "files": 8,
+          "decoded": 8,
+          "failures": [],
+          "wall_ms": 8479.38,
+          "cpu_ms": 8562.5,
+          "cpu_to_wall": 1.01,
+          "throughput_files_per_s": 0.943,
+          "throughput_megapixels_per_s": 6.101,
+          "decoded_array_bytes_retained_by_results": 103467424
+        },
+        {
+          "workers": 2,
+          "files": 8,
+          "decoded": 8,
+          "failures": [],
+          "wall_ms": 8348.347,
+          "cpu_ms": 8406.25,
+          "cpu_to_wall": 1.007,
+          "throughput_files_per_s": 0.958,
+          "throughput_megapixels_per_s": 6.197,
+          "decoded_array_bytes_retained_by_results": 103467424
+        }
+      ],
+      "speedup_vs_one_worker": 0.986
+    },
+    {
+      "workers": 4,
+      "files": 8,
+      "decoded": 8,
+      "failures": [],
+      "wall_ms": 7319.139,
+      "cpu_ms": 7500.0,
+      "cpu_to_wall": 1.025,
+      "throughput_files_per_s": 1.093,
+      "throughput_megapixels_per_s": 7.068,
+      "decoded_array_bytes_retained_by_results": 103467424,
+      "wall_ms_mean": 7412.204,
+      "wall_ms_min": 7319.139,
+      "repeats": [
+        {
+          "workers": 4,
+          "files": 8,
+          "decoded": 8,
+          "failures": [],
+          "wall_ms": 7505.269,
+          "cpu_ms": 7593.75,
+          "cpu_to_wall": 1.012,
+          "throughput_files_per_s": 1.066,
+          "throughput_megapixels_per_s": 6.893,
+          "decoded_array_bytes_retained_by_results": 103467424
+        },
+        {
+          "workers": 4,
+          "files": 8,
+          "decoded": 8,
+          "failures": [],
+          "wall_ms": 7319.139,
+          "cpu_ms": 7500.0,
+          "cpu_to_wall": 1.025,
+          "throughput_files_per_s": 1.093,
+          "throughput_megapixels_per_s": 7.068,
+          "decoded_array_bytes_retained_by_results": 103467424
+        }
+      ],
+      "speedup_vs_one_worker": 1.119
+    }
+  ]
+}

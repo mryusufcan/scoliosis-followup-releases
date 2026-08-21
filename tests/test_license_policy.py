@@ -1,7 +1,11 @@
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from types import SimpleNamespace
+import tempfile
 import unittest
+from unittest.mock import patch
 
+import modular_app.services.license_policy as policy
 from modular_app.services.license_policy import evaluate_license_gate
 
 
@@ -16,47 +20,216 @@ class FakeRepository:
         self.values[key] = str(value)
 
 
-def status(active, online):
-    return SimpleNamespace(active=active, online=online, message="test")
+def license_status(active, online):
+    return SimpleNamespace(
+        active=active,
+        online=online,
+        message="test",
+    )
+
+
+def trial_status(started, now, online=True, ok=True):
+    return SimpleNamespace(
+        online=online,
+        ok=ok,
+        message="test",
+        trial_started_at=started.isoformat() if started else None,
+        server_now=now.isoformat() if now else None,
+    )
 
 
 class LicensePolicyTests(unittest.TestCase):
     def setUp(self):
         self.repo = FakeRepository()
-        self.start = datetime(2026, 8, 13, 9, 0, tzinfo=timezone.utc)
+        self.start = datetime(
+            2026, 8, 13, 9, 0, tzinfo=timezone.utc
+        )
+        self.temp = tempfile.TemporaryDirectory()
+        root = Path(self.temp.name)
+
+        self.patches = [
+            patch.object(policy, "MACHINE_STATE_DIR", root),
+            patch.object(
+                policy,
+                "MACHINE_STATE_FILE",
+                root / ".license_state.json",
+            ),
+            patch.object(
+                policy,
+                "_get_hwid",
+                return_value="TEST-HWID-1234567890",
+            ),
+        ]
+        for item in self.patches:
+            item.start()
+
+    def tearDown(self):
+        for item in reversed(self.patches):
+            item.stop()
+        self.temp.cleanup()
 
     def test_active_license_records_online_validation(self):
         result = evaluate_license_gate(
             self.repo,
-            checker=lambda: SimpleNamespace(active=True, online=True, message="test", expires_at="2027-08-13"),
+            checker=lambda: SimpleNamespace(
+                active=True,
+                online=True,
+                message="test",
+                expires_at="2027-08-13",
+            ),
             now=self.start,
         )
         self.assertTrue(result.allowed)
         self.assertEqual(result.mode, "licensed")
-        self.assertIn("license/last_online_validation_at", self.repo.values)
-        self.assertEqual(result.expires_at, "2027-08-13")
-        self.assertEqual(self.repo.values["license/expires_at"], "2027-08-13")
 
-    def test_offline_license_is_limited_to_six_hours_after_validation(self):
-        evaluate_license_gate(self.repo, checker=lambda: status(True, True), now=self.start)
-        allowed = evaluate_license_gate(self.repo, checker=lambda: status(False, False), now=self.start + timedelta(hours=5, minutes=59))
-        expired = evaluate_license_gate(self.repo, checker=lambda: status(False, False), now=self.start + timedelta(hours=6, seconds=1))
-        self.assertTrue(allowed.allowed)
-        self.assertEqual(allowed.mode, "offline_grace")
-        self.assertFalse(expired.allowed)
-        self.assertEqual(expired.mode, "offline_expired")
+    def test_trial_requires_server_on_first_use(self):
+        result = evaluate_license_gate(
+            self.repo,
+            checker=lambda: license_status(False, False),
+            trial_checker=lambda: SimpleNamespace(
+                online=False, ok=False, message="offline"
+            ),
+            now=self.start,
+        )
+        self.assertFalse(result.allowed)
+        self.assertEqual(result.mode, "trial_online_required")
 
-    def test_unlicensed_trial_is_six_hours_and_is_not_reset(self):
-        allowed = evaluate_license_gate(self.repo, checker=lambda: status(False, True), now=self.start)
-        expired = evaluate_license_gate(self.repo, checker=lambda: status(False, True), now=self.start + timedelta(hours=6, seconds=1))
-        self.assertTrue(allowed.allowed)
-        self.assertEqual(allowed.mode, "trial")
-        self.assertFalse(expired.allowed)
-        self.assertEqual(expired.mode, "trial_expired")
+    def test_server_starts_trial_and_preserves_start_date(self):
+        result = evaluate_license_gate(
+            self.repo,
+            checker=lambda: license_status(False, True),
+            trial_checker=lambda: trial_status(
+                self.start,
+                self.start,
+            ),
+            now=self.start,
+        )
+        self.assertTrue(result.allowed)
+        self.assertEqual(result.mode, "trial")
+        self.assertEqual(
+            self.repo.values["license/unlicensed_started_at"],
+            self.start.isoformat(),
+        )
+
+    def test_database_deletion_cannot_reset_server_trial(self):
+        first = evaluate_license_gate(
+            self.repo,
+            checker=lambda: license_status(False, True),
+            trial_checker=lambda: trial_status(
+                self.start,
+                self.start,
+            ),
+            now=self.start,
+        )
+        self.assertTrue(first.allowed)
+
+        fresh_repo = FakeRepository()
+        expired_time = self.start + timedelta(days=14, seconds=1)
+
+        result = evaluate_license_gate(
+            fresh_repo,
+            checker=lambda: license_status(False, True),
+            trial_checker=lambda: trial_status(
+                self.start,
+                expired_time,
+            ),
+            now=expired_time,
+        )
+        self.assertFalse(result.allowed)
+        self.assertEqual(result.mode, "trial_expired")
+
+    def test_reinstall_and_local_state_deletion_cannot_reset_online_trial(self):
+        evaluate_license_gate(
+            self.repo,
+            checker=lambda: license_status(False, True),
+            trial_checker=lambda: trial_status(
+                self.start,
+                self.start,
+            ),
+            now=self.start,
+        )
+
+        policy.MACHINE_STATE_FILE.unlink()
+        fresh_repo = FakeRepository()
+        later = self.start + timedelta(days=10)
+
+        result = evaluate_license_gate(
+            fresh_repo,
+            checker=lambda: license_status(False, True),
+            trial_checker=lambda: trial_status(
+                self.start,
+                later,
+            ),
+            now=later,
+        )
+
+        self.assertTrue(result.allowed)
+        self.assertEqual(result.mode, "trial")
+        self.assertLess(
+            result.remaining,
+            timedelta(days=5),
+        )
+
+    def test_tampered_local_state_is_fail_closed(self):
+        evaluate_license_gate(
+            self.repo,
+            checker=lambda: license_status(False, True),
+            trial_checker=lambda: trial_status(
+                self.start,
+                self.start,
+            ),
+            now=self.start,
+        )
+
+        text = policy.MACHINE_STATE_FILE.read_text(
+            encoding="utf-8"
+        )
+        policy.MACHINE_STATE_FILE.write_text(
+            text.replace(
+                "TEST-HWID-1234567890",
+                "OTHER-HWID-123456789",
+            ),
+            encoding="utf-8",
+        )
+
+        result = evaluate_license_gate(
+            self.repo,
+            checker=lambda: license_status(False, True),
+            trial_checker=lambda: trial_status(
+                self.start,
+                self.start + timedelta(hours=1),
+            ),
+            now=self.start + timedelta(hours=1),
+        )
+
+        self.assertFalse(result.allowed)
+        self.assertEqual(
+            result.mode,
+            "license_state_invalid",
+        )
 
     def test_clock_rollback_is_rejected(self):
-        evaluate_license_gate(self.repo, checker=lambda: status(False, True), now=self.start)
-        result = evaluate_license_gate(self.repo, checker=lambda: status(False, True), now=self.start - timedelta(hours=1))
+        evaluate_license_gate(
+            self.repo,
+            checker=lambda: license_status(False, True),
+            trial_checker=lambda: trial_status(
+                self.start,
+                self.start,
+            ),
+            now=self.start,
+        )
+
+        result = evaluate_license_gate(
+            self.repo,
+            checker=lambda: license_status(False, False),
+            trial_checker=lambda: SimpleNamespace(
+                online=False,
+                ok=False,
+                message="offline",
+            ),
+            now=self.start - timedelta(hours=1),
+        )
+
         self.assertFalse(result.allowed)
         self.assertEqual(result.mode, "clock_changed")
 

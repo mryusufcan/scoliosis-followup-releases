@@ -1,0 +1,13 @@
+{
+  "kind": "real_dicom_cache_memory_benchmark",
+  "files_considered": 16,
+  "files_loaded": 16,
+  "dataset_cache_entries": 1,
+  "dataset_cache_bytes": 13513974,
+  "dataset_cache_budget_bytes": 33554432,
+  "pixmap_cache_entries": 2,
+  "pixmap_cache_bytes": 49896000,
+  "pixmap_cache_budget_bytes": 134217728,
+  "pixmap_cache_entry_limit": 10,
+  "source": "dev_data/dicom_samples"
+}

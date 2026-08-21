@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "purpose": "Scoliosis Follow-Up roadmap performance gates",
+  "measurement_policy": {
+    "dataset": "dev_data/dicom_samples",
+    "real_data_only": true,
+    "warmup_runs": 1,
+    "reported_repetitions": 3,
+    "environment_note": "Record OS, Python, PySide6, pydicom, NumPy and CPU/GPU with each benchmark result."
+  },
+  "observed_baseline_after_current_optimization": {
+    "dicom_read_mean_ms": 4.73,
+    "dicom_decode_mean_ms": 1004.47,
+    "render_mean_ms": 51.53,
+    "viewer_cache_hit_mean_ms": 0.05,
+    "startup_import_ms": 622.57,
+    "startup_construct_ms": 104.89,
+    "startup_first_paint_ms": 16.49,
+    "source": "docs/performance_optimization_report.md"
+  },
+  "budgets": {
+    "dicom": {
+      "mean_read_ms": {"target": 15.0, "severity": "warning"},
+      "decode_pixels_ms": {"target": 1200.0, "severity": "warning"},
+      "mean_render_ms": {"target": 300.0, "severity": "warning"},
+      "large_single_image_render_ms": {"target": 900.0, "severity": "warning"},
+      "cache_hit_ms": {"target": 1.0, "severity": "error"},
+      "folder_scan_decode_pixels": {"target": false, "severity": "error"}
+    },
+    "ui": {
+      "viewer_window_level_debounce_ms": {"target": 45, "severity": "info"},
+      "slider_render_burst_policy": {"target": "coalesced", "severity": "error"},
+      "first_paint_ms": {"target": 50.0, "severity": "warning"}
+    },
+    "startup": {
+      "import_ms": {"target": 800.0, "severity": "warning"},
+      "construct_ms": {"target": 250.0, "severity": "warning"},
+      "first_paint_ms": {"target": 50.0, "severity": "warning"}
+    },
+    "memory": {
+      "viewer_dataset_cache_entries": {"target": 1, "severity": "error"},
+      "viewer_dataset_cache_bytes": {"target": 33554432, "severity": "error"},
+      "viewer_pixmap_cache_entries": {"target": 10, "severity": "warning"},
+      "viewer_pixmap_cache_bytes": {"target": 134217728, "severity": "error"},
+      "stitch_array_cache_bytes": {"target": 268435456, "severity": "error"},
+      "stitch_gray_cache_bytes": {"target": 268435456, "severity": "error"}
+    },
+    "registration_and_stitching": {
+      "baseline_required": true,
+      "registration_auto_align_ms": {"target": 1500.0, "severity": "warning", "status": "initial_budget"},
+      "stitch_compose_preview_ms": {"target": 1200.0, "severity": "warning", "status": "initial_budget"},
+      "quality_score_reproducibility": {"target": "deterministic_for_same_inputs", "severity": "error"}
+    },
+    "reliability": {
+      "unit_and_workflow_regressions": {"target": 0, "severity": "error"},
+      "ui_smoke_failures": {"target": 0, "severity": "error"},
+      "export_round_trip_failures": {"target": 0, "severity": "error"}
+    }
+  },
+  "next_measurements": [
+    "registration_auto_align_cold_and_warm_ms",
+    "stitch_compose_preview_and_full_ms",
+    "PACS query/retrieve UI blocking duration",
+    "longitudinal dashboard load time for 100/1000 exam rows",
+    "report generation time with 1/10/100 measurements",
+    "SQLite index/search time for patient and exam queries"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "format": "ScoliosisFollowUpAIModelV2",
+  "task": "cobb_endplate_landmarks",
+  "model_version": "replace-with-version",
+  "model_file": "model.onnx",
+  "sha256": "replace-with-64-character-sha256",
+  "input_width": 512,
+  "input_height": 1024,
+  "confidence_threshold": 0.70,
+  "output_schema": "normalized_xy_confidence_4",
+  "onnx_opset": 17,
+  "source_repository": "https://github.com/organisation/repository",
+  "source_commit": "replace-with-7-to-64-hex-commit",
+  "source_license": "replace-with-code-license",
+  "weights_license": "replace-with-weights-license",
+  "dataset_license": "replace-with-dataset-license",
+  "model_card": {
+    "intended_use": "AP/PA omurga röntgeninde dört noktalı Cobb taslağı üretir; tanı veya tedavi kararı vermez.",
+    "validation_summary": "Hasta bazlı ayrılmış yerel doğrulama özeti buraya yazılır.",
+    "known_failure_modes": ["Lateral görüntü", "Çok kareli DICOM", "Eksik veya bozuk DICOM metadata"],
+    "supported_views": ["AP", "PA"],
+    "supported_modalities": ["DX", "CR"],
+    "excluded_conditions": ["Lateral", "Color image", "Multiframe"]
+  }
+}

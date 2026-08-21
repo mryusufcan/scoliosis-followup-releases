@@ -1,0 +1,300 @@
+{
+  "generated_at": "2026-08-20T13:49:58",
+  "quarantine": {
+    "path": ".quarantine",
+    "bytes": 1945022020,
+    "mib": 1854.92,
+    "gib": 1.811,
+    "files": 32255
+  },
+  "quarantine_children": [
+    {
+      "path": ".quarantine\\landmark_lab",
+      "bytes": 1941406920,
+      "mib": 1851.47,
+      "gib": 1.808,
+      "files": 32214
+    },
+    {
+      "path": ".quarantine\\Vertebra-Landmark-Detection_b9fc05c",
+      "bytes": 3615100,
+      "mib": 3.45,
+      "gib": 0.003,
+      "files": 41
+    }
+  ],
+  "restore_points": {
+    "path": ".restore_points",
+    "bytes": 1685016820,
+    "mib": 1606.96,
+    "gib": 1.569,
+    "files": 24152
+  },
+  "restore_point_children": [
+    {
+      "path": ".restore_points\\landmark_lab_adapter_20260820_114227",
+      "bytes": 1682796025,
+      "mib": 1604.84,
+      "gib": 1.567,
+      "files": 23984
+    },
+    {
+      "path": ".restore_points\\startup_dicom_smoke_20260820_132429",
+      "bytes": 212827,
+      "mib": 0.2,
+      "gib": 0.0,
+      "files": 5
+    },
+    {
+      "path": ".restore_points\\landmark_v2_active_gate_20260820_115531",
+      "bytes": 195273,
+      "mib": 0.19,
+      "gib": 0.0,
+      "files": 14
+    },
+    {
+      "path": ".restore_points\\experimental_landmark_app_20260820_122524",
+      "bytes": 183474,
+      "mib": 0.17,
+      "gib": 0.0,
+      "files": 11
+    },
+    {
+      "path": ".restore_points\\experimental_landmark_cobb_20260820_130310",
+      "bytes": 181068,
+      "mib": 0.17,
+      "gib": 0.0,
+      "files": 9
+    },
+    {
+      "path": ".restore_points\\ai_model_inspector_20260820_095423",
+      "bytes": 153187,
+      "mib": 0.15,
+      "gib": 0.0,
+      "files": 3
+    },
+    {
+      "path": ".restore_points\\ai_model_candidate_review_final_20260820_110256",
+      "bytes": 150134,
+      "mib": 0.14,
+      "gib": 0.0,
+      "files": 7
+    },
+    {
+      "path": ".restore_points\\ai_model_candidate_review_20260820_105046",
+      "bytes": 149107,
+      "mib": 0.14,
+      "gib": 0.0,
+      "files": 6
+    },
+    {
+      "path": ".restore_points\\viewer_cobb_persistent_save_20260820_101125",
+      "bytes": 127106,
+      "mib": 0.12,
+      "gib": 0.0,
+      "files": 5
+    },
+    {
+      "path": ".restore_points\\render_pipeline_optimization_20260820_114614",
+      "bytes": 124952,
+      "mib": 0.12,
+      "gib": 0.0,
+      "files": 6
+    },
+    {
+      "path": ".restore_points\\byte_weighted_cache_20260820_120323",
+      "bytes": 110645,
+      "mib": 0.11,
+      "gib": 0.0,
+      "files": 5
+    },
+    {
+      "path": ".restore_points\\dicom_preload_real_integration_20260819_010500",
+      "bytes": 79022,
+      "mib": 0.08,
+      "gib": 0.0,
+      "files": 3
+    },
+    {
+      "path": ".restore_points\\ai_provenance_v2_20260820_091948",
+      "bytes": 64716,
+      "mib": 0.06,
+      "gib": 0.0,
+      "files": 3
+    },
+    {
+      "path": ".restore_points\\compact_viewer_tree_20260820_132121",
+      "bytes": 61550,
+      "mib": 0.06,
+      "gib": 0.0,
+      "files": 4
+    },
+    {
+      "path": ".restore_points\\manual_cobb_acute_angle_20260820_130858",
+      "bytes": 55137,
+      "mib": 0.05,
+      "gib": 0.0,
+      "files": 5
+    },
+    {
+      "path": ".restore_points\\viewer_tree_row_density_20260820_134629",
+      "bytes": 48439,
+      "mib": 0.05,
+      "gib": 0.0,
+      "files": 4
+    },
+    {
+      "path": ".restore_points\\ai_model_acceptance_final_20260820_102922",
+      "bytes": 46236,
+      "mib": 0.04,
+      "gib": 0.0,
+      "files": 14
+    },
+    {
+      "path": ".restore_points\\ai_model_acceptance_20260820_101537",
+      "bytes": 44441,
+      "mib": 0.04,
+      "gib": 0.0,
+      "files": 13
+    },
+    {
+      "path": ".restore_points\\cobb_save_dialog_20260820_112315",
+      "bytes": 39792,
+      "mib": 0.04,
+      "gib": 0.0,
+      "files": 2
+    },
+    {
+      "path": ".restore_points\\ai_model_acceptance_20260820_100932",
+      "bytes": 35950,
+      "mib": 0.03,
+      "gib": 0.0,
+      "files": 5
+    },
+    {
+      "path": ".restore_points\\landmark_lab_final_20260820_114729",
+      "bytes": 27684,
+      "mib": 0.03,
+      "gib": 0.0,
+      "files": 9
+    },
+    {
+      "path": ".restore_points\\landmark_onnx_conversion_20260820_115255",
+      "bytes": 26375,
+      "mib": 0.03,
+      "gib": 0.0,
+      "files": 8
+    },
+    {
+      "path": ".restore_points\\ai_model_v2_20260820_091516",
+      "bytes": 23441,
+      "mib": 0.02,
+      "gib": 0.0,
+      "files": 4
+    },
+    {
+      "path": ".restore_points\\landmark_contract_20260820_114630",
+      "bytes": 22181,
+      "mib": 0.02,
+      "gib": 0.0,
+      "files": 7
+    },
+    {
+      "path": ".restore_points\\viewer_cache_state_optimization_20260820_114908",
+      "bytes": 18872,
+      "mib": 0.02,
+      "gib": 0.0,
+      "files": 2
+    },
+    {
+      "path": ".restore_points\\dicom_landmark_pipeline_20260820_121428",
+      "bytes": 13900,
+      "mib": 0.01,
+      "gib": 0.0,
+      "files": 7
+    },
+    {
+      "path": ".restore_points\\codec_fixture_extension_20260820_101512",
+      "bytes": 10407,
+      "mib": 0.01,
+      "gib": 0.0,
+      "files": 1
+    },
+    {
+      "path": ".restore_points\\packaging_onnxruntime_20260820_133103",
+      "bytes": 9885,
+      "mib": 0.01,
+      "gib": 0.0,
+      "files": 3
+    },
+    {
+      "path": ".restore_points\\windows_cobb_save_acceptance_20260820_105045",
+      "bytes": 3377,
+      "mib": 0.0,
+      "gib": 0.0,
+      "files": 1
+    },
+    {
+      "path": ".restore_points\\cobb_e2e_test_20260820_091341",
+      "bytes": 1103,
+      "mib": 0.0,
+      "gib": 0.0,
+      "files": 1
+    },
+    {
+      "path": ".restore_points\\gitignore_cleanup_20260820",
+      "bytes": 514,
+      "mib": 0.0,
+      "gib": 0.0,
+      "files": 1
+    }
+  ],
+  "largest_restore_point": {
+    "path": ".restore_points\\landmark_lab_adapter_20260820_114227",
+    "bytes": 1682796025,
+    "mib": 1604.84,
+    "gib": 1.567,
+    "files": 23984
+  },
+  "largest_restore_children": [
+    {
+      "path": ".restore_points\\landmark_lab_adapter_20260820_114227\\.quarantine",
+      "bytes": 1682785237,
+      "mib": 1604.83,
+      "gib": 1.567,
+      "files": 23981
+    },
+    {
+      "path": ".restore_points\\landmark_lab_adapter_20260820_114227\\docs",
+      "bytes": 6904,
+      "mib": 0.01,
+      "gib": 0.0,
+      "files": 1
+    },
+    {
+      "path": ".restore_points\\landmark_lab_adapter_20260820_114227\\todo.md",
+      "bytes": 3805,
+      "mib": 0.0,
+      "gib": 0.0,
+      "files": 1
+    },
+    {
+      "path": ".restore_points\\landmark_lab_adapter_20260820_114227\\RESTORE_NOTE.txt",
+      "bytes": 79,
+      "mib": 0.0,
+      "gib": 0.0,
+      "files": 1
+    }
+  ],
+  "duplicate_comparison": {
+    "current_path": ".quarantine\\landmark_lab",
+    "backup_path": ".restore_points\\landmark_lab_adapter_20260820_114227\\.quarantine\\landmark_lab",
+    "current_files": 32214,
+    "backup_files": 23981,
+    "same_relative_path_and_size_files": 23976,
+    "same_relative_path_and_size_mib": 1604.82,
+    "exact_same_hash_files": 23976,
+    "exact_same_hash_mib": 1604.82,
+    "note": "Bu yalnızca ölçüm ve hash karşılaştırmasıdır; hiçbir dosya silinmedi."
+  }
+}

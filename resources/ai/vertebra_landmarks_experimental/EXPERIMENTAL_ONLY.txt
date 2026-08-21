@@ -1,0 +1,1 @@
+DENEYSEL: Bu paket teknik landmark taslağı içindir. Klinik kabul geçilmemiştir; Cobb hesaplamaz ve otomatik ölçüm kaydı oluşturmaz.

@@ -1,0 +1,12 @@
+{
+  "format": "ScoliosisFollowUpAIModelV1",
+  "task": "cobb_endplate_landmarks",
+  "model_version": "0.1.0",
+  "model_file": "model.onnx",
+  "sha256": "MODEL_DOSYASININ_64_KARAKTERLIK_SHA256_DEGERI",
+  "input_width": 512,
+  "input_height": 1024,
+  "input_name": "image",
+  "output_name": "cobb_points",
+  "confidence_threshold": 0.7
+}

@@ -1,0 +1,39 @@
+{
+  "kind": "real_dicom_render_optimization_comparison",
+  "dataset": "dev_data/dicom_samples",
+  "repeats": 3,
+  "scope": "process_dicom_array + QImage detach",
+  "baseline": {
+    "files": 3,
+    "process_dicom_array_mean_ms": 67.882,
+    "process_dicom_array_peak_tracemalloc_bytes": 87757704,
+    "source_shapes": [[2393, 3056], [2393, 3056], [2393, 3056]]
+  },
+  "optimized": {
+    "files": 3,
+    "process_dicom_array_mean_ms": 39.686,
+    "process_dicom_array_peak_tracemalloc_bytes": 36566650,
+    "source_shapes": [[2393, 3056], [2393, 3056], [2393, 3056]]
+  },
+  "improvement": {
+    "process_dicom_array_mean_reduction_percent": 41.54,
+    "pipeline_peak_tracemalloc_reduction_percent": 58.34,
+    "official_perf_profile_render_mean_ms_before": 271.48,
+    "official_perf_profile_render_mean_ms_after": 242.82,
+    "official_perf_profile_render_mean_reduction_percent": 10.56,
+    "large_7257x3056_render_ms_after": 745.61
+  },
+  "guards": {
+    "source_array_immutability_test": "pass",
+    "dicom_sha256_immutability_tests": "pass",
+    "viewer_state_tests": "pass",
+    "preload_integration_tests": "pass",
+    "full_regression_tests": "127/127 pass",
+    "windows_interactive_acceptance": "pass"
+  },
+  "notes": [
+    "The source DICOM pixel matrix and metadata are not written back.",
+    "Brightness and Window/Level cache entries are retained under the bounded cache; cache keys prevent stale pixmap application.",
+    "The official perf_profile result is machine, disk-cache and Qt-version dependent."
+  ]
+}

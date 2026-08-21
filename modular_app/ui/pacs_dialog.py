@@ -14,8 +14,9 @@ from pacs.client import PacsConfig, PacsError, query_studies, retrieve_study, se
 class PacsDialog(QDialog):
     """Explicit, user-configured PACS query/retrieve/send window."""
     files_retrieved = Signal(list)
+    dicom_sent = Signal(str)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, *, allow_send: bool = True):
         super().__init__(parent)
         self.rows: list[dict[str, str]] = []
         self.settings = QSettings("ScoliosisFollowUp", "ScoliosisFollowUp")
@@ -53,6 +54,9 @@ class PacsDialog(QDialog):
         retrieve_button.clicked.connect(self.retrieve)
         send_button = QPushButton("DICOM Gönder (C-STORE)")
         send_button.clicked.connect(self.send)
+        send_button.setEnabled(bool(allow_send))
+        if not allow_send:
+            send_button.setToolTip("DICOM gönderimi için Hekim veya Yönetici rolü gerekir.")
         buttons.addStretch(); buttons.addWidget(retrieve_button); buttons.addWidget(send_button)
         root.addLayout(buttons)
 
@@ -110,6 +114,7 @@ class PacsDialog(QDialog):
             return
         try:
             send_dicom(self.config(), path)
+            self.dicom_sent.emit(path)
             QMessageBox.information(self, "PACS", "DICOM başarıyla gönderildi.")
         except PacsError as exc:
             QMessageBox.warning(self, "PACS gönderme", str(exc))

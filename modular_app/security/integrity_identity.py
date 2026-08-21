@@ -1,6 +1,3 @@
-"""Paketleme sırasında yalnızca genel anahtar özeti yazılır.
+"""Paketleme sırasında oluşturulan genel anahtar özeti."""
 
-Özel anahtar bu projede saklanmaz veya dağıtıma dahil edilmez.
-"""
-
-PUBLIC_KEY_SHA256 = ""
+PUBLIC_KEY_SHA256 = "6780c02148855e0310bf9814ecb0dc48c4783e8958e55b1e3aa5b3abb657838b"

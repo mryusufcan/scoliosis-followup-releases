@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import hashlib
+import hmac
+import json
+import os
 import sqlite3
 from contextlib import contextmanager
 from datetime import date, datetime
@@ -115,6 +119,18 @@ class ExamRepository:
                 "verified_by": "TEXT NOT NULL DEFAULT ''",
                 "verified_at": "TEXT",
                 "verification_note": "TEXT NOT NULL DEFAULT ''",
+                # Ölçüm değerinin yanında, dört noktalı manuel ölçümün
+                # kaynak kanıtı da saklanır. DICOM piksel verisine veya
+                # dosyasına hiçbir zaman yazılmaz.
+                "source_sop_instance_uid": "TEXT NOT NULL DEFAULT ''",
+                "point_data": "TEXT NOT NULL DEFAULT ''",
+                "measurement_method": "TEXT NOT NULL DEFAULT 'manual_4_point'",
+                "measurement_version": "TEXT NOT NULL DEFAULT '1'",
+                "created_by": "TEXT NOT NULL DEFAULT ''",
+                "provenance_json": "TEXT NOT NULL DEFAULT ''",
+                "upper_vertebra": "TEXT NOT NULL DEFAULT ''",
+                "lower_vertebra": "TEXT NOT NULL DEFAULT ''",
+                "curve_direction": "TEXT NOT NULL DEFAULT ''",
             }.items():
                 if name not in columns:
                     con.execute(f"ALTER TABLE cobb_measurements ADD COLUMN {name} {definition}")
@@ -169,6 +185,16 @@ class ExamRepository:
                 )
             """)
             con.execute("""
+                CREATE TABLE IF NOT EXISTS image_notes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    patient_id TEXT NOT NULL,
+                    dicom_path TEXT NOT NULL,
+                    note TEXT NOT NULL,
+                    created_by TEXT NOT NULL DEFAULT '',
+                    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            con.execute("""
                 CREATE TABLE IF NOT EXISTS app_users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     display_name TEXT NOT NULL UNIQUE,
@@ -188,6 +214,14 @@ class ExamRepository:
                 "INSERT OR IGNORE INTO app_users(display_name, role) VALUES (?, ?)",
                 ("Yerel Yönetici", "Yönetici"),
             )
+            user_columns = {row[1] for row in con.execute("PRAGMA table_info(app_users)")}
+            for name, definition in {
+                "password_salt": "TEXT NOT NULL DEFAULT ''",
+                "password_hash": "TEXT NOT NULL DEFAULT ''",
+                "password_updated_at": "TEXT",
+            }.items():
+                if name not in user_columns:
+                    con.execute(f"ALTER TABLE app_users ADD COLUMN {name} {definition}")
             con.execute("""
                 CREATE INDEX IF NOT EXISTS idx_sessions_patient_created
                 ON comparison_sessions(patient_id, created_at DESC)
@@ -203,6 +237,10 @@ class ExamRepository:
             con.execute("""
                 CREATE INDEX IF NOT EXISTS idx_labels_patient_path
                 ON vertebra_labels(patient_id, dicom_path, created_at)
+            """)
+            con.execute("""
+                CREATE INDEX IF NOT EXISTS idx_image_notes_patient_path
+                ON image_notes(patient_id, dicom_path, created_at DESC)
             """)
 
     def add_exam(
@@ -315,6 +353,53 @@ class ExamRepository:
             ).fetchall()
         return [dict(row) for row in rows]
 
+    def list_follow_up_schedule(self, days_ahead: int = 30, today: date | None = None) -> list[dict[str, Any]]:
+        """Return upcoming and overdue local follow-up dates without changing records."""
+        horizon = max(0, min(int(days_ahead), 3650))
+        reference_day = today or date.today()
+        names = {str(row["patient_id"]): row for row in self.list_patients()}
+        with self.connection() as con:
+            profiles = con.execute(
+                """SELECT patient_id, diagnosis, next_follow_up_date
+                   FROM patient_profiles
+                   WHERE trim(next_follow_up_date) <> ''"""
+            ).fetchall()
+        rows: list[dict[str, Any]] = []
+        for profile in profiles:
+            patient_id = str(profile["patient_id"])
+            raw_date = str(profile["next_follow_up_date"] or "").strip()
+            normalized = raw_date.replace("-", "")
+            try:
+                follow_up_date = datetime.strptime(normalized, "%Y%m%d").date()
+                remaining = (follow_up_date - reference_day).days
+            except ValueError:
+                rows.append({
+                    "patient_id": patient_id,
+                    "patient_name": str(names.get(patient_id, {}).get("patient_name", "Hasta")),
+                    "next_follow_up_date": raw_date,
+                    "days_until": None,
+                    "status": "Tarih biçimi geçersiz",
+                    "diagnosis": str(profile["diagnosis"] or ""),
+                })
+                continue
+            if remaining > horizon:
+                continue
+            if remaining < 0:
+                status = f"{abs(remaining)} gün gecikmiş"
+            elif remaining == 0:
+                status = "Bugün"
+            else:
+                status = f"{remaining} gün sonra"
+            rows.append({
+                "patient_id": patient_id,
+                "patient_name": str(names.get(patient_id, {}).get("patient_name", "Hasta")),
+                "next_follow_up_date": follow_up_date.strftime("%Y-%m-%d"),
+                "days_until": remaining,
+                "status": status,
+                "diagnosis": str(profile["diagnosis"] or ""),
+            })
+        return sorted(rows, key=lambda row: (row["days_until"] is None, row["days_until"] if row["days_until"] is not None else 999999, row["patient_name"]))
+
     def set_patient_display_name(self, patient_id: str, display_name: str) -> None:
         """Store a local UI label only; original DICOM patient tags are never modified."""
         with self.connection() as con:
@@ -349,7 +434,40 @@ class ExamRepository:
             threshold = float(self.get_setting("follow_up/cobb_alert_threshold", "5") or 5)
         except ValueError:
             threshold = 5.0
+        try:
+            repeatability_threshold = float(self.get_setting("quality/cobb_repeatability_threshold", "3") or 3)
+        except ValueError:
+            repeatability_threshold = 3.0
+        issues.extend(self.cobb_repeatability_issues(patient_id, repeatability_threshold))
         issues.extend(self.follow_up_alerts(patient_id, threshold))
+        return issues
+
+    def cobb_repeatability_issues(self, patient_id: str, threshold: float = 3.0) -> list[dict[str, str]]:
+        """Flag material disagreement between the last two measurements of one image.
+
+        This is a quality-control check for repeated manual measurements; it
+        does not estimate progression and never makes a clinical diagnosis.
+        """
+        limit = max(0.1, abs(float(threshold)))
+        groups: dict[tuple[str, str], list[dict[str, Any]]] = {}
+        for row in self.list_cobb_measurements(patient_id):
+            groups.setdefault((str(row.get("dicom_path", "")), str(row.get("side", ""))), []).append(row)
+        issues: list[dict[str, str]] = []
+        for (path, side), rows in groups.items():
+            if len(rows) < 2:
+                continue
+            latest, previous = rows[0], rows[1]
+            difference = abs(float(latest["angle_degrees"]) - float(previous["angle_degrees"]))
+            if difference >= limit:
+                issues.append({
+                    "severity": "Uyarı",
+                    "kind": "Cobb tekrar ölçüm farkı",
+                    "details": (
+                        f"{Path(path).name or 'Görüntü'} ({side.upper() or 'taraf yok'}): "
+                        f"son iki manuel ölçüm arasında {difference:.2f}° fark var "
+                        f"(eşik: {limit:.1f}°; kayıt #{previous['id']} / #{latest['id']})."
+                    ),
+                })
         return issues
 
     def list_patient_follow_up(self, patient_id: str) -> list[dict[str, Any]]:
@@ -363,6 +481,11 @@ class ExamRepository:
                         WHERE c.patient_id = e.patient_id AND c.dicom_path = e.dicom_path
                         ORDER BY c.created_at DESC, c.id DESC
                         LIMIT 1) AS latest_cobb,
+                       (SELECT c.is_locked
+                        FROM cobb_measurements AS c
+                        WHERE c.patient_id = e.patient_id AND c.dicom_path = e.dicom_path
+                        ORDER BY c.created_at DESC, c.id DESC
+                        LIMIT 1) AS latest_cobb_locked,
                        (SELECT COUNT(*)
                         FROM comparison_sessions AS s
                         WHERE s.patient_id = e.patient_id
@@ -441,18 +564,65 @@ class ExamRepository:
             con.execute("UPDATE comparison_sessions SET notes = ? WHERE id = ?", (str(notes or ""), int(session_id)))
 
     def add_cobb_measurement(
-        self, *, patient_id: str, dicom_path: str, exam_date: str, side: str, angle_degrees: float
+        self,
+        *,
+        patient_id: str,
+        dicom_path: str,
+        exam_date: str,
+        side: str,
+        angle_degrees: float,
+        source_sop_instance_uid: str = "",
+        points: list[dict[str, float]] | None = None,
+        measurement_method: str = "manual_4_point",
+        measurement_version: str = "1",
+        created_by: str = "",
+        provenance_json: str = "",
+        upper_vertebra: str = "",
+        lower_vertebra: str = "",
+        curve_direction: str = "",
     ) -> int:
+        point_data = ""
+        if points:
+            normalized: list[dict[str, float]] = []
+            for point in points:
+                try:
+                    normalized.append({"x": round(float(point["x"]), 3), "y": round(float(point["y"]), 3)})
+                except (KeyError, TypeError, ValueError):
+                    raise ValueError("Cobb ölçüm noktaları x/y koordinatları içermelidir.") from None
+            if len(normalized) != 4:
+                raise ValueError("Cobb ölçümü için tam olarak dört nokta gerekir.")
+            point_data = json.dumps(normalized, separators=(",", ":"), ensure_ascii=True)
+        normalized_provenance = ""
+        if str(provenance_json or "").strip():
+            try:
+                provenance_payload = json.loads(str(provenance_json))
+            except (TypeError, ValueError, json.JSONDecodeError) as exc:
+                raise ValueError("Cobb ölçümü provenance_json geçerli JSON olmalıdır.") from exc
+            if not isinstance(provenance_payload, dict):
+                raise ValueError("Cobb ölçümü provenance_json nesne biçiminde olmalıdır.")
+            normalized_provenance = json.dumps(provenance_payload, separators=(",", ":"), ensure_ascii=True)
         with self.connection() as con:
             cur = con.execute(
-                """INSERT INTO cobb_measurements (patient_id, dicom_path, exam_date, side, angle_degrees)
-                   VALUES (?, ?, ?, ?, ?)""",
+                """INSERT INTO cobb_measurements
+                   (patient_id, dicom_path, exam_date, side, angle_degrees,
+                    source_sop_instance_uid, point_data, measurement_method,
+                    measurement_version, created_by, provenance_json, upper_vertebra, lower_vertebra, curve_direction)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     str(patient_id or "UNKNOWN"),
                     str(Path(dicom_path).resolve()),
                     str(exam_date or "UNKNOWN"),
                     str(side),
                     float(angle_degrees),
+                    str(source_sop_instance_uid or ""),
+                    point_data,
+                    str(measurement_method or "manual_4_point"),
+                    str(measurement_version or "1"),
+                    str(created_by or ""),
+                    normalized_provenance,
+                    str(upper_vertebra or ""),
+                    str(lower_vertebra or ""),
+                    str(curve_direction or ""),
                 ),
             )
             return int(cur.lastrowid)
@@ -463,6 +633,52 @@ class ExamRepository:
                 """SELECT * FROM cobb_measurements WHERE patient_id = ?
                    ORDER BY exam_date DESC, created_at DESC, id DESC""",
                 (str(patient_id),),
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def previous_cobb_for_pair(
+        self,
+        patient_id: str,
+        upper_vertebra: str,
+        lower_vertebra: str,
+        curve_direction: str = "",
+        *,
+        before_measurement_id: int | None = None,
+    ) -> dict[str, Any] | None:
+        """Return the previous Cobb record for the same end-vertebra pair.
+
+        This is a longitudinal comparison helper only. It does not classify
+        progression or make a clinical decision.
+        """
+        upper = str(upper_vertebra or "").strip()
+        lower = str(lower_vertebra or "").strip()
+        direction = str(curve_direction or "").strip()
+        if not upper or not lower:
+            return None
+
+        sql = """
+            SELECT * FROM cobb_measurements
+            WHERE patient_id=?
+              AND upper_vertebra=?
+              AND lower_vertebra=?
+              AND curve_direction=?
+        """
+        params: list[Any] = [str(patient_id), upper, lower, direction]
+        if before_measurement_id is not None:
+            sql += " AND id < ?"
+            params.append(int(before_measurement_id))
+        sql += " ORDER BY exam_date DESC, created_at DESC, id DESC LIMIT 1"
+
+        with self.connection() as con:
+            row = con.execute(sql, tuple(params)).fetchone()
+        return dict(row) if row else None
+
+    def list_all_cobb_measurements(self) -> list[dict[str, Any]]:
+        """Return local measurements for quality/training-data review screens."""
+        with self.connection() as con:
+            rows = con.execute(
+                """SELECT * FROM cobb_measurements
+                   ORDER BY patient_id, exam_date DESC, created_at DESC, id DESC"""
             ).fetchall()
         return [dict(row) for row in rows]
 
@@ -595,9 +811,60 @@ class ExamRepository:
         with self.connection() as con:
             con.execute("DELETE FROM vertebra_labels WHERE id=?", (int(label_id),))
 
+    def add_image_note(self, *, patient_id: str, dicom_path: str, note: str, created_by: str = "") -> int:
+        """Store a local image note; the source DICOM is never modified."""
+        text = str(note or "").strip()
+        if not text:
+            raise ValueError("Görüntü notu boş olamaz.")
+        if len(text) > 4000:
+            raise ValueError("Görüntü notu en fazla 4000 karakter olabilir.")
+        with self.connection() as con:
+            cur = con.execute(
+                """INSERT INTO image_notes(patient_id, dicom_path, note, created_by)
+                   VALUES (?, ?, ?, ?)""",
+                (str(patient_id), str(Path(dicom_path).resolve()), text, str(created_by or "")),
+            )
+            return int(cur.lastrowid)
+
+    def list_image_notes(self, patient_id: str, dicom_path: str = "") -> list[dict[str, Any]]:
+        with self.connection() as con:
+            if dicom_path:
+                rows = con.execute(
+                    """SELECT * FROM image_notes WHERE patient_id=? AND dicom_path=?
+                       ORDER BY created_at DESC, id DESC""",
+                    (str(patient_id), str(Path(dicom_path).resolve())),
+                ).fetchall()
+            else:
+                rows = con.execute(
+                    "SELECT * FROM image_notes WHERE patient_id=? ORDER BY created_at DESC, id DESC",
+                    (str(patient_id),),
+                ).fetchall()
+        return [dict(row) for row in rows]
+
+    def update_image_note(self, note_id: int, note: str) -> None:
+        """Update only the local note text; source DICOM and note ownership are unchanged."""
+        text = str(note or "").strip()
+        if not text:
+            raise ValueError("Görüntü notu boş olamaz.")
+        if len(text) > 4000:
+            raise ValueError("Görüntü notu en fazla 4000 karakter olabilir.")
+        with self.connection() as con:
+            row = con.execute("SELECT id FROM image_notes WHERE id=?", (int(note_id),)).fetchone()
+            if row is None:
+                raise ValueError("Görüntü notu bulunamadı.")
+            con.execute("UPDATE image_notes SET note=? WHERE id=?", (text, int(note_id)))
+
+    def delete_image_note(self, note_id: int) -> None:
+        with self.connection() as con:
+            con.execute("DELETE FROM image_notes WHERE id=?", (int(note_id),))
+
     def list_users(self) -> list[dict[str, Any]]:
         with self.connection() as con:
-            rows = con.execute("SELECT * FROM app_users WHERE active=1 ORDER BY role, display_name COLLATE NOCASE").fetchall()
+            rows = con.execute(
+                """SELECT id, display_name, role, active, created_at, password_updated_at,
+                          CASE WHEN password_hash <> '' THEN 1 ELSE 0 END AS password_protected
+                   FROM app_users WHERE active=1 ORDER BY role, display_name COLLATE NOCASE"""
+            ).fetchall()
         return [dict(row) for row in rows]
 
     def add_user(self, display_name: str, role: str) -> int:
@@ -606,6 +873,54 @@ class ExamRepository:
         with self.connection() as con:
             cur = con.execute("INSERT INTO app_users(display_name, role) VALUES (?, ?)", (str(display_name).strip(), role))
             return int(cur.lastrowid)
+
+    @staticmethod
+    def _password_digest(password: str, salt: bytes) -> str:
+        return hashlib.pbkdf2_hmac("sha256", str(password).encode("utf-8"), salt, 390000).hex()
+
+    def set_user_password(self, user_id: int, password: str) -> None:
+        """Set a local role-switch password using a salted PBKDF2 hash.
+
+        This is a local accountability safeguard, not a replacement for a
+        hospital identity provider or central single sign-on service.
+        """
+        if len(str(password)) < 8:
+            raise ValueError("Yerel kullanıcı parolası en az 8 karakter olmalıdır.")
+        salt = os.urandom(16)
+        with self.connection() as con:
+            row = con.execute("SELECT id FROM app_users WHERE id=? AND active=1", (int(user_id),)).fetchone()
+            if row is None:
+                raise ValueError("Kullanıcı bulunamadı.")
+            con.execute(
+                """UPDATE app_users SET password_salt=?, password_hash=?, password_updated_at=CURRENT_TIMESTAMP
+                   WHERE id=?""",
+                (salt.hex(), self._password_digest(str(password), salt), int(user_id)),
+            )
+
+    def clear_user_password(self, user_id: int) -> None:
+        with self.connection() as con:
+            con.execute(
+                "UPDATE app_users SET password_salt='', password_hash='', password_updated_at=CURRENT_TIMESTAMP WHERE id=?",
+                (int(user_id),),
+            )
+
+    def authenticate_user(self, user_id: int, password: str) -> dict[str, Any] | None:
+        """Return the safe user record only if its configured local password matches."""
+        with self.connection() as con:
+            row = con.execute("SELECT * FROM app_users WHERE id=? AND active=1", (int(user_id),)).fetchone()
+        if row is None:
+            return None
+        user = dict(row)
+        salt_hex, stored = str(user.get("password_salt", "")), str(user.get("password_hash", ""))
+        if not stored:
+            return {key: value for key, value in user.items() if key not in {"password_salt", "password_hash"}}
+        try:
+            digest = self._password_digest(str(password), bytes.fromhex(salt_hex))
+        except ValueError:
+            return None
+        if not hmac.compare_digest(digest, stored):
+            return None
+        return {key: value for key, value in user.items() if key not in {"password_salt", "password_hash"}}
 
     def get_setting(self, key: str, default: str = "") -> str:
         with self.connection() as con:
@@ -620,18 +935,91 @@ class ExamRepository:
                 (str(key), str(value)),
             )
 
+    @staticmethod
+    def _longitudinal_pair_key(row: dict[str, Any]) -> tuple[str, str, str] | None:
+        upper = str(row.get("upper_vertebra", "") or "").strip()
+        lower = str(row.get("lower_vertebra", "") or "").strip()
+        direction = str(row.get("curve_direction", "") or "").strip()
+        if not upper or not lower:
+            return None
+        return upper, lower, direction
+
+    @staticmethod
+    def _one_cobb_per_exam_date(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Return one representative measurement per exam date.
+
+        Repeated measurements on the same exam are quality/repeatability data,
+        not additional longitudinal time points. Prefer a locked record; when
+        none is locked, prefer the newest measurement.
+        """
+        by_date: dict[str, list[dict[str, Any]]] = {}
+        for row in rows:
+            exam_date = str(row.get("exam_date", "") or "").strip()
+            if not exam_date:
+                continue
+            by_date.setdefault(exam_date, []).append(row)
+
+        selected: list[dict[str, Any]] = []
+        for group in by_date.values():
+            chosen = max(
+                group,
+                key=lambda row: (
+                    bool(row.get("is_locked")),
+                    str(row.get("created_at", "") or ""),
+                    int(row.get("id", 0) or 0),
+                ),
+            )
+            selected.append(chosen)
+
+        return sorted(
+            selected,
+            key=lambda row: (
+                str(row.get("exam_date", "") or ""),
+                str(row.get("created_at", "") or ""),
+                int(row.get("id", 0) or 0),
+            ),
+        )
+
+    def longitudinal_cobb_series(self, patient_id: str) -> dict[tuple[str, str, str], list[dict[str, Any]]]:
+        """Group Cobb history by end-vertebra pair, curve direction and distinct exam date."""
+        groups: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
+        for row in self.list_cobb_measurements(patient_id):
+            key = self._longitudinal_pair_key(row)
+            if key is None:
+                continue
+            groups.setdefault(key, []).append(row)
+
+        return {
+            key: self._one_cobb_per_exam_date(rows)
+            for key, rows in groups.items()
+        }
+
     def follow_up_alerts(self, patient_id: str, angle_threshold: float = 5.0) -> list[dict[str, str]]:
         """Return follow-up flags only; this function never makes a diagnosis."""
         alerts: list[dict[str, str]] = []
-        measurements = list(reversed(self.list_cobb_measurements(patient_id)))
-        if len(measurements) >= 2:
-            previous, latest = measurements[-2], measurements[-1]
-            delta = float(latest["angle_degrees"]) - float(previous["angle_degrees"])
-            if abs(delta) >= abs(float(angle_threshold)):
+        limit = abs(float(angle_threshold))
+
+        # Longitudinal change must be evaluated within the same end-vertebra pair
+        # and between distinct exam dates. Repeat measurements of the same exam
+        # must never become artificial progression points.
+        for (upper, lower, direction), series in self.longitudinal_cobb_series(patient_id).items():
+            if len(series) < 2:
+                continue
+
+            previous, latest = series[-2], series[-1]
+            previous_angle = float(previous["angle_degrees"])
+            latest_angle = float(latest["angle_degrees"])
+            delta = latest_angle - previous_angle
+
+            if abs(delta) >= limit:
                 alerts.append({
-                    "severity": "Uyarı", "kind": "Cobb değişimi", "details": (
-                        f"Son iki kayıt arasında {delta:+.2f}° değişim var (eşik: {float(angle_threshold):.1f}°). "
-                        "Klinik değerlendirme gerektirir."
+                    "severity": "Uyarı",
+                    "kind": f"Cobb değişimi ({upper}–{lower}{' | ' + direction if direction else ''})",
+                    "details": (
+                        f"{previous.get('exam_date', '—')} → {latest.get('exam_date', '—')}: "
+                        f"{previous_angle:.2f}° → {latest_angle:.2f}° "
+                        f"(Δ {delta:+.2f}°; eşik: {limit:.1f}°). "
+                        "Bu yalnızca sayısal takip uyarısıdır; klinik değerlendirme gerektirir."
                     ),
                 })
         follow_up = str(self.get_patient_profile(patient_id).get("next_follow_up_date", "")).strip()

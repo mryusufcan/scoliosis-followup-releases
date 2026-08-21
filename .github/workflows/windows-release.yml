@@ -1,0 +1,71 @@
+name: Windows Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "GitHub Release oluştur"
+        required: false
+        default: true
+        type: boolean
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-release:
+    runs-on: windows-2022
+    env:
+      PYTHONUTF8: "1"
+      QT_QPA_PLATFORM: offscreen
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install Inno Setup
+        if: ${{ github.event_name == 'push' || inputs.publish }}
+        shell: pwsh
+        run: choco install innosetup --no-progress -y
+
+      - name: Run full CI release pipeline
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CERTIFICATE_THUMBPRINT: ${{ secrets.WINDOWS_CERTIFICATE_THUMBPRINT }}
+          INTEGRITY_PRIVATE_KEY: ${{ secrets.INTEGRITY_PRIVATE_KEY }}
+        run: |
+          $publish = '${{ github.event_name == 'push' || inputs.publish }}' -eq 'true'
+          $args = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', '.\packaging\ci_release.ps1', '-Clean', '-RunBenchmarks')
+          if ($publish) { $args += '-PublishGitHubRelease' }
+          if ($env:CERTIFICATE_THUMBPRINT) { $args += @('-CertificateThumbprint', $env:CERTIFICATE_THUMBPRINT) }
+          if ($env:INTEGRITY_PRIVATE_KEY) {
+            $keyPath = Join-Path $env:RUNNER_TEMP 'integrity_private.pem'
+            [IO.File]::WriteAllText($keyPath, $env:INTEGRITY_PRIVATE_KEY)
+            $args += @('-IntegrityPrivateKey', $keyPath)
+          }
+          powershell @args
+
+      - name: Upload CI logs and artifact manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scoliosis-followup-ci-${{ github.run_number }}
+          path: |
+            build/ci-release/
+            dist/ScoliosisFollowUp/runtime_integrity.json
+            installer/ScoliosisFollowUp_Setup.exe
+            docs/roadmap/worker_concurrency_benchmark_20260820.json
+          if-no-files-found: warn
+          retention-days: 30

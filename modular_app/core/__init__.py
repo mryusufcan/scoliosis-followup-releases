@@ -1,0 +1,1 @@
+"""Goruntuleme ve hesaplama cekirdekleri."""

@@ -1,6 +1,20 @@
 PySide6>=6.5.0
 pydicom>=2.4.0
+# Gerçek cihazlardan gelen JPEG Lossless DICOM görüntülerinin piksel verisini
+# çözmek için pydicom eklentisi. Örnek omurga çekimleri bu aktarım sözdizimini
+# kullanıyor; eklenti hem görüntüleme hem kalite/anonimleştirme kontrolleri
+# için gereklidir.
+pylibjpeg>=2.0.0
+pylibjpeg-libjpeg>=2.3.0
+pylibjpeg-openjpeg>=2.5.0
+pylibjpeg-rle>=2.2.0
+pyjpegls>=1.5.1
 numpy>=1.24.0
+onnxruntime>=1.17.0
+scipy>=1.11.0
+opencv-python>=4.8.0
+pyqtgraph>=0.14.0
+Pillow>=10.0.0
 reportlab>=4.0.0
 pynetdicom>=2.1.0
 pyinstaller>=6.0.0

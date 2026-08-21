@@ -1,0 +1,2 @@
+STARTUP_PROFILE import_ms=802.76 construct_ms=123.59 first_paint_ms=19.08
+STARTUP_PROFILE_OK

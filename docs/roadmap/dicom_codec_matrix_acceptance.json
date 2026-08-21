@@ -1,0 +1,416 @@
+{
+  "source": "dev_data/dicom_samples",
+  "note": "Kategorisi bulunmayan codec/frame türleri gerçek örnek yokluğu nedeniyle pass olarak işaretlenmez.",
+  "groups": {
+    "explicit_vr": {
+      "sample_count": 4,
+      "pass_count": 0,
+      "metadata_only_count": 4,
+      "fail_count": 0,
+      "status": "metadata_only_in_dev_data",
+      "samples": [
+        {
+          "path": "dev_data\\dicom_samples\\SE00999\\IM00001",
+          "transfer_syntax": "1.2.840.10008.1.2.1",
+          "frames": 1,
+          "decode_status": "metadata_only",
+          "error_type": "AttributeError",
+          "error": "The dataset has no 'Pixel Data', 'Float Pixel Data' or 'Double Float Pixel Data' element, no pixel data to decode",
+          "decode_ms": 2.75
+        },
+        {
+          "path": "dev_data\\dicom_samples\\SE10000\\IM00004",
+          "transfer_syntax": "1.2.840.10008.1.2.1",
+          "frames": 1,
+          "decode_status": "metadata_only",
+          "error_type": "AttributeError",
+          "error": "The dataset has no 'Pixel Data', 'Float Pixel Data' or 'Double Float Pixel Data' element, no pixel data to decode",
+          "decode_ms": 4.95
+        },
+        {
+          "path": "dev_data\\dicom_samples\\SE10000\\IM00012",
+          "transfer_syntax": "1.2.840.10008.1.2.1",
+          "frames": 1,
+          "decode_status": "metadata_only",
+          "error_type": "AttributeError",
+          "error": "The dataset has no 'Pixel Data', 'Float Pixel Data' or 'Double Float Pixel Data' element, no pixel data to decode",
+          "decode_ms": 30.93
+        },
+        {
+          "path": "dev_data\\dicom_samples\\SE10000\\IM00014",
+          "transfer_syntax": "1.2.840.10008.1.2.1",
+          "frames": 1,
+          "decode_status": "metadata_only",
+          "error_type": "AttributeError",
+          "error": "The dataset has no 'Pixel Data', 'Float Pixel Data' or 'Double Float Pixel Data' element, no pixel data to decode",
+          "decode_ms": 28.48
+        }
+      ]
+    },
+    "jpeg_baseline": {
+      "sample_count": 0,
+      "pass_count": 0,
+      "metadata_only_count": 0,
+      "fail_count": 0,
+      "status": "not_available_in_dev_data",
+      "samples": []
+    },
+    "jpeg_lossless": {
+      "sample_count": 16,
+      "pass_count": 16,
+      "metadata_only_count": 0,
+      "fail_count": 0,
+      "status": "pass",
+      "samples": [
+        {
+          "path": "dev_data\\dicom_samples\\SE00001\\IM00002",
+          "transfer_syntax": "1.2.840.10008.1.2.4.70",
+          "frames": 1,
+          "decode_status": "pass",
+          "shape": [
+            2393,
+            3056
+          ],
+          "decode_ms": 192.65
+        },
+        {
+          "path": "dev_data\\dicom_samples\\SE00001\\IM00003",
+          "transfer_syntax": "1.2.840.10008.1.2.4.70",
+          "frames": 1,
+          "decode_status": "pass",
+          "shape": [
+            2393,
+            3056
+          ],
+          "decode_ms": 187.6
+        },
+        {
+          "path": "dev_data\\dicom_samples\\SE00001\\IM00004",
+          "transfer_syntax": "1.2.840.10008.1.2.4.70",
+          "frames": 1,
+          "decode_status": "pass",
+          "shape": [
+            2393,
+            3056
+          ],
+          "decode_ms": 191.43
+        },
+        {
+          "path": "dev_data\\dicom_samples\\SE00001\\IM00005",
+          "transfer_syntax": "1.2.840.10008.1.2.4.70",
+          "frames": 1,
+          "decode_status": "pass",
+          "shape": [
+            3082,
+            1528
+          ],
+          "decode_ms": 149.42
+        },
+        {
+          "path": "dev_data\\dicom_samples\\SE00002\\IM00003",
+          "transfer_syntax": "1.2.840.10008.1.2.4.70",
+          "frames": 1,
+          "decode_status": "pass",
+          "shape": [
+            960,
+            960
+          ],
+          "decode_ms": 32.73
+        },
+        {
+          "path": "dev_data\\dicom_samples\\SE00002\\IM00005",
+          "transfer_syntax": "1.2.840.10008.1.2.4.70",
+          "frames": 1,
+          "decode_status": "pass",
+          "shape": [
+            2757,
+            3056
+          ],
+          "decode_ms": 226.08
+        },
+        {
+          "path": "dev_data\\dicom_samples\\SE00002\\IM00006",
+          "transfer_syntax": "1.2.840.10008.1.2.4.70",
+          "frames": 1,
+          "decode_status": "pass",
+          "shape": [
+            2393,
+            3056
+          ],
+          "decode_ms": 189.5
+        },
+        {
+          "path": "dev_data\\dicom_samples\\SE00002\\IM00007",
+          "transfer_syntax": "1.2.840.10008.1.2.4.70",
+          "frames": 1,
+          "decode_status": "pass",
+          "shape": [
+            2757,
+            3056
+          ],
+          "decode_ms": 208.93
+        },
+        {
+          "path": "dev_data\\dicom_samples\\SE00002\\IM00008",
+          "transfer_syntax": "1.2.840.10008.1.2.4.70",
+          "frames": 1,
+          "decode_status": "pass",
+          "shape": [
+            7257,
+            3056
+          ],
+          "decode_ms": 642.81
+        },
+        {
+          "path": "dev_data\\dicom_samples\\SE00002\\IM00009",
+          "transfer_syntax": "1.2.840.10008.1.2.4.70",
+          "frames": 1,
+          "decode_status": "pass",
+          "shape": [
+            3081,
+            1528
+          ],
+          "decode_ms": 144.13
+        }
+      ]
+    },
+    "jpeg_2000": {
+      "sample_count": 0,
+      "pass_count": 0,
+      "metadata_only_count": 0,
+      "fail_count": 0,
+      "status": "not_available_in_dev_data",
+      "samples": []
+    },
+    "rle": {
+      "sample_count": 0,
+      "pass_count": 0,
+      "metadata_only_count": 0,
+      "fail_count": 0,
+      "status": "not_available_in_dev_data",
+      "samples": []
+    },
+    "multiframe": {
+      "sample_count": 0,
+      "pass_count": 0,
+      "metadata_only_count": 0,
+      "fail_count": 0,
+      "status": "not_available_in_dev_data",
+      "samples": []
+    }
+  },
+  "outcomes": [
+    {
+      "path": "dev_data\\dicom_samples\\SE00001\\IM00002",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        2393,
+        3056
+      ],
+      "decode_ms": 192.65
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00001\\IM00003",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        2393,
+        3056
+      ],
+      "decode_ms": 187.6
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00001\\IM00004",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        2393,
+        3056
+      ],
+      "decode_ms": 191.43
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00001\\IM00005",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        3082,
+        1528
+      ],
+      "decode_ms": 149.42
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00002\\IM00003",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        960,
+        960
+      ],
+      "decode_ms": 32.73
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00002\\IM00005",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        2757,
+        3056
+      ],
+      "decode_ms": 226.08
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00002\\IM00006",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        2393,
+        3056
+      ],
+      "decode_ms": 189.5
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00002\\IM00007",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        2757,
+        3056
+      ],
+      "decode_ms": 208.93
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00002\\IM00008",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        7257,
+        3056
+      ],
+      "decode_ms": 642.81
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00002\\IM00009",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        3081,
+        1528
+      ],
+      "decode_ms": 144.13
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00003\\IM00009",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        2757,
+        3056
+      ],
+      "decode_ms": 234.3
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00003\\IM00010",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        2757,
+        3056
+      ],
+      "decode_ms": 240.92
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00003\\IM00011",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        2757,
+        3056
+      ],
+      "decode_ms": 249.09
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00003\\IM00012",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        7257,
+        3056
+      ],
+      "decode_ms": 655.36
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE00999\\IM00001",
+      "transfer_syntax": "1.2.840.10008.1.2.1",
+      "frames": 1,
+      "decode_status": "metadata_only",
+      "error_type": "AttributeError",
+      "error": "The dataset has no 'Pixel Data', 'Float Pixel Data' or 'Double Float Pixel Data' element, no pixel data to decode",
+      "decode_ms": 2.75
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE01000\\IM00011",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        2100,
+        2970
+      ],
+      "decode_ms": 195.13
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE01000\\IM00013",
+      "transfer_syntax": "1.2.840.10008.1.2.4.70",
+      "frames": 1,
+      "decode_status": "pass",
+      "shape": [
+        2100,
+        2970
+      ],
+      "decode_ms": 192.53
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE10000\\IM00004",
+      "transfer_syntax": "1.2.840.10008.1.2.1",
+      "frames": 1,
+      "decode_status": "metadata_only",
+      "error_type": "AttributeError",
+      "error": "The dataset has no 'Pixel Data', 'Float Pixel Data' or 'Double Float Pixel Data' element, no pixel data to decode",
+      "decode_ms": 4.95
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE10000\\IM00012",
+      "transfer_syntax": "1.2.840.10008.1.2.1",
+      "frames": 1,
+      "decode_status": "metadata_only",
+      "error_type": "AttributeError",
+      "error": "The dataset has no 'Pixel Data', 'Float Pixel Data' or 'Double Float Pixel Data' element, no pixel data to decode",
+      "decode_ms": 30.93
+    },
+    {
+      "path": "dev_data\\dicom_samples\\SE10000\\IM00014",
+      "transfer_syntax": "1.2.840.10008.1.2.1",
+      "frames": 1,
+      "decode_status": "metadata_only",
+      "error_type": "AttributeError",
+      "error": "The dataset has no 'Pixel Data', 'Float Pixel Data' or 'Double Float Pixel Data' element, no pixel data to decode",
+      "decode_ms": 28.48
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "kind": "synthetic_worker_benchmark",
+  "warning": "Sentetik NumPy yükü; gerçek DICOM codec/decode maliyetinin yerine geçmez.",
+  "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.2",
+  "cases": [
+    {
+      "name": "large_single_frame",
+      "shape": [
+        2393,
+        3056
+      ],
+      "dtype": "uint16",
+      "frame_index": 0,
+      "repeats": 2,
+      "decode_ms": {
+        "mean_ms": 9.539,
+        "p95_ms": 9.635,
+        "max_ms": 9.645
+      },
+      "qimage_conversion_ms": {
+        "mean_ms": 58.382,
+        "p95_ms": 58.549,
+        "max_ms": 58.567
+      },
+      "worker_round_trip_ms": {
+        "mean_ms": 12.993,
+        "p95_ms": 13.663,
+        "max_ms": 13.737
+      },
+      "cache_lookup_us": 0.09,
+      "tracemalloc_peak_bytes": 102385895,
+      "rss_before_bytes": null,
+      "rss_after_bytes": null,
+      "estimated_frame_bytes": 14626016
+    },
+    {
+      "name": "multiframe_8x512",
+      "shape": [
+        8,
+        512,
+        512
+      ],
+      "dtype": "uint16",
+      "frame_index": 7,
+      "repeats": 2,
+      "decode_ms": {
+        "mean_ms": 1.767,
+        "p95_ms": 2.113,
+        "max_ms": 2.151
+      },
+      "qimage_conversion_ms": {
+        "mean_ms": 0.722,
+        "p95_ms": 0.827,
+        "max_ms": 0.839
+      },
+      "worker_round_trip_ms": {
+        "mean_ms": 3.254,
+        "p95_ms": 3.379,
+        "max_ms": 3.393
+      },
+      "cache_lookup_us": 0.09,
+      "tracemalloc_peak_bytes": 4723773,
+      "rss_before_bytes": null,
+      "rss_after_bytes": null,
+      "estimated_frame_bytes": 524288
+    },
+    {
+      "name": "small_preview",
+      "shape": [
+        512,
+        512
+      ],
+      "dtype": "uint16",
+      "frame_index": 0,
+      "repeats": 2,
+      "decode_ms": {
+        "mean_ms": 0.822,
+        "p95_ms": 0.845,
+        "max_ms": 0.847
+      },
+      "qimage_conversion_ms": {
+        "mean_ms": 1.71,
+        "p95_ms": 1.804,
+        "max_ms": 1.814
+      },
+      "worker_round_trip_ms": {
+        "mean_ms": 1.963,
+        "p95_ms": 2.219,
+        "max_ms": 2.247
+      },
+      "cache_lookup_us": 0.085,
+      "tracemalloc_peak_bytes": 3673199,
+      "rss_before_bytes": null,
+      "rss_after_bytes": null,
+      "estimated_frame_bytes": 524288
+    }
+  ]
+}

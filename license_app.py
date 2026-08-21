@@ -15,13 +15,22 @@ EXPIRY_DATE_FIELDS = (
     "expires_at", "expiry_date", "expiration_date", "end_date",
     "valid_until", "license_end_date", "expiry", "expires_on", "end_at",
 )
+REQUEST_TIMEOUT_SECONDS = 2.5
+HWID_TIMEOUT_SECONDS = 2
 
 
 def get_hwid():
     """Bilgisayarın donanım bileşenlerinden benzersiz bir HWID üretir."""
     try:
-        cmd = "wmic baseboard get serialnumber"
-        serial = subprocess.check_output(cmd, shell=True).decode().split('\n')[1].strip()
+        result = subprocess.run(
+            ["wmic", "baseboard", "get", "serialnumber"],
+            capture_output=True,
+            check=False,
+            text=True,
+            timeout=HWID_TIMEOUT_SECONDS,
+        )
+        values = [line.strip() for line in result.stdout.splitlines() if line.strip() and "serialnumber" not in line.lower()]
+        serial = values[0] if values else ""
         if not serial or serial == "None":
             serial = platform.node()
     except Exception:
@@ -42,34 +51,57 @@ class LicenseStatus:
 
 
 def check_license_status() -> LicenseStatus:
-    """HWID lisansını denetler ve sunucuya erişilebildiğini ayrıca bildirir."""
+    """HWID lisansını güvenli Supabase RPC üzerinden doğrular."""
     hwid = get_hwid()
-    url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/licenses?hwid=eq.{hwid}&status=eq.active"
+    url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/rpc/check_device_license"
     headers = {
         "apikey": SUPABASE_ANON_KEY,
-        "Authorization": f"Bearer {SUPABASE_ANON_KEY}"
+        "Authorization": f"Bearer {SUPABASE_ANON_KEY}",
+        "Content-Type": "application/json",
     }
+
     try:
-        response = requests.get(f"{url}&select=id", headers=headers, timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            if data and len(data) > 0:
-                expires_at = None
-                # Tablo şeması sürümleri arasında tarih adı değişebildiği için
-                # olası alanlar ayrı denenir; lisans anahtarı gibi alanlar alınmaz.
-                for field in EXPIRY_DATE_FIELDS:
-                    expiry_response = requests.get(f"{url}&select={field}", headers=headers, timeout=5)
-                    if expiry_response.status_code != 200:
-                        continue
-                    expiry_data = expiry_response.json()
-                    if expiry_data and expiry_data[0].get(field) not in (None, ""):
-                        expires_at = str(expiry_data[0][field]).strip()
-                        break
-                return LicenseStatus(True, True, "Etkin lisans doğrulandı.", expires_at)
-            return LicenseStatus(False, True, "Bu bilgisayar için etkin lisans bulunamadı.")
-        return LicenseStatus(False, False, f"Lisans sunucusu yanıt vermedi (HTTP {response.status_code}).")
+        response = requests.post(
+            url,
+            headers=headers,
+            json={"p_hwid": hwid},
+            timeout=REQUEST_TIMEOUT_SECONDS,
+        )
+
+        if response.status_code != 200:
+            return LicenseStatus(
+                False,
+                False,
+                f"Lisans sunucusu yanıt vermedi (HTTP {response.status_code}).",
+            )
+
+        data = response.json()
+        row = data[0] if isinstance(data, list) and data else (
+            data if isinstance(data, dict) else {}
+        )
+
+        active = bool(row.get("active", False))
+        message = str(
+            row.get(
+                "message",
+                "Lisans sunucusundan geçerli yanıt alınamadı.",
+            )
+        )
+        expires_at = row.get("expires_at") or None
+
+        return LicenseStatus(
+            active,
+            True,
+            message,
+            str(expires_at).strip() if expires_at else None,
+        )
+
     except Exception as exc:
-        return LicenseStatus(False, False, f"Lisans sunucusuna ulaşılamadı: {exc}")
+        return LicenseStatus(
+            False,
+            False,
+            f"Lisans sunucusuna ulaşılamadı: {exc}",
+        )
 
 
 def verify_license_silent():
@@ -77,47 +109,134 @@ def verify_license_silent():
     return check_license_status().active
 
 
-def activate_license(name: str, email: str, license_key: str) -> tuple[bool, str]:
-    """Activate the current computer through the existing license endpoint.
+def activate_license(
+    name: str,
+    email: str,
+    license_key: str,
+) -> tuple[bool, str]:
+    """Lisansı güvenli Supabase RPC üzerinden mevcut HWID'ye bağlar."""
+    name = str(name).strip()
+    email = str(email).strip()
+    license_key = str(license_key).strip()
 
-    This UI-independent function is used by the PySide application. It does
-    not start a second Tk window or open the clinical application itself.
-    """
-    name, email, license_key = str(name).strip(), str(email).strip(), str(license_key).strip()
     if not name or not email or not license_key:
         return False, "Ad, e-posta ve lisans anahtarı zorunludur."
+
     hwid = get_hwid()
-    url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/licenses?license_key=eq.{license_key}"
+    url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/rpc/activate_device_license"
     headers = {
         "apikey": SUPABASE_ANON_KEY,
         "Authorization": f"Bearer {SUPABASE_ANON_KEY}",
         "Content-Type": "application/json",
-        "Prefer": "return=representation",
     }
+
     try:
-        response = requests.get(url, headers=headers, timeout=5)
-        if response.status_code != 200:
-            return False, "Lisans sunucusuna bağlanılamadı."
-        data = response.json()
-        if not data:
-            return False, "Geçersiz lisans anahtarı."
-        record = data[0]
-        if record.get("status") != "active":
-            return False, "Bu lisans etkin değil veya devre dışı bırakılmış."
-        registered_hwid = record.get("hwid")
-        if registered_hwid and registered_hwid != "EMPTY" and registered_hwid != hwid:
-            return False, "Bu lisans anahtarı başka bir cihaza kayıtlı."
-        patch_response = requests.patch(
+        response = requests.post(
             url,
-            json={"name": name, "email": email, "hwid": hwid, "status": "active"},
             headers=headers,
-            timeout=5,
+            json={
+                "p_license_key": license_key,
+                "p_hwid": hwid,
+                "p_name": name,
+                "p_email": email,
+            },
+            timeout=REQUEST_TIMEOUT_SECONDS,
         )
-        if patch_response.status_code in (200, 204):
-            return True, "Lisanslama başarılı."
-        return False, "Lisans kaydı güncellenemedi."
+
+        if response.status_code != 200:
+            return (
+                False,
+                f"Lisans sunucusu yanıt vermedi (HTTP {response.status_code}).",
+            )
+
+        data = response.json()
+        row = data[0] if isinstance(data, list) and data else (
+            data if isinstance(data, dict) else {}
+        )
+
+        success = bool(row.get("success", False))
+        message = str(
+            row.get(
+                "message",
+                "Lisans sunucusundan geçerli yanıt alınamadı.",
+            )
+        )
+        return success, message
+
     except Exception as exc:
         return False, f"Bağlantı hatası: {exc}"
+
+
+# ---------------------------------------------------------------------------
+# DEVICE TRIAL SERVER API
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class TrialServerStatus:
+    online: bool
+    ok: bool
+    message: str
+    trial_started_at: str | None = None
+    server_now: str | None = None
+
+
+def check_or_create_device_trial() -> TrialServerStatus:
+    """Cihazın tek seferlik trial başlangıcını Supabase RPC üzerinden getirir.
+
+    Trial başlangıç tarihi istemci tarafından gönderilmez. Sunucu aynı HWID için
+    ilk oluşturduğu tarihi daima korur; reinstall/AppData silme yeni trial üretmez.
+    """
+    hwid = get_hwid()
+    url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/rpc/get_or_create_device_trial"
+    headers = {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": f"Bearer {SUPABASE_ANON_KEY}",
+        "Content-Type": "application/json",
+    }
+    try:
+        response = requests.post(
+            url,
+            headers=headers,
+            json={"p_hwid": hwid},
+            timeout=REQUEST_TIMEOUT_SECONDS,
+        )
+        if response.status_code != 200:
+            return TrialServerStatus(
+                False,
+                False,
+                f"Deneme lisansı sunucusu yanıt vermedi (HTTP {response.status_code}).",
+            )
+
+        data = response.json()
+        if isinstance(data, list):
+            row = data[0] if data else {}
+        elif isinstance(data, dict):
+            row = data
+        else:
+            row = {}
+
+        started = row.get("trial_started_at")
+        server_now = row.get("server_now")
+        if not started or not server_now:
+            return TrialServerStatus(
+                True,
+                False,
+                "Deneme lisansı sunucusundan geçerli tarih alınamadı.",
+            )
+
+        return TrialServerStatus(
+            True,
+            True,
+            "Cihaz deneme kaydı doğrulandı.",
+            str(started),
+            str(server_now),
+        )
+    except Exception as exc:
+        return TrialServerStatus(
+            False,
+            False,
+            f"Deneme lisansı sunucusuna ulaşılamadı: {exc}",
+        )
 
 def register_and_activate(name_entry, email_entry, key_entry, window):
     name = name_entry.get().strip()

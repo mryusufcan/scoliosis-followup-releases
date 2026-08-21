@@ -1,6 +1,12 @@
-# Yerel Python ve derleme çıktıları
+﻿# Yerel Python ve derleme çıktıları
 __pycache__/
 *.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
 .venv-build/
 build/
 dist/
@@ -8,11 +14,23 @@ installer/
 .restore_points/
 security_keys/
 
+# Yerel deneysel AI/model alanları
+.quarantine/
+
+# Yerel paketleme, release ve ikili çıktılar
+releases/
+*.exe
+*.msi
+*.dmp
+*.crash
+*.prof
+
 # Hasta verileri ve yerel çalışma dosyaları
 data/
 logs/
 modular_app/data/
 work/
+dev_data/
 ___Skolyoz deneme hastaları/
 *.dcm
 *.dicom
@@ -21,12 +39,21 @@ ___Skolyoz deneme hastaları/
 *.sqlite3
 *.sfbak
 
-# Yerel dışa aktarımlar ve oturum kayıtları
+# Yerel dışa aktarımlar, arşivler ve oturum kayıtları
 *.zip
+*.7z
+*.rar
 *oturum*.json
+*.log
+*.tmp
+*.bak
+*.old
 
 # İşletim sistemi / düzenleyici dosyaları
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
+
+# PyInstaller generated spec
+ScoliosisFollowUp.spec

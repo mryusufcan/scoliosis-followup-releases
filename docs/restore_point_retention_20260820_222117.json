@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-08-20T22:21:17",
+  "root": "C:\\Users\\yusuf\\Desktop\\Scoliosis Follow Up",
+  "policy": {
+    "keep_days": 7,
+    "keep_last": 10,
+    "max_auto_delete_mib": 500.0,
+    "default_mode": "dry-run",
+    "large_points_require_manual_review": true
+  },
+  "mode": "dry-run",
+  "summary": {
+    "total_points": 1,
+    "keep_recent": 1,
+    "keep_last": 0,
+    "large_protected": 0,
+    "candidate_delete": 0,
+    "candidate_delete_mib": 0.0
+  },
+  "restore_points": [
+    {
+      "path": "C:\\Users\\yusuf\\Desktop\\Scoliosis Follow Up\\.restore_points\\restore_retention_ui_20260820",
+      "name": "restore_retention_ui_20260820",
+      "modified": "2026-08-20T14:17:10",
+      "age_days": 0.336,
+      "bytes": 51899,
+      "files": 1,
+      "classification": "keep_recent",
+      "reason": "Son 7 gün içinde oluşturuldu.",
+      "mib": 0.05
+    }
+  ]
+}

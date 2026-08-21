@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-08-20T13:40:00+03:00",
+  "policy": "48 saatten eski, açıkça manual sürüm yedeği olarak adlandırılmış restore point'ler temizlenir. Son iki gün içindeki özellik restore point'leri, büyük aynı-gün deneysel yedeği ve release arşivi korunur.",
+  "targets": [
+    {
+      "path": ".restore_points/manual_20260817_232019_v1.5.1",
+      "modified": "2026-08-17T23:20:20+03:00",
+      "size_mib": 101.66,
+      "reason": "Eski v1.5.1 manual snapshot; mevcut v1.6.0 release arşivi ve yeni restore point'ler korunuyor."
+    },
+    {
+      "path": ".restore_points/manual_20260818_000432_v1.6.0",
+      "modified": "2026-08-18T00:04:34+03:00",
+      "size_mib": 101.71,
+      "reason": "48 saatten eski manual v1.6.0 snapshot; aynı sürümün releases/1.6.0 dağıtım arşivi korunuyor."
+    }
+  ],
+  "preserved": [
+    ".restore_points/landmark_lab_adapter_20260820_114227",
+    ".restore_points/*_20260818_20*",
+    ".restore_points/*_20260819_*",
+    ".restore_points/*_20260820_*",
+    ".quarantine",
+    "releases/1.6.0"
+  ],
+  "estimated_reclaimed_mib": 203.37,
+  "note": "Silme öncesi envanter docs/restore_point_inventory_20260820.json dosyasındadır. Kaynak kodu ve DICOM verileri hedef değildir."
+}

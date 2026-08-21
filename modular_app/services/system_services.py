@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import base64
 import hashlib
@@ -8,16 +8,89 @@ import platform
 import sqlite3
 import sys
 import zipfile
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
 
-APP_VERSION = "1.1.0"
+from modular_app.config.paths import VERSION_FILE
+
+def _read_app_version() -> str:
+    try:
+        version = VERSION_FILE.read_text(encoding="utf-8").strip()
+        return version if version else "0.0.0"
+    except Exception:
+        return "0.0.0"
+
+APP_VERSION = _read_app_version()
 BACKUP_MAGIC = b"SCOLIOSIS_BACKUP_V1\n"
+UPDATE_FEED_FORMAT = "ScoliosisFollowUpUpdateV1"
 
 
 class BackupError(RuntimeError):
     pass
+
+
+@dataclass(frozen=True)
+class DatabaseHealth:
+    ok: bool
+    message: str
+    tables: tuple[str, ...] = ()
+
+
+def check_local_database_health(
+    database_path: str | Path,
+    required_tables: tuple[str, ...] = (),
+) -> DatabaseHealth:
+    """Read-only SQLite health check used before and after application startup.
+
+    The function never creates, migrates or repairs a database.  It is safe to
+    run before the repository is constructed, which protects against opening a
+    damaged local database and making the situation worse.
+    """
+    path = Path(database_path)
+    if not path.exists():
+        return DatabaseHealth(True, "Yerel takip veritabanı henüz oluşturulmamış; ilk açılışta hazırlanacak.")
+    if not path.is_file():
+        return DatabaseHealth(False, "Yerel veritabanı yolu geçerli bir dosya değil.")
+    try:
+        uri = path.resolve().as_uri() + "?mode=ro"
+        connection = sqlite3.connect(uri, uri=True, timeout=3)
+        try:
+            integrity = connection.execute("PRAGMA integrity_check").fetchone()
+            if not integrity or str(integrity[0]).lower() != "ok":
+                return DatabaseHealth(False, "Yerel veritabanı bütünlük denetimi başarısız oldu.")
+            tables = tuple(sorted(str(row[0]) for row in connection.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'"
+            ).fetchall()))
+        finally:
+            connection.close()
+    except (OSError, sqlite3.Error) as exc:
+        return DatabaseHealth(False, f"Yerel veritabanı okunamadı: {exc}")
+    missing = sorted(set(required_tables) - set(tables))
+    if missing:
+        return DatabaseHealth(False, "Yerel veritabanında gerekli kayıt tabloları eksik: " + ", ".join(missing), tables)
+    return DatabaseHealth(True, "Yerel veritabanı bütünlük denetimi başarılı.", tables)
+
+
+def backup_reminder_message(repository, now: datetime | None = None, max_age_days: int = 7) -> str | None:
+    """Return a non-blocking reminder only when local follow-up data needs backup."""
+    if not repository.list_patients():
+        return None
+    current = now or datetime.now(timezone.utc)
+    raw = repository.get_setting("backup/last_success_at", "")
+    try:
+        last = datetime.fromisoformat(str(raw).replace("Z", "+00:00")) if raw else None
+        if last is not None and last.tzinfo is None:
+            last = last.replace(tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        last = None
+    if last is None:
+        return "Yerel takip verileri için henüz şifreli veritabanı yedeği oluşturulmadı."
+    age_days = max(0, int((current - last).total_seconds() // 86400))
+    if age_days >= max(1, int(max_age_days)):
+        return f"Son şifreli veritabanı yedeği {age_days} gün önce oluşturuldu."
+    return None
 
 
 def configure_logging(data_dir: str | Path) -> Path:
@@ -42,7 +115,8 @@ def export_diagnostic_bundle(data_dir: str | Path, destination: str | Path) -> P
 
     Veritabanı, DICOM dosyaları ve kullanıcı tarafından oluşturulmuş raporlar
     pakete bilinçli olarak eklenmez. Yalnızca uygulama sürümü, işletim sistemi
-    özeti ve hata günlüğü eklenir.
+    özeti eklenir. Ham hata günlüğü, dosya yolu veya kullanıcı girdisi
+    içerebileceğinden pakete alınmaz; yerelde incelemeye bırakılır.
     """
     root, output = Path(data_dir), Path(destination)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -53,13 +127,11 @@ def export_diagnostic_bundle(data_dir: str | Path, destination: str | Path) -> P
         "platform": platform.platform(),
         "python": sys.version,
         "contains_patient_data": False,
-        "included_files": ["application.log (varsa)", "diagnostics.json"],
+        "log_present_locally": (root / "logs" / "application.log").is_file(),
+        "included_files": ["diagnostics.json"],
     }
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("diagnostics.json", json.dumps(manifest, ensure_ascii=False, indent=2))
-        log_path = root / "logs" / "application.log"
-        if log_path.is_file():
-            archive.write(log_path, arcname="application.log")
     return output
 
 
@@ -124,8 +196,48 @@ def restore_encrypted_backup(source: str | Path, destination_db: str | Path, pas
     return output
 
 
+def _canonical_update_payload(data: dict) -> bytes:
+    payload = {
+        "format": str(data.get("format", UPDATE_FEED_FORMAT)),
+        "version": str(data.get("version", "")),
+        "url": str(data.get("url", "")),
+        "sha256": str(data.get("sha256", "")).lower(),
+    }
+    return json.dumps(payload, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+
+def _default_update_public_key() -> Path:
+    # Kaynakta resources/; PyInstaller one-dir paketinde _internal/resources/
+    # altında bulunur. __file__ her iki düzende de _internal veya kaynak kökünü
+    # işaret eden modül ağacında olduğundan bu yol sabittir.
+    return Path(__file__).resolve().parents[2] / "resources" / "security" / "integrity_public_key.pem"
+
+
+def verify_update_feed(data: dict, public_key_path: str | Path | None = None) -> tuple[str, str, str]:
+    """Verify the signed update manifest before showing a download link.
+
+    The release feed is intentionally only a notification. The user still
+    downloads and launches the signed installer manually.
+    """
+    if not isinstance(data, dict) or data.get("format", UPDATE_FEED_FORMAT) != UPDATE_FEED_FORMAT:
+        raise ValueError("Güncelleme manifest biçimi geçersiz.")
+    version, url, expected_hash = str(data.get("version", "")).strip(), str(data.get("url", "")).strip(), str(data.get("sha256", "")).strip().lower()
+    if not version or not url.lower().startswith("https://") or len(expected_hash) != 64 or any(char not in "0123456789abcdef" for char in expected_hash):
+        raise ValueError("Güncelleme manifest'inde sürüm, HTTPS indirme adresi veya SHA-256 özeti geçersiz.")
+    try:
+        import base64
+        from cryptography.hazmat.primitives.serialization import load_pem_public_key
+        signature = base64.b64decode(str(data.get("signature", "")), validate=True)
+        key_path = Path(public_key_path) if public_key_path else _default_update_public_key()
+        public_key = load_pem_public_key(key_path.read_bytes())
+        public_key.verify(signature, _canonical_update_payload(data))
+    except Exception as exc:
+        raise ValueError("Güncelleme manifest imzası doğrulanamadı.") from exc
+    return version, url, expected_hash
+
+
 def check_for_update(feed_url: str, current_version: str = APP_VERSION) -> tuple[bool, str]:
-    """Check an explicit JSON endpoint only; update download/install is never automatic."""
+    """Check a signed HTTPS update manifest; download/install is never automatic."""
     if not str(feed_url).strip():
         return False, "Güncelleme adresi tanımlı değil. Bu denetim isteğe bağlıdır."
     if not str(feed_url).strip().lower().startswith("https://"):
@@ -135,10 +247,10 @@ def check_for_update(feed_url: str, current_version: str = APP_VERSION) -> tuple
         response = requests.get(str(feed_url).strip(), timeout=5)
         response.raise_for_status()
         data = response.json()
-        available = str(data.get("version", "")).strip()
-        url = str(data.get("url", "")).strip()
+        available, url, expected_hash = verify_update_feed(data)
     except Exception as exc:
         return False, f"Güncelleme denetlenemedi: {exc}"
     if available and available != current_version:
-        return True, f"Yeni sürüm mevcut: {available}" + (f"\nİndirme: {url}" if url else "")
+        return True, f"Yeni sürüm mevcut: {available}\nİndirme: {url}\nSHA-256: {expected_hash}"
     return False, "Uygulama sürümü güncel görünüyor."
+
