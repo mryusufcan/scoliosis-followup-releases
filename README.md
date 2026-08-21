@@ -1,6 +1,6 @@
 # Scoliosis Follow-Up
 
-![Sürüm](https://img.shields.io/badge/Sürüm-1.7.3-blue.svg)
+![Sürüm](https://img.shields.io/badge/Sürüm-1.7.4-blue.svg)
 ![Durum](https://img.shields.io/badge/Durum-Aktif-success.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)
 
@@ -11,9 +11,9 @@ Scoliosis Follow-Up; farklı tarihlerde elde edilen skolyoz grafilerini tek bir 
 > ⚠️ **Scoliosis Follow-Up klinik karar destek veya otomatik tanı sistemi değildir.**  
 > Görüntüleme, ölçüm, teknik değerlendirme ve takip süreçlerini desteklemek amacıyla geliştirilmiş bir yazılımdır.
 
-[![Scoliosis Follow-Up 1.7.3 İndir](https://img.shields.io/badge/Windows-1.7.3%20İndir-0078D6?style=for-the-badge&logo=windows)](https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.7.3/ScoliosisFollowUp_Setup_1.7.3.exe)
+[![Scoliosis Follow-Up 1.7.4 İndir](https://img.shields.io/badge/Windows-1.7.4%20İndir-0078D6?style=for-the-badge&logo=windows)](https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.7.4/ScoliosisFollowUp_Setup_1.7.4.exe)
 
-[Sürüm notlarını görüntüle](https://github.com/mryusufcan/scoliosis-followup-releases/releases/tag/1.7.3)
+[Sürüm notlarını görüntüle](https://github.com/mryusufcan/scoliosis-followup-releases/releases/tag/1.7.4)
 
 ---
 
@@ -320,12 +320,17 @@ Son kararlı sürümü GitHub üzerindeki **Releases** bölümünden indirebilir
 
 ---
 
-# 🆕 Sürüm 1.7.3
+# 🆕 Sürüm 1.7.4
 
-Scoliosis Follow-Up **1.7.3**, görüntü seçimini hızlandıran, birleştirme modülünü farklı uzun grafiler için ortak hale getiren ve isteğe bağlı dördüncü görüntü desteği ekleyen kararlılık sürümüdür.
+Scoliosis Follow-Up **1.7.4**, Windows kurulumundaki cihaz kimliği ve lisans doğrulamasını düzelten bakım sürümüdür. 1.7.3 ile gelen hızlı görüntü seçimi, 2–4 parçalı birleştirme ve Docker gerektirmeyen yerel AI özellikleri korunur.
 
 ### Öne çıkan yenilikler
 
+- Paketlenmiş EXE ile kaynak ortamda aynı Windows cihaz kimliği
+- Hatalı “başka cihaza ait” lisans uyarısına karşı güvenilir sistem yolu çözümleme
+- Lisans yönetimi ve uygulama başlangıcında ortak doğrulama politikası
+- Geçersiz lisans durumunda eski son kullanım tarihinin gösterilmemesi
+- Sunucu doğrulamasından sonra eski lisans önbelleğinin güvenli temizlenmesi
 - Genel amaçlı Görüntü Birleştirme modülü
 - Üst, Orta, Alt ve isteğe bağlı 4. Parça ile 2–4 görüntülü çalışma
 - Dört görüntü için üç ayrı birleşim kalite kontrolü
@@ -366,7 +371,7 @@ Scoliosis Follow-Up **1.7.3**, görüntü seçimini hızlandıran, birleştirme 
 - Deneysel AI landmark araçları, model paket doğrulaması ve uzman onay akışı
 - Sadeleştirilmiş Project Control Center ve güvenli proje arşivleme araçları
 
-1.7.3 kaynak sürümü yayın öncesinde **154 otomatik test**, DICOM render/önbellek ölçümleri, başlangıç kontrolü ve Python ortam doğrulamasıyla test edilmiştir. Yayın paketi ayrıca installer SHA-256, imzalı güncelleme ve temiz dağıtım kontrollerinden geçirilmektedir.
+1.7.4 kaynak sürümü yayın öncesinde **180 otomatik test** ve paketleme ortamındaki **156 modüler test** ile doğrulanmıştır. Yayın paketi ayrıca installer SHA-256, imzalı güncelleme ve temiz dağıtım kontrollerinden geçirilmiştir.
 
 > Yerel AI Cobb sonucu deneysel bir taslaktır. Tanı koymaz, otomatik ölçüm kaydı oluşturmaz ve yetkili hekim görüntü üzerindeki çizgileri doğrulamadan kaydedilemez. ONNX çıktısı eski Linux/MMCV ortamıyla piksel düzeyinde birebir olmayabilir.
 
@@ -409,10 +414,10 @@ Odaklanılan başlıca alanlar:
 
 Yayınlanan kurulum paketleri dağıtım öncesinde yerel bütünlük ve güvenlik kontrollerinden geçirilmektedir.
 
-VirusTotal sonucu sürüme özgüdür. **1.7.3 installer için yapılacak tarama sonucu ayrıca doğrulanmalı ve aşağıdaki bağlantı güncellenmelidir.**
+VirusTotal sonucu sürüme özgüdür. **1.7.4 installer için yapılacak tarama sonucu ayrıca doğrulanmalı ve aşağıdaki bağlantı güncellenmelidir.**
 
 <!--
-1.7.3 taramasından sonra etkinleştir:
+1.7.4 taramasından sonra etkinleştir:
 
 ✅ VirusTotal: 0 / XX güvenlik sağlayıcısı tehdit tespit etti.
 
@@ -434,3 +439,4 @@ Radyoloji iş akışlarından edinilen saha deneyimi doğrultusunda geliştirile
 Bu repository'deki kaynak kodun ve uygulamanın kullanım koşulları proje lisansına tabidir.
 
 © 2026 Scoliosis Follow-Up
+
