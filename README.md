@@ -1,19 +1,19 @@
 # Scoliosis Follow-Up
 
-![Sürüm](https://img.shields.io/badge/Sürüm-1.7.2-blue.svg)
+![Sürüm](https://img.shields.io/badge/Sürüm-1.7.3-blue.svg)
 ![Durum](https://img.shields.io/badge/Durum-Aktif-success.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)
 
-**Skolyoz radyografilerinin görüntülenmesi, ölçülmesi, karşılaştırılması, uzun dönem takip edilmesi ve parçalı omurga grafilerinin birleştirilmesi için geliştirilmiş Windows masaüstü uygulaması.**
+**Skolyoz radyografilerinin görüntülenmesi, ölçülmesi, karşılaştırılması, uzun dönem takip edilmesi ve parçalı uzun grafilerin birleştirilmesi için geliştirilmiş Windows masaüstü uygulaması.**
 
-Scoliosis Follow-Up; farklı tarihlerde elde edilen skolyoz grafilerini tek bir çalışma ortamında incelemek, Cobb ölçümlerini takip etmek, grafileri Overlay/Blink yöntemleriyle karşılaştırmak ve servikal–dorsal–lomber görüntüleri tek uzun omurga grafisi halinde birleştirmek amacıyla geliştirilmiştir.
+Scoliosis Follow-Up; farklı tarihlerde elde edilen skolyoz grafilerini tek bir çalışma ortamında incelemek, Cobb ölçümlerini takip etmek, grafileri Overlay/Blink yöntemleriyle karşılaştırmak ve 2–4 ardışık görüntüyü tek uzun grafi halinde birleştirmek amacıyla geliştirilmiştir.
 
 > ⚠️ **Scoliosis Follow-Up klinik karar destek veya otomatik tanı sistemi değildir.**  
 > Görüntüleme, ölçüm, teknik değerlendirme ve takip süreçlerini desteklemek amacıyla geliştirilmiş bir yazılımdır.
 
-[![Scoliosis Follow-Up 1.7.2 İndir](https://img.shields.io/badge/Windows-1.7.2%20İndir-0078D6?style=for-the-badge&logo=windows)](https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.7.2/ScoliosisFollowUp_Setup_1.7.2.exe)
+[![Scoliosis Follow-Up 1.7.3 İndir](https://img.shields.io/badge/Windows-1.7.3%20İndir-0078D6?style=for-the-badge&logo=windows)](https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.7.3/ScoliosisFollowUp_Setup_1.7.3.exe)
 
-[Sürüm notlarını görüntüle](https://github.com/mryusufcan/scoliosis-followup-releases/releases/tag/1.7.2)
+[Sürüm notlarını görüntüle](https://github.com/mryusufcan/scoliosis-followup-releases/releases/tag/1.7.3)
 
 ---
 
@@ -25,7 +25,7 @@ Scoliosis Follow-Up; farklı tarihlerde elde edilen skolyoz grafilerini tek bir 
 ### 📈 Skolyoz Takip
 ![Skolyoz Takip](assets/skolyoz-takip.png)
 
-### 🧩 DICOM Omurga Birleştirme
+### 🧩 Görüntü Birleştirme
 ![DICOM Birleştirme](assets/dicom-birlestirme.png)
 
 ---
@@ -97,17 +97,17 @@ Projeksiyon bilgisi mevcutsa AP / PA / LAT uyumluluğu da değerlendirilir.
 
 ---
 
-## 🧩 DICOM Omurga Birleştirme
+## 🧩 Görüntü Birleştirme
 
-Parçalı skolyoz grafilerinin tek uzun omurga görüntüsüne dönüştürülmesi için ayrı bir çalışma modülü bulunmaktadır.
+Ardışık uzun grafilerin tek görüntüye dönüştürülmesi için ortak bir çalışma modülü bulunmaktadır.
 
 Desteklenen yapı:
 
-**Servikal → Dorsal → Lomber**
+**Üst → Orta → Alt → isteğe bağlı 4. Parça**
 
 Özellikler:
 
-- 2 veya 3 parçalı görüntü ile çalışma
+- 2, 3 veya 4 parçalı görüntü ile çalışma
 - Otomatik hizalama
 - Manuel hizalama
 - Nokta tabanlı manuel düzeltme
@@ -320,16 +320,21 @@ Son kararlı sürümü GitHub üzerindeki **Releases** bölümünden indirebilir
 
 ---
 
-# 🆕 Sürüm 1.7.2
+# 🆕 Sürüm 1.7.3
 
-Scoliosis Follow-Up **1.7.2**, 1.7.1 özelliklerini koruyan ve kurulu uygulamanın mevcut sürümünü `0.0.0` göstermesine neden olan paketleme hatasını gideren bakım sürümüdür.
+Scoliosis Follow-Up **1.7.3**, görüntü seçimini hızlandıran, birleştirme modülünü farklı uzun grafiler için ortak hale getiren ve isteğe bağlı dördüncü görüntü desteği ekleyen kararlılık sürümüdür.
 
 ### Öne çıkan yenilikler
 
-- Kurulu uygulamada doğru `1.7.2` sürüm gösterimi
-- `VERSION` bilgisinin Windows paketine zorunlu olarak eklenmesi
-- PyInstaller çalışma ortamında güvenli sürüm yolu çözümleme
-- Sürüm bilgisi eksik paketleri reddeden yeni yayın kontrolü
+- Genel amaçlı Görüntü Birleştirme modülü
+- Üst, Orta, Alt ve isteğe bağlı 4. Parça ile 2–4 görüntülü çalışma
+- Dört görüntü için üç ayrı birleşim kalite kontrolü
+- Açık görüntüleri yeniden klasör taramadan birleştirme sırasına atama
+- Görüntü seçicisinde küçük dosya önizlemeleri
+- Arayüzü kilitlemeyen arka plan DICOM önizleme üretimi
+- Seçilen büyük önizlemeye öncelik verme
+- Kontrollü küçük ve büyük önizleme önbelleği
+- Klasör tarama ve görüntü seçme akışında performans iyileştirmeleri
 - Docker gerektirmeyen yerel Mazurowski ONNX AI Cobb taslağı
 - Görüntüyü bilgisayar dışına göndermeyen çevrimdışı AI analizi
 - AI sonucunda otomatik kayıt engeli ve Hekim rolüyle zorunlu uzman onayı
@@ -344,7 +349,7 @@ Scoliosis Follow-Up **1.7.2**, 1.7.1 özelliklerini koruyan ve kurulu uygulaman�
 - Geliştirilmiş otomatik Overlay registration
 - Translation, scale ve rotation destekli hizalama
 - Hasta ve projeksiyon uyumluluk kontrolleri
-- Geliştirilmiş DICOM omurga birleştirme
+- Geliştirilmiş ortak görüntü birleştirme
 - Yeni seam blending ve kalite skoru
 - Birleşim bazlı kalite değerlendirmesi
 - Final Verification ve sonuç kilitleme
@@ -361,7 +366,7 @@ Scoliosis Follow-Up **1.7.2**, 1.7.1 özelliklerini koruyan ve kurulu uygulaman�
 - Deneysel AI landmark araçları, model paket doğrulaması ve uzman onay akışı
 - Sadeleştirilmiş Project Control Center ve güvenli proje arşivleme araçları
 
-1.7.2 sürümü yayın öncesinde **175 otomatik test**, gerçek paketlenmiş EXE başlangıç kontrolü, paket kabul denetimi, installer SHA-256 kontrolü ve imzalı güncelleme doğrulamasıyla test edilmiştir. Paketlenmiş uygulamanın günlüğünde sürümün `1.7.2` olarak okunduğu ayrıca doğrulanmıştır.
+1.7.3 kaynak sürümü yayın öncesinde **154 otomatik test**, DICOM render/önbellek ölçümleri, başlangıç kontrolü ve Python ortam doğrulamasıyla test edilmiştir. Yayın paketi ayrıca installer SHA-256, imzalı güncelleme ve temiz dağıtım kontrollerinden geçirilmektedir.
 
 > Yerel AI Cobb sonucu deneysel bir taslaktır. Tanı koymaz, otomatik ölçüm kaydı oluşturmaz ve yetkili hekim görüntü üzerindeki çizgileri doğrulamadan kaydedilemez. ONNX çıktısı eski Linux/MMCV ortamıyla piksel düzeyinde birebir olmayabilir.
 
@@ -404,10 +409,10 @@ Odaklanılan başlıca alanlar:
 
 Yayınlanan kurulum paketleri dağıtım öncesinde yerel bütünlük ve güvenlik kontrollerinden geçirilmektedir.
 
-VirusTotal sonucu sürüme özgüdür. **1.7.2 installer için yapılacak tarama sonucu ayrıca doğrulanmalı ve aşağıdaki bağlantı güncellenmelidir.**
+VirusTotal sonucu sürüme özgüdür. **1.7.3 installer için yapılacak tarama sonucu ayrıca doğrulanmalı ve aşağıdaki bağlantı güncellenmelidir.**
 
 <!--
-1.7.2 taramasından sonra etkinleştir:
+1.7.3 taramasından sonra etkinleştir:
 
 ✅ VirusTotal: 0 / XX güvenlik sağlayıcısı tehdit tespit etti.
 
