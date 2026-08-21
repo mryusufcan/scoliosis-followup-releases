@@ -175,12 +175,52 @@ def evaluate_license_gate(
 
     machine_state, state_error = _read_machine_state()
     if state_error:
+        if checker is None:
+            from license_app import check_license_status
+            checker = check_license_status
+
+        try:
+            status = checker()
+            active = bool(getattr(status, "active", status is True))
+            online = bool(getattr(status, "online", active))
+            verified_expiry = getattr(status, "expires_at", None)
+        except Exception:
+            active, online, verified_expiry = False, False, None
+
+        # Yerel kayıt hatası hiçbir zaman çevrimdışı tolerans sağlamaz. Ancak
+        # lisans sunucusu aynı HWID için etkin lisansı çevrimiçi doğrularsa,
+        # sunucu kaydı yetkili kaynak olarak kabul edilir. Böylece ekrandaki
+        # "internete bağlanıp doğrulayın" yönlendirmesi gerçekten çalışır.
+        if active and online:
+            _store_now(repository, "license/last_online_validation_at", local_now)
+            repository.set_setting("license/last_status", "active")
+            if verified_expiry:
+                repository.set_setting(
+                    "license/expires_at",
+                    str(verified_expiry),
+                )
+            return LicenseGateResult(
+                True,
+                "licensed",
+                "Etkin lisans çevrimiçi doğrulandı.",
+                expires_at=(
+                    str(verified_expiry)
+                    if verified_expiry
+                    else None
+                ),
+            )
+
+        if online:
+            repository.set_setting("license/expires_at", "")
+            repository.set_setting("license/last_online_validation_at", "")
+            repository.set_setting("license/last_status", "unlicensed")
+
         return LicenseGateResult(
             False,
             "license_state_invalid",
             "Yerel lisans/deneme kaydı değiştirilmiş veya başka cihaza ait görünüyor. "
             "Devam etmek için internet bağlantısıyla etkin lisans doğrulayın.",
-            expires_at=stored_expiry,
+            expires_at=None,
         )
 
     if not _clock_is_valid(repository, local_now, machine_state):

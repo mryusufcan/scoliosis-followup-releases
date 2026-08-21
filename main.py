@@ -806,7 +806,19 @@ class ScoliosisFollowUpApp(QMainWindow):
         self._theme_name = "dark"
         if app is not None:
             saved_theme = self._theme_settings.value("ui/theme", "dark")
-            self._theme_name = apply_app_theme(app, saved_theme)
+            requested_theme = (
+                "light"
+                if str(saved_theme).casefold() == "light"
+                else "dark"
+            )
+            # QApplication teması süreçte zaten hazırsa aynı native Qt stilini
+            # yeniden kurmak gereksizdir. Özellikle çok sayıda pencere açıp
+            # kapatan otomatik testlerde QStyle nesnesini tekrar değiştirmek
+            # Windows/Qt tarafında erişim ihlaline yol açabilir.
+            if app.property("appTheme") == requested_theme:
+                self._theme_name = requested_theme
+            else:
+                self._theme_name = apply_app_theme(app, requested_theme)
 
         self.setWindowTitle("Scoliosis Follow-Up")
         self.setMinimumSize(1180, 720)

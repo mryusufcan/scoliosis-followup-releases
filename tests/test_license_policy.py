@@ -224,6 +224,45 @@ class LicensePolicyTests(unittest.TestCase):
             result.mode,
             "license_state_invalid",
         )
+        self.assertIsNone(result.expires_at)
+
+    def test_online_active_license_recovers_from_invalid_local_state(self):
+        evaluate_license_gate(
+            self.repo,
+            checker=lambda: license_status(False, True),
+            trial_checker=lambda: trial_status(
+                self.start,
+                self.start,
+            ),
+            now=self.start,
+        )
+
+        text = policy.MACHINE_STATE_FILE.read_text(encoding="utf-8")
+        policy.MACHINE_STATE_FILE.write_text(
+            text.replace(
+                "TEST-HWID-1234567890",
+                "OTHER-HWID-123456789",
+            ),
+            encoding="utf-8",
+        )
+
+        result = evaluate_license_gate(
+            self.repo,
+            checker=lambda: SimpleNamespace(
+                active=True,
+                online=True,
+                message="test",
+                expires_at="2027-08-16T23:59:59+03:00",
+            ),
+            now=self.start + timedelta(hours=1),
+        )
+
+        self.assertTrue(result.allowed)
+        self.assertEqual(result.mode, "licensed")
+        self.assertEqual(
+            result.expires_at,
+            "2027-08-16T23:59:59+03:00",
+        )
 
     def test_clock_rollback_is_rejected(self):
         evaluate_license_gate(
