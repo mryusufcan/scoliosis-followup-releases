@@ -1,0 +1,7 @@
+Version: 1.7.5
+Created: 2026-08-21T21:39:16
+Release: C:\Users\yusuf\Desktop\Scoliosis Follow Up\releases\1.7.5
+Tests: OK
+Build: OK
+Installer: OK
+Local verification: OK

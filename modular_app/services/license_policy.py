@@ -215,6 +215,60 @@ def evaluate_license_gate(
             repository.set_setting("license/last_online_validation_at", "")
             repository.set_setting("license/last_status", "unlicensed")
 
+            # Etkin lisans yoksa sunucudaki cihaz-bağlı deneme kaydı ikinci
+            # yetkili kaynaktır. Yerel dosya değişmiş olsa bile sunucu aynı
+            # HWID için özgün başlangıç tarihini döndürür; bu nedenle deneme
+            # süresi sıfırlanmadan güvenli yerel kayıt yeniden oluşturulabilir.
+            server = _server_trial_status(trial_checker)
+            if (
+                server is not None
+                and bool(getattr(server, "online", False))
+                and bool(getattr(server, "ok", False))
+            ):
+                server_start = _parse_timestamp(
+                    getattr(server, "trial_started_at", None)
+                )
+                server_now = _parse_timestamp(
+                    getattr(server, "server_now", None)
+                )
+                if server_start is not None and server_now is not None:
+                    repository.set_setting(
+                        "license/unlicensed_started_at",
+                        server_start.isoformat(),
+                    )
+                    repository.set_setting(
+                        "license/last_seen_at",
+                        server_now.isoformat(),
+                    )
+                    try:
+                        _write_machine_state(
+                            server_start,
+                            server_now,
+                            server_synced=True,
+                        )
+                    except Exception:
+                        pass
+                    else:
+                        remaining = TRIAL_PERIOD - (
+                            server_now - server_start
+                        )
+                        if remaining > timedelta(0):
+                            return LicenseGateResult(
+                                True,
+                                "trial",
+                                "Deneme kaydı sunucudan doğrulandı ve cihazda "
+                                f"onarım yapıldı. {_format_remaining(remaining)} kaldı.",
+                                remaining,
+                                None,
+                            )
+                        return LicenseGateResult(
+                            False,
+                            "trial_expired",
+                            "14 günlük lisanssız deneme süresi doldu. "
+                            "Devam etmek için etkin lisans gerekir.",
+                            expires_at=None,
+                        )
+
         return LicenseGateResult(
             False,
             "license_state_invalid",

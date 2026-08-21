@@ -1,7 +1,7 @@
 {
   "format": "ScoliosisFollowUpUpdateV1",
-  "sha256": "463b02f73266eafb9ce7e0ff43873e6beb9fd2e6ff44854c6873c5391d2de70d",
-  "signature": "2xy06dRK1ICXYuPu+w3pHnZWtXdx5aDMj4MDNnl2lJg5u9fg9A1QdBE6S/DcwYuUgl6sy+FIc6xpCKj+v0jWBg==",
+  "sha256": "12f5004e2595100eb165a396a132116d167e8de251b92a3f255fa679eae1a6e8",
+  "signature": "V86heWVMCAkx4U9Tjuk5KawNGL6GrG2aPkSiHIHNec7gTnBQ9FVYjypjHQSkURvB7MajTBceh+7Ccv8f/Kh3Bg==",
   "url": "https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.7.5/ScoliosisFollowUp_Setup_1.7.5.exe",
   "version": "1.7.5"
 }

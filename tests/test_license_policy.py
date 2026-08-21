@@ -187,7 +187,7 @@ class LicensePolicyTests(unittest.TestCase):
             timedelta(days=5),
         )
 
-    def test_tampered_local_state_is_fail_closed(self):
+    def test_tampered_local_state_is_repaired_from_server_trial(self):
         evaluate_license_gate(
             self.repo,
             checker=lambda: license_status(False, True),
@@ -219,12 +219,46 @@ class LicensePolicyTests(unittest.TestCase):
             now=self.start + timedelta(hours=1),
         )
 
-        self.assertFalse(result.allowed)
-        self.assertEqual(
-            result.mode,
-            "license_state_invalid",
-        )
+        self.assertTrue(result.allowed)
+        self.assertEqual(result.mode, "trial")
         self.assertIsNone(result.expires_at)
+        repaired, error = policy._read_machine_state()
+        self.assertIsNone(error)
+        self.assertIsNotNone(repaired)
+
+    def test_tampered_local_state_stays_closed_when_offline(self):
+        evaluate_license_gate(
+            self.repo,
+            checker=lambda: license_status(False, True),
+            trial_checker=lambda: trial_status(
+                self.start,
+                self.start,
+            ),
+            now=self.start,
+        )
+
+        text = policy.MACHINE_STATE_FILE.read_text(encoding="utf-8")
+        policy.MACHINE_STATE_FILE.write_text(
+            text.replace(
+                "TEST-HWID-1234567890",
+                "OTHER-HWID-123456789",
+            ),
+            encoding="utf-8",
+        )
+
+        result = evaluate_license_gate(
+            self.repo,
+            checker=lambda: license_status(False, False),
+            trial_checker=lambda: SimpleNamespace(
+                online=False,
+                ok=False,
+                message="offline",
+            ),
+            now=self.start + timedelta(hours=1),
+        )
+
+        self.assertFalse(result.allowed)
+        self.assertEqual(result.mode, "license_state_invalid")
 
     def test_online_active_license_recovers_from_invalid_local_state(self):
         evaluate_license_gate(
