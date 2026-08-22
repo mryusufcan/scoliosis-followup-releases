@@ -322,68 +322,31 @@ Son kararlı sürümü GitHub üzerindeki **Releases** bölümünden indirebilir
 
 # 🆕 Sürüm 1.7.6
 
-Scoliosis Follow-Up **1.7.6**, birleştirilmiş DICOM görüntülerinin doğru parlaklıkla yeniden açılmasını sağlayan bakım sürümüdür. 1.7.5 sürümündeki lisans, performans, 2–4 parçalı birleştirme ve yerel AI geliştirmeleri korunur.
+1.7.6, birleştirilmiş DICOM görüntülerinin doğru parlaklıkla yeniden açılmasını sağlayan ve proje bakım/yayın yapısını sadeleştiren bakım sürümüdür.
 
-### Öne çıkan yenilikler
+## Düzeltmeler
 
-- Birleştirilmiş 8-bit DICOM çıktılarda doğru Window/Level, rescale ve VOI LUT bilgileri
-- Pencere bilgisi bulunmayan eski 8-bit DICOM dosyaları için güvenli `WL 127.5 / WW 255` varsayılanı
-- Taşınabilir PyInstaller tanımı ve sadeleştirilmiş proje bakım/yayın yapısı
-- Paketlenmiş EXE ile kaynak ortamda aynı Windows cihaz kimliği
-- Hatalı “başka cihaza ait” lisans uyarısına karşı güvenilir sistem yolu çözümleme
-- Lisans yönetimi ve uygulama başlangıcında ortak doğrulama politikası
-- Geçersiz lisans durumunda eski son kullanım tarihinin gösterilmemesi
-- Sunucu doğrulamasından sonra eski lisans önbelleğinin güvenli temizlenmesi
-- Sunucudaki geçerli lisans ve deneme kaydından yerel lisans durumunun güvenli onarılması
-- Çevrimdışı kullanım sınırları korunurken çevrimiçi doğrulamada hatalı cihaz uyarısının giderilmesi
-- Lisans ekranlarında sunucudan gelen güncel durum ve son kullanım tarihinin gösterilmesi
-- Qt test yaşam döngüsünde Windows işlem çökmesine yol açan kararsızlığın giderilmesi
-- Genel amaçlı Görüntü Birleştirme modülü
-- Üst, Orta, Alt ve isteğe bağlı 4. Parça ile 2–4 görüntülü çalışma
-- Dört görüntü için üç ayrı birleşim kalite kontrolü
-- Açık görüntüleri yeniden klasör taramadan birleştirme sırasına atama
-- Görüntü seçicisinde küçük dosya önizlemeleri
-- Arayüzü kilitlemeyen arka plan DICOM önizleme üretimi
-- Seçilen büyük önizlemeye öncelik verme
-- Kontrollü küçük ve büyük önizleme önbelleği
-- Klasör tarama ve görüntü seçme akışında performans iyileştirmeleri
-- Docker gerektirmeyen yerel Mazurowski ONNX AI Cobb taslağı
-- Görüntüyü bilgisayar dışına göndermeyen çevrimdışı AI analizi
-- AI sonucunda otomatik kayıt engeli ve Hekim rolüyle zorunlu uzman onayı
-- Arayüzü kilitlemeyen arka plan AI analizi
-- Güven eşiği, DICOM uygunluğu ve çizgi geometrisi kontrolleri
-- Omurga çevresinde okunabilir AI tanjant çizgileri
-- Yenilenmiş profesyonel kullanıcı arayüzü
-- Görüntüleyici ve takip araçlarında yeni ikon sistemi
-- PixelSpacing destekli gerçek mm/cm mesafe ölçümü
-- Eğri ve yön duyarlı Cobb takip altyapısı
-- Cobb değişim hızı / derece-yıl hesaplaması
-- Geliştirilmiş otomatik Overlay registration
-- Translation, scale ve rotation destekli hizalama
-- Hasta ve projeksiyon uyumluluk kontrolleri
-- Geliştirilmiş ortak görüntü birleştirme
-- Yeni seam blending ve kalite skoru
-- Birleşim bazlı kalite değerlendirmesi
-- Final Verification ve sonuç kilitleme
-- Yeni Teknik Görüntü Kalite Kontrol modülü
-- Yenilenmiş uygulama içi güncelleme sistemi
-- SHA-256 installer doğrulaması
-- Project Control Center restore noktası oluşturma
-- Performans ve stabilite geliştirmeleri
-- Güncellenmiş yayın doğrulama altyapısı
-- DICOM picker ve başlangıçta DICOM açma iş akışı geliştirmeleri
-- Overlay/Blink karşılaştırma ve otomatik hizalama güvenlik kontrolleri
-- Hasta takip merkezi, eğri bazlı trendler ve karşılaştırma oturumları
-- PDF/CSV raporlarının takip verileriyle güçlendirilmesi
-- Deneysel AI landmark araçları, model paket doğrulaması ve uzman onay akışı
-- Sadeleştirilmiş Project Control Center ve güvenli proje arşivleme araçları
+- PNG ile birlikte kaydedilen 8-bit DICOM çıktılara doğru `WindowCenter`, `WindowWidth`, rescale ve VOI LUT bilgileri eklendi.
+- Pencere bilgisi bulunmayan eski 8-bit DICOM dosyalarının görüntüleyicide aşırı karanlık açılması giderildi.
+- Etiketsiz 8-bit görüntüler için güvenli `WL 127.5 / WW 255` varsayılanı eklendi.
 
-1.7.6 Windows installer SHA-256 özeti imzalı `update.json` ile eşleştirilmiş; GitHub'a yüklenen güncelleme bildirimi yerel dosyayla birebir doğrulanmış ve sürüm `latest` olarak yayımlanmıştır.
+## Proje ve paketleme
 
-> Yerel AI Cobb sonucu deneysel bir taslaktır. Tanı koymaz, otomatik ölçüm kaydı oluşturmaz ve yetkili hekim görüntü üzerindeki çizgileri doğrulamadan kaydedilemez. ONNX çıktısı eski Linux/MMCV ortamıyla piksel düzeyinde birebir olmayabilir.
+- PyInstaller spec dosyası `packaging` altında toplandı ve bilgisayara özel mutlak yollar kaldırıldı.
+- Proje araçları ve eski bakım kısayolları ilgili `tools` ve `scripts/maintenance` klasörlerine taşındı.
+- Proje kökü sadeleştirilirken başlatma, Project Control Center, güvenlik denetimi ve kaynak arşivleme yolları güncellendi.
+- Yeniden üretilebilir build/cache çıktıları ve eski yerel yayın kopyaları temizlendi; aktif modeller ve araştırma kaynakları korundu.
+
+## Doğrulama
+
+- Windows installer başarıyla üretildi.
+- Installer SHA-256 özeti imzalı `update.json` ile eşleşti.
+- GitHub'a yüklenen `update.json` yerel imzalı dosyayla birebir doğrulandı.
+- `1.7.6` GitHub Releases üzerinde kararlı ve `latest` sürüm olarak yayımlandı.
+
+[GitHub sürümünü ve indirme dosyalarını görüntüle](https://github.com/mryusufcan/scoliosis-followup-releases/releases/tag/1.7.6)
 
 ---
-
 # ⚠️ Tıbbi Kullanım Hakkında
 
 Scoliosis Follow-Up'ın geliştirilme amacı radyolojik görüntülerin görüntülenmesini, ölçülmesini, karşılaştırılmasını ve takip süreçlerinin organize edilmesini kolaylaştırmaktır.
