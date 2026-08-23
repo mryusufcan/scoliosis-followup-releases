@@ -1,21 +1,21 @@
 # Scoliosis Follow-Up
 
-![Sürüm](https://img.shields.io/badge/Sürüm-1.7.7-blue.svg)
+![Sürüm](https://img.shields.io/badge/Sürüm-1.7.8-blue.svg)
 ![Durum](https://img.shields.io/badge/Durum-Aktif-success.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg)
 
 **Skolyoz radyografilerinin görüntülenmesi, ölçülmesi, karşılaştırılması, uzun dönem takip edilmesi ve parçalı uzun grafilerin birleştirilmesi için geliştirilmiş Windows masaüstü uygulaması.**
 
-**Güncel sürüm: 1.7.7** — Daha hızlı seçim önizlemeleri, iptal edilebilir lazy viewer queue, bellek bütçeli cache ve transfer-syntax bazlı native decoder seçimi içerir.
+**Güncel sürüm: 1.7.8** — Profesyonel İlk Kullanım Sihirbazı, güvenli yerel tercihler ve geliştirilmiş güncelleme denetimi içerir; 1.7.7 görüntüleyici performans iyileştirmelerini korur.
 
 Scoliosis Follow-Up; farklı tarihlerde elde edilen skolyoz grafilerini tek bir çalışma ortamında incelemek, Cobb ölçümlerini takip etmek, grafileri Overlay/Blink yöntemleriyle karşılaştırmak ve 2–4 ardışık görüntüyü tek uzun grafi halinde birleştirmek amacıyla geliştirilmiştir.
 
 > ⚠️ **Scoliosis Follow-Up klinik karar destek veya otomatik tanı sistemi değildir.**  
 > Görüntüleme, ölçüm, teknik değerlendirme ve takip süreçlerini desteklemek amacıyla geliştirilmiş bir yazılımdır.
 
-[![Scoliosis Follow-Up 1.7.7 İndir](https://img.shields.io/badge/Windows-1.7.7%20İndir-0078D6?style=for-the-badge&logo=windows)](https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.7.7/ScoliosisFollowUp_Setup_1.7.7.exe)
+[![Scoliosis Follow-Up 1.7.8 İndir](https://img.shields.io/badge/Windows-1.7.8%20İndir-0078D6?style=for-the-badge&logo=windows)](https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.7.8/ScoliosisFollowUp_Setup_1.7.8.exe)
 
-[Sürüm notlarını görüntüle](https://github.com/mryusufcan/scoliosis-followup-releases/releases/tag/1.7.7)
+[Sürüm notlarını görüntüle](https://github.com/mryusufcan/scoliosis-followup-releases/releases/tag/1.7.8)
 
 ---
 
@@ -320,32 +320,33 @@ Son kararlı sürümü GitHub üzerindeki **Releases** bölümünden indirebilir
 
 > Son kullanıcı bilgisayarında Python veya ayrı bir geliştirme ortamı kurulması gerekmez.
 
+> 1.7.8 paketi Authenticode imzası taşımaz. Windows ilk indirme veya çalıştırmada “Bilinmeyen yayıncı” ya da SmartScreen uyarısı gösterebilir.
+
 ---
 
-# 🆕 Sürüm 1.7.7
+# 🆕 Sürüm 1.7.8
 
-1.7.7; ana DICOM viewer, seçim önizlemeleri ve sıkıştırılmış piksel decode akışında performans, bellek bütçesi ve stale-result güvenliği odaklı bir sürümdür.
+1.7.8; yeni kurulum deneyimini yönlendiren İlk Kullanım Sihirbazı ile güvenli kullanıcı, görünüm, başlangıç alanı ve isteğe bağlı PACS tercihlerini uygulamaya ekleyen bir sürümdür.
 
 ## Öne çıkan yenilikler
 
-- Ana viewer için iptal edilebilir ve öncelikli lazy/asenkron decode queue.
-- Current görüntüden sonra en fazla iki komşu görüntünün düşük öncelikle prefetch edilmesi.
-- Duplicate in-flight decode isteklerinin engellenmesi, generation ve source-signature doğrulaması.
-- Decoded array ve view pixmap cache’lerinde byte/entry bütçesi ve dosya değişiminde stale entry temizliği.
-- Seçim ekranında ortak preview worker, 640 px bounded preview ve metadata-only viewer tree ekleme.
-- `pydicom.pixels.pixel_array(..., index=frame)` ile path-based lazy frame decode.
-- JPEG Lossless için `pylibjpeg`, JPEG 2000 için `pylibjpeg-openjpeg`, JPEG-LS için `pyjpegls` preferred yolları ve pydicom fallback akışı.
-- DICOM bilgi ekranında Transfer Syntax ve seçilen decoder tanısı.
+- Yalnızca gerçek yeni kurulumlarda açılan profesyonel İlk Kullanım Sihirbazı.
+- Kullanıcı/rol, koyu-açık tema ve başlangıç çalışma alanı seçimi.
+- İsteğe bağlı PACS sunucusu, port ve AE Title hazırlığı.
+- Mevcut veritabanı bulunan yükseltmelerde sihirbazın zorla gösterilmemesi.
+- Yardım menüsünden sihirbazı yeniden açma desteği.
+- Eski veya eşit sürümlerin yanlışlıkla güncelleme olarak sunulmasını engelleyen sayısal sürüm karşılaştırması.
+- 1.7.7 ile gelen lazy viewer queue, bellek bütçeli cache ve native DICOM codec iyileştirmelerinin korunması.
 
 ## Doğrulama
 
-- Gerçek 16 JPEG Lossless SV1 DICOM dosyasında `pylibjpeg` decode başarı oranı **16/16**, array digest uyuşmazlığı **0**.
-- Cache benchmarkında cold decode+render ortalaması yaklaşık 996 ms; yalnızca görünüm değişimi render’ı yaklaşık 45 ms.
-- Tam test süiti: **205 passed, 5 warnings**.
-- Offscreen UI smoke: `UI_THEME_SMOKE_OK`.
-- Benchmark ve testler sırasında kaynak DICOM dosyaları değiştirilmedi.
+- Tam test süiti: **211 passed, 5 üçüncü taraf codec uyarısı**.
+- PyInstaller uygulama ve Inno Setup kurulum paketi üretimi başarılı.
+- İmzalı runtime bütünlük manifesti ve update manifesti doğrulandı.
+- Dağıtım güvenlik denetiminde engelleyici bulgu veya uyarı bulunmadı.
+- İzole temiz kurulum, çalışma, veritabanı/günlük oluşturma ve kaldırma testi başarılı.
 
-[1.7.7 sürümünü ve indirme dosyalarını görüntüle](https://github.com/mryusufcan/scoliosis-followup-releases/releases/tag/1.7.7)
+[1.7.8 sürümünü ve indirme dosyalarını görüntüle](https://github.com/mryusufcan/scoliosis-followup-releases/releases/tag/1.7.8)
 
 ---
 # ⚠️ Tıbbi Kullanım Hakkında
@@ -385,10 +386,10 @@ Odaklanılan başlıca alanlar:
 
 Yayınlanan kurulum paketleri dağıtım öncesinde yerel bütünlük ve güvenlik kontrollerinden geçirilmektedir.
 
-VirusTotal sonucu sürüme özgüdür. **1.7.7 installer için yapılacak tarama sonucu ayrıca doğrulanmalı ve aşağıdaki bağlantı güncellenmelidir.**
+VirusTotal sonucu sürüme özgüdür. **1.7.8 installer için yapılacak tarama sonucu ayrıca doğrulanmalı ve aşağıdaki bağlantı güncellenmelidir.**
 
 <!--
-1.7.7 taramasından sonra etkinleştir:
+1.7.8 taramasından sonra etkinleştir:
 
 ✅ VirusTotal: 0 / XX güvenlik sağlayıcısı tehdit tespit etti.
 
