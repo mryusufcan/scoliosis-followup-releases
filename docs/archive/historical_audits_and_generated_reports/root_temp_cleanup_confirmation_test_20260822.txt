@@ -1,0 +1,1 @@
+Silme durduruldu: --confirm CLEAN_ROOT_TEMP gerekli.

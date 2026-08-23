@@ -1,0 +1,65 @@
+{
+  "kind": "real_dicom_decoded_array_cache_benchmark",
+  "schema_version": 1,
+  "dataset": {
+    "root_name": "dicom_samples",
+    "files_selected": 4
+  },
+  "policy": {
+    "cold": "dataset/header/pixmap/decoded caches cleared before each file",
+    "view_change": "only pixmap/dataset caches cleared; brightness changes; decoded array retained",
+    "dicom_files_modified": false
+  },
+  "results": [
+    {
+      "file_name": "IM00002",
+      "cold_decode_and_render_ms": 1080.278,
+      "view_change_render_ms_mean": 47.755,
+      "view_change_render_ms": [
+        43.811,
+        49.201,
+        50.252
+      ],
+      "decoded_cache_entries": 1
+    },
+    {
+      "file_name": "IM00003",
+      "cold_decode_and_render_ms": 1109.757,
+      "view_change_render_ms_mean": 57.387,
+      "view_change_render_ms": [
+        61.981,
+        57.607,
+        52.573
+      ],
+      "decoded_cache_entries": 1
+    },
+    {
+      "file_name": "IM00004",
+      "cold_decode_and_render_ms": 1096.534,
+      "view_change_render_ms_mean": 46.573,
+      "view_change_render_ms": [
+        45.96,
+        47.877,
+        45.883
+      ],
+      "decoded_cache_entries": 1
+    },
+    {
+      "file_name": "IM00005",
+      "cold_decode_and_render_ms": 698.394,
+      "view_change_render_ms_mean": 29.904,
+      "view_change_render_ms": [
+        29.567,
+        28.786,
+        31.36
+      ],
+      "decoded_cache_entries": 1
+    }
+  ],
+  "summary": {
+    "cold_mean_ms": 996.241,
+    "view_change_mean_ms": 45.405,
+    "reuse_speedup": 21.941
+  }
+}
+Benchmark JSON: C:\Users\yusuf\Desktop\Scoliosis Follow Up\docs\roadmap\decode_cache_benchmark_latest.json

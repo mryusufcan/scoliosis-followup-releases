@@ -36,7 +36,7 @@ from PySide6.QtWidgets import (
     QStyleFactory
 
 )
-from PySide6.QtCore import Qt, QPointF, QSize, QTimer, QRectF, QSettings, QEvent, QObject
+from PySide6.QtCore import Qt, QPointF, QSize, QTimer, QRectF, QSettings, QEvent, QObject, QThreadPool
 
 from PySide6.QtGui import (
         QFont, QPixmap, QImage, QPainter, QPen, QIcon, QPalette, QColor, QActionGroup,
@@ -839,6 +839,8 @@ class ScoliosisFollowUpApp(QMainWindow):
         self._overlay_initial_scale = 1.0
         self.window_settings = {}
         self._default_window_cache = {}
+        self._default_window_cache_limit = 128
+
         self.cobb_mode_active = False
         self.cobb_points = []
         self.cobb_items = []
@@ -937,11 +939,22 @@ class ScoliosisFollowUpApp(QMainWindow):
 
         self._viewer_dicom_flags = {}
         self._viewer_metadata_cache = {}
+        # Pixel Data içermeyen DICOM başlıklarını sınırlı cache'te tut.
+        self._viewer_header_cache = {}
+        self._viewer_header_cache_limit = 32
+        self._viewer_path_cache_limit = 128
+
         self._viewer_frame_counts = {}
         self._viewer_fit_scale = 0.0
         self._viewer_preload_enabled = True
         self._viewer_preload_pending = {}
-        self._viewer_preload_controller = DicomPreloadController(parent=self)
+        self._viewer_preload_pool = QThreadPool(self)
+        self._viewer_preload_pool.setMaxThreadCount(1)
+        self._viewer_preload_controller = DicomPreloadController(
+            pool=self._viewer_preload_pool,
+            parent=self,
+        )
+
         self._viewer_preload_controller.image_ready.connect(self._on_viewer_preload_ready)
         self._viewer_preload_controller.decode_failed.connect(self._on_viewer_preload_failed)
         self._viewer_preload_controller.decode_cancelled.connect(self._on_viewer_preload_cancelled)
@@ -1179,8 +1192,38 @@ class ScoliosisFollowUpApp(QMainWindow):
         return viewer_core.show_viewer_file_context_menu(self, pos)
 
 
-    def _viewer_pixmap_cache_key(self, file_path, frame_index=None):
+    def _viewer_decoded_array_cache_key(self, file_path, frame_index=0):
         absolute_path = os.path.abspath(file_path)
+        try:
+            stat = os.stat(absolute_path)
+            source_signature = (int(stat.st_mtime_ns), int(stat.st_size))
+        except OSError:
+            source_signature = (0, 0)
+        return (absolute_path, source_signature, int(frame_index))
+
+
+    def _evict_stale_viewer_signature(self, absolute_path, source_signature):
+        """Drop old decoded/pixmap entries when a path is replaced in place."""
+        for cache_name in ("_viewer_decoded_array_cache", "_viewer_only_pixmap_cache"):
+            cache = getattr(self, cache_name, None)
+            if not isinstance(cache, dict):
+                continue
+            for key in list(cache):
+                if not isinstance(key, tuple) or len(key) < 2:
+                    continue
+                if os.path.abspath(str(key[0])) == absolute_path and key[1] != source_signature:
+                    cache.pop(key, None)
+
+
+    def _viewer_pixmap_cache_key(self, file_path, frame_index=None):
+
+        absolute_path = os.path.abspath(file_path)
+        try:
+            stat = os.stat(absolute_path)
+            source_signature = (int(stat.st_mtime_ns), int(stat.st_size))
+        except OSError:
+            source_signature = (0, 0)
+        self._evict_stale_viewer_signature(absolute_path, source_signature)
         brightness = int(getattr(self, 'viewer_brightness_value', 0))
         default_wc, default_ww = self._default_window(absolute_path)
         wc, ww = self.viewer_window_settings.get(absolute_path, (default_wc, default_ww))
@@ -1188,6 +1231,7 @@ class ScoliosisFollowUpApp(QMainWindow):
             frame_index = self.viewer_frame_index if absolute_path == self.viewer_current_path else 0
         return (
             absolute_path,
+            source_signature,
             brightness,
             round(float(wc), 3),
             round(float(ww), 3),
@@ -1211,34 +1255,43 @@ class ScoliosisFollowUpApp(QMainWindow):
             return cached
 
         try:
+            decoded_key = self._viewer_decoded_array_cache_key(absolute_path, frame_index)
+            source = cache_get(self._viewer_decoded_array_cache, decoded_key)
             ds = cache_get(self._viewer_dataset_cache, absolute_path)
-            if ds is None:
-                ds = pydicom.dcmread(absolute_path)
+            if source is None:
+                if ds is None:
+                    ds = pydicom.dcmread(absolute_path)
+                    cache_put_sized(
+                        self._viewer_dataset_cache,
+                        absolute_path,
+                        ds,
+                        max_bytes=self._viewer_dataset_cache_bytes,
+                        max_entries=self._viewer_dataset_cache_limit,
+                    )
+                source = ds.pixel_array
+                if getattr(source, "ndim", 0) == 3:
+                    samples = int(getattr(ds, "SamplesPerPixel", 1) or 1)
+                    if samples > 1 and source.shape[-1] in (3, 4):
+                        source = source[..., 0]
+                    else:
+                        source = source[min(max(0, frame_index), source.shape[0] - 1)]
+                source = np.ascontiguousarray(np.array(source, copy=True))
+                source.setflags(write=False)
                 cache_put_sized(
-                    self._viewer_dataset_cache,
-                    absolute_path,
-                    ds,
-                    max_bytes=self._viewer_dataset_cache_bytes,
-                    max_entries=self._viewer_dataset_cache_limit,
+                    self._viewer_decoded_array_cache,
+                    decoded_key,
+                    source,
+                    max_bytes=self._viewer_decoded_array_cache_bytes,
+                    max_entries=self._viewer_decoded_array_cache_limit,
                 )
+            elif ds is None:
+                # An array hit can outlive the one-entry Dataset cache. Header-only
+                # metadata is enough for render transforms when source_array exists.
+                header_loader = getattr(viewer_core, "_viewer_header_for_path", None)
+                ds = header_loader(self, absolute_path) if callable(header_loader) else None
+                if ds is None:
+                    ds = pydicom.dcmread(absolute_path, stop_before_pixels=True)
 
-            source = ds.pixel_array
-            # pydicom pixel_array erişiminden sonra Dataset artık decoded array
-            # de tutabilir; byte ağırlığını bu noktada yeniden değerlendir.
-            if absolute_path in self._viewer_dataset_cache:
-                cache_put_sized(
-                    self._viewer_dataset_cache,
-                    absolute_path,
-                    ds,
-                    max_bytes=self._viewer_dataset_cache_bytes,
-                    max_entries=self._viewer_dataset_cache_limit,
-                )
-            if getattr(source, "ndim", 0) == 3:
-                samples = int(getattr(ds, "SamplesPerPixel", 1) or 1)
-                if samples > 1 and source.shape[-1] in (3, 4):
-                    source = source[..., 0]
-                else:
-                    source = source[min(max(0, frame_index), source.shape[0] - 1)]
             arr = process_dicom_array(
                 ds,
                 brightness,
@@ -1299,12 +1352,44 @@ class ScoliosisFollowUpApp(QMainWindow):
     def _on_viewer_preload_ready(self, result: PreloadResult):
         request = result.request
         fit = bool(self._viewer_preload_pending.pop(request.request_id, False))
-        if os.path.abspath(request.path) != os.path.abspath(self.viewer_current_path or ''):
-            return
-        if int(request.frame_index) != int(self.viewer_frame_index):
+        is_current = (
+            os.path.abspath(request.path) == os.path.abspath(self.viewer_current_path or '')
+            and int(request.frame_index) == int(self.viewer_frame_index)
+        )
+        try:
+            stat = os.stat(request.path)
+            current_signature = (int(stat.st_mtime_ns), int(stat.st_size))
+        except OSError:
+            current_signature = (0, 0)
+        if tuple(getattr(request, 'source_signature', (0, 0))) != current_signature:
+            if is_current and getattr(self, '_viewer_preload_enabled', False):
+                self.request_viewer_preload(request.path, fit=fit, reason='source-replaced')
             return
         try:
+            decoded_array = result.decoded.array
+            if not is_current:
+                if str(getattr(request, 'reason', '')).startswith('prefetch'):
+                    decoded_array.setflags(write=False)
+                    decoded_key = self._viewer_decoded_array_cache_key(request.path, request.frame_index)
+                    cache_put_sized(
+                        self._viewer_decoded_array_cache,
+                        decoded_key,
+                        decoded_array,
+                        max_bytes=self._viewer_decoded_array_cache_bytes,
+                        max_entries=self._viewer_decoded_array_cache_limit,
+                    )
+                return
+            decoded_array.setflags(write=False)
+            decoded_key = self._viewer_decoded_array_cache_key(request.path, request.frame_index)
+            cache_put_sized(
+                self._viewer_decoded_array_cache,
+                decoded_key,
+                decoded_array,
+                max_bytes=self._viewer_decoded_array_cache_bytes,
+                max_entries=self._viewer_decoded_array_cache_limit,
+            )
             default_wc, default_ww = self._default_window(request.path)
+
             wc, ww = self.viewer_window_settings.get(
                 os.path.abspath(request.path),
                 (default_wc, default_ww),
@@ -1341,6 +1426,7 @@ class ScoliosisFollowUpApp(QMainWindow):
                 max_entries=self._viewer_pixmap_cache_limit,
             )
             self._apply_viewer_preloaded_pixmap(pixmap, fit=fit)
+            self._schedule_viewer_neighbor_prefetch(request.path)
         except Exception as exc:
             self._on_viewer_preload_failed(
                 PreloadError(request=request, message=str(exc), exception_type=exc.__class__.__name__)
@@ -1389,11 +1475,50 @@ class ScoliosisFollowUpApp(QMainWindow):
             self._viewer_preload_pending.pop(request_id, None)
 
 
-    def request_viewer_preload(self, path, *, fit=False):
+    def _schedule_viewer_neighbor_prefetch(self, current_path):
+        """Queue at most two adjacent full-resolution frames after current render."""
+        try:
+            items = self._viewer_file_items()
+        except Exception:
+            return
+        normalized = os.path.abspath(str(current_path))
+        paths = [
+            os.path.abspath(str(item.data(0, Qt.UserRole)))
+            for item in items
+            if item.data(0, Qt.UserRole)
+        ]
+        if normalized not in paths:
+            return
+        index = paths.index(normalized)
+        neighbors = []
+        if index > 0:
+            neighbors.append(paths[index - 1])
+        if index + 1 < len(paths):
+            neighbors.append(paths[index + 1])
+        for neighbor in neighbors[:2]:
+            if not self._viewer_is_dicom(neighbor):
+                continue
+            frame = 0
+            key = self._viewer_decoded_array_cache_key(neighbor, frame)
+            if cache_get(self._viewer_decoded_array_cache, key) is not None:
+                continue
+            slot = f"prefetch:{neighbor}:{frame}"
+            self._viewer_preload_controller.request(
+                neighbor,
+                frame,
+                slot=slot,
+                priority=10,
+                reason="prefetch-neighbor",
+            )
+
+
+    def request_viewer_preload(self, path, *, fit=False, priority=0, reason="current"):
         request = self._viewer_preload_controller.request(
             path,
             self.viewer_frame_index,
             slot="viewer",
+            priority=priority,
+            reason=reason,
         )
         self._viewer_preload_pending[request.request_id] = bool(fit)
         self.viewer_info_label.setText("DICOM hazırlanıyor…")
@@ -1427,6 +1552,14 @@ class ScoliosisFollowUpApp(QMainWindow):
 
     def _viewer_frame_count_for_path(self, file_path):
         return viewer_core._viewer_frame_count_for_path(self, file_path)
+
+
+    def _viewer_header_for_path(self, file_path):
+        return viewer_core._viewer_header_for_path(self, file_path)
+
+
+    def _clear_viewer_path_caches(self, file_path):
+        return viewer_core.clear_viewer_path_caches(self, file_path)
 
 
     def _refresh_viewer_frame_controls(self):

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Callable
 
-from PySide6.QtCore import QAbstractItemModel, QItemSelectionModel, Qt, QTimer, Signal
+from PySide6.QtCore import QAbstractItemModel, QItemSelectionModel, QThreadPool, Qt, QTimer, Signal
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QDialog,
@@ -36,6 +36,7 @@ from modular_app.timeline.longitudinal_models import (
 from modular_app.timeline.longitudinal_service import LongitudinalService, LongitudinalServiceError
 from modular_app.timeline.timeline_model import ExamTimelineTableModel
 from modular_app.timeline.trend_chart import CobbTrendPlot
+from modular_app.ui.background_task import FunctionTask
 from modular_app.ui.ui_clarity import configure_action, create_context_banner
 
 
@@ -66,6 +67,10 @@ class LongitudinalPanel(QWidget):
         self._refresh_timer.setSingleShot(True)
         self._refresh_timer.setInterval(160)
         self._refresh_timer.timeout.connect(self._refresh_snapshot)
+        self._refresh_pool = QThreadPool(self)
+        self._refresh_pool.setMaxThreadCount(1)
+        self._refresh_generation = 0
+        self._refresh_task: FunctionTask | None = None
 
         self.setObjectName("longitudinalPanel")
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -378,7 +383,10 @@ class LongitudinalPanel(QWidget):
         self._refresh_timer.start()
 
     def _refresh_snapshot(self) -> None:
+        self._refresh_generation += 1
+        generation = self._refresh_generation
         if not self.patient_id:
+            self._set_refresh_busy(False)
             self.snapshot = None
             self.timeline_model.clear()
             self.chart.set_points(())
@@ -392,16 +400,50 @@ class LongitudinalPanel(QWidget):
             date_to=self.date_to_edit.text().strip(),
             search_text=self.search_edit.text().strip(),
         )
-        try:
-            snapshot = self.service.load_snapshot(filters)
-        except LongitudinalServiceError as exc:
-            self.snapshot = None
-            self._show_error(exc.message)
-            self.timeline_model.clear()
-            self.chart.set_points(())
-            self._update_empty_state()
+        self._set_refresh_busy(True)
+        task = FunctionTask(lambda selected_filters=filters: self.service.load_snapshot(selected_filters))
+        self._refresh_task = task
+        task.signals.finished.connect(
+            lambda snapshot, token=generation: self._snapshot_ready(token, snapshot)
+        )
+        task.signals.failed.connect(
+            lambda error, token=generation: self._snapshot_failed(token, error)
+        )
+        self._refresh_pool.start(task)
+
+    def _set_refresh_busy(self, busy: bool) -> None:
+        self.refresh_button.setEnabled(not busy)
+        if busy:
+            self.action_status.setText("Takip verisi arka planda yenileniyor…")
+
+    def shutdown(self) -> None:
+        """Invalidate queued results before the panel/dialog is destroyed."""
+        self._refresh_generation += 1
+        self._refresh_timer.stop()
+        self._refresh_pool.clear()
+        self._refresh_task = None
+
+    def _snapshot_ready(self, generation: int, snapshot: object) -> None:
+        if generation != self._refresh_generation:
             return
+        self._refresh_task = None
+        self._set_refresh_busy(False)
         self.set_snapshot(snapshot)
+
+    def _snapshot_failed(self, generation: int, error: object) -> None:
+        if generation != self._refresh_generation:
+            return
+        self._refresh_task = None
+        self._set_refresh_busy(False)
+        self.snapshot = None
+        if isinstance(error, LongitudinalServiceError):
+            message = error.message
+        else:
+            message = str(error) or error.__class__.__name__
+        self._show_error(message)
+        self.timeline_model.clear()
+        self.chart.set_points(())
+        self._update_empty_state()
 
     def _update_from_snapshot(self, snapshot: PanelSnapshot) -> None:
         self.timeline_model.set_rows(snapshot.exams)
@@ -575,6 +617,10 @@ class LongitudinalPanel(QWidget):
         self.warning_label.setText(str(message))
         self.warning_label.setVisible(True)
 
+    def closeEvent(self, event) -> None:
+        self.shutdown()
+        event.accept()
+
 
 def _date_text(value: object) -> str:
     raw = str(value or "").strip()
@@ -626,6 +672,10 @@ class LongitudinalPanelDialog(QDialog):
         self.panel.csv_export_requested.connect(self.csv_export_requested)
         self.panel.pdf_export_requested.connect(self.pdf_export_requested)
         self.panel.error_occurred.connect(self.error_occurred)
+
+    def closeEvent(self, event) -> None:
+        self.panel.shutdown()
+        event.accept()
 
 
 __all__ = ["LongitudinalPanel", "LongitudinalPanelDialog"]

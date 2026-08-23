@@ -1,0 +1,297 @@
+{
+  "generated_at": "2026-08-22T15:27:14",
+  "areas": {
+    ".quarantine": {
+      "bytes": 8986667452,
+      "mib": 8570.35,
+      "files": 56937,
+      "children": [
+        {
+          "name": "mazurowski_scoliosis_project",
+          "bytes": 6999727451,
+          "mib": 6675.46,
+          "files": 23365
+        },
+        {
+          "name": "landmark_lab",
+          "bytes": 1941406920,
+          "mib": 1851.47,
+          "files": 32214
+        },
+        {
+          "name": "mmdetection_v2.16.0",
+          "bytes": 23111088,
+          "mib": 22.04,
+          "files": 1261
+        },
+        {
+          "name": "release-pages",
+          "bytes": 18806893,
+          "mib": 17.94,
+          "files": 56
+        },
+        {
+          "name": "Vertebra-Landmark-Detection_b9fc05c",
+          "bytes": 3615100,
+          "mib": 3.45,
+          "files": 41
+        }
+      ]
+    },
+    ".restore_points": {
+      "bytes": 1533580550,
+      "mib": 1462.54,
+      "files": 7,
+      "children": [
+        {
+          "name": "restore-20260821_143801-bacak-modulu-kaldirilmadan-ve-goruntu-birlestirm.zip",
+          "bytes": 255592466,
+          "mib": 243.75,
+          "files": 1
+        },
+        {
+          "name": "restore-20260821_183958-1-7-4-lisans-cihaz-kimligi-duzeltmesi-yayin-once.zip",
+          "bytes": 255591532,
+          "mib": 243.75,
+          "files": 1
+        },
+        {
+          "name": "restore-20260821_142029-ortak-havuz-ve-kullanici-kontrollu-omurga-eslest.zip",
+          "bytes": 255587684,
+          "mib": 243.75,
+          "files": 1
+        },
+        {
+          "name": "restore-20260821_135858-scoliosis-follow-up-1-7-2-tamamlanmis-kararli-su.zip",
+          "bytes": 255586038,
+          "mib": 243.75,
+          "files": 1
+        },
+        {
+          "name": "restore-20260821_131940-scoliosis-follow-up-1-7-2-yayin-oncesi-surum-duz.zip",
+          "bytes": 255586011,
+          "mib": 243.75,
+          "files": 1
+        },
+        {
+          "name": "restore-20260821_125538-scoliosis-follow-up-1-7-1-yayin-oncesi-docker-si.zip",
+          "bytes": 255584920,
+          "mib": 243.74,
+          "files": 1
+        },
+        {
+          "name": "restore_retention_ui_20260820",
+          "bytes": 51899,
+          "mib": 0.05,
+          "files": 1
+        }
+      ]
+    },
+    "resources": {
+      "bytes": 273845547,
+      "mib": 261.16,
+      "files": 16,
+      "children": [
+        {
+          "name": "ai",
+          "bytes": 272739389,
+          "mib": 260.1,
+          "files": 12
+        },
+        {
+          "name": "branding",
+          "bytes": 1106045,
+          "mib": 1.05,
+          "files": 3
+        },
+        {
+          "name": "security",
+          "bytes": 113,
+          "mib": 0.0,
+          "files": 1
+        }
+      ]
+    },
+    ".venv": {
+      "bytes": 1142008701,
+      "mib": 1089.1,
+      "files": 16347,
+      "children": [
+        {
+          "name": "Lib",
+          "bytes": 1136047273,
+          "mib": 1083.42,
+          "files": 16288
+        },
+        {
+          "name": "Scripts",
+          "bytes": 5961023,
+          "mib": 5.68,
+          "files": 57
+        },
+        {
+          "name": "pyvenv.cfg",
+          "bytes": 334,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": ".gitignore",
+          "bytes": 71,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "Include",
+          "bytes": 0,
+          "mib": 0.0,
+          "files": 0
+        }
+      ]
+    },
+    ".venv-build": {
+      "bytes": 1121066099,
+      "mib": 1069.13,
+      "files": 13783,
+      "children": [
+        {
+          "name": "Lib",
+          "bytes": 1115427377,
+          "mib": 1063.75,
+          "files": 13727
+        },
+        {
+          "name": "Scripts",
+          "bytes": 5638265,
+          "mib": 5.38,
+          "files": 54
+        },
+        {
+          "name": "pyvenv.cfg",
+          "bytes": 386,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": ".gitignore",
+          "bytes": 71,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "Include",
+          "bytes": 0,
+          "mib": 0.0,
+          "files": 0
+        }
+      ]
+    },
+    "releases": {
+      "bytes": 3337414086,
+      "mib": 3182.81,
+      "files": 20,
+      "children": [
+        {
+          "name": "1.7.5",
+          "bytes": 739961040,
+          "mib": 705.68,
+          "files": 4
+        },
+        {
+          "name": "1.7.3",
+          "bytes": 739715404,
+          "mib": 705.45,
+          "files": 4
+        },
+        {
+          "name": "1.7.4",
+          "bytes": 739625137,
+          "mib": 705.36,
+          "files": 4
+        },
+        {
+          "name": "1.7.2",
+          "bytes": 739544768,
+          "mib": 705.28,
+          "files": 4
+        },
+        {
+          "name": "1.7.0",
+          "bytes": 378567737,
+          "mib": 361.03,
+          "files": 4
+        }
+      ]
+    },
+    "project_archives": {
+      "bytes": 92355363,
+      "mib": 88.08,
+      "files": 1,
+      "children": [
+        {
+          "name": "ScoliosisFollowUp_Source_v1.6.0_20260820_221517.zip",
+          "bytes": 92355363,
+          "mib": 88.08,
+          "files": 1
+        }
+      ]
+    },
+    "dist": {
+      "bytes": 706856196,
+      "mib": 674.11,
+      "files": 1558,
+      "children": [
+        {
+          "name": "ScoliosisFollowUp",
+          "bytes": 706856196,
+          "mib": 674.11,
+          "files": 1558
+        }
+      ]
+    },
+    "installer": {
+      "bytes": 740279892,
+      "mib": 705.99,
+      "files": 2,
+      "children": [
+        {
+          "name": "ScoliosisFollowUp_Setup.exe",
+          "bytes": 370180642,
+          "mib": 353.03,
+          "files": 1
+        },
+        {
+          "name": "ScoliosisFollowUp_Setup_1.7.1.exe",
+          "bytes": 370099250,
+          "mib": 352.95,
+          "files": 1
+        }
+      ]
+    },
+    "build": {
+      "bytes": 72613451,
+      "mib": 69.25,
+      "files": 66,
+      "children": [
+        {
+          "name": "ScoliosisFollowUp",
+          "bytes": 53781313,
+          "mib": 51.29,
+          "files": 16
+        },
+        {
+          "name": "release-site-1.7.5",
+          "bytes": 18829964,
+          "mib": 17.96,
+          "files": 49
+        },
+        {
+          "name": "spec",
+          "bytes": 2174,
+          "mib": 0.0,
+          "files": 1
+        }
+      ]
+    }
+  }
+}

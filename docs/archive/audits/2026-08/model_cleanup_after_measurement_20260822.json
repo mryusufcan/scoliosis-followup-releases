@@ -1,0 +1,75 @@
+{
+  "generated_at": "2026-08-22T16:05:46",
+  "areas": {
+    ".quarantine": {
+      "exists": true,
+      "bytes": 7914046360,
+      "mib": 7547.42,
+      "files": 56931
+    },
+    ".restore_points": {
+      "exists": true,
+      "bytes": 1533588603,
+      "mib": 1462.54,
+      "files": 8
+    },
+    "resources\\ai": {
+      "exists": true,
+      "bytes": 272739389,
+      "mib": 260.1,
+      "files": 12
+    }
+  },
+  "models": [
+    {
+      "path": "resources\\ai\\mazurowski\\mazurowski_mask_rcnn.onnx",
+      "mib": 167.76,
+      "sha256": "454daa1761a7975433b90bb3a00e9c8d2ddcb8e05ba17b0ebade11e39b495726"
+    },
+    {
+      "path": "resources\\ai\\vertebra_landmarks_experimental\\vertebra_landmarks_68.onnx",
+      "mib": 92.33,
+      "sha256": "f3e1e6b319064a2288a792678d92dabf1e56e8004813fff3b372be1c214c440f"
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn.onnx",
+      "mib": 167.76,
+      "sha256": "a9dbcc3bc33c7c06e0c9410fab903d22a4e373a85b282eed3336edf61614c58e"
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416.onnx",
+      "mib": 167.76,
+      "sha256": "1640e2b3f7527e7cc36b1438c3b85d4fd75bd17b04ed2b6d4f62e32fc5d0281d"
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_dynamic.onnx",
+      "mib": 167.76,
+      "sha256": "400ba7031ac06ebc90cbd3f22de5e1d749f51c0f59f195931e67b8b02af59a3f"
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_dynamic_standard.onnx",
+      "mib": 167.76,
+      "sha256": "a1e92cbc1823f8b6a54407052030e1ddcf5e758869da425247e0b83bbde71646"
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_standard.onnx",
+      "mib": 167.76,
+      "sha256": "2b0b671712d705ae50f9a65b5edcdefe01ae23a5bf7ee90e1bfd5c689143e5a4"
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\downloaded_weights\\mask_rcnn_r50_fpn_2x_coco_cp4\\epoch_24.pth",
+      "mib": 334.98,
+      "sha256": "5036206197a145d58334918263ded9eb34b0eeb3e83cf48f83ef911ada7112dc"
+    },
+    {
+      "path": ".quarantine\\landmark_lab\\weights_quarantine\\model_last.pth",
+      "mib": 92.47,
+      "sha256": "6a779e01b9a41601334e0a9541278fc557a95bd650c6c8de311204821509d19b"
+    },
+    {
+      "path": ".quarantine\\landmark_lab\\weights_quarantine\\weights.zip",
+      "mib": 85.66,
+      "sha256": "1b088004614c09ad6605f444c39b160144b07704b58bae13f21dd19665d7a1d2"
+    }
+  ]
+}

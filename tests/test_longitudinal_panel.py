@@ -1,6 +1,7 @@
 import os
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
@@ -10,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tests"))
 
-from PySide6.QtCore import Qt  # noqa: E402
+from PySide6.QtCore import QEventLoop, Qt  # noqa: E402
 from PySide6.QtWidgets import QApplication  # noqa: E402
 
 from modular_app.database.exam_repository import ExamRepository  # noqa: E402
@@ -116,6 +117,17 @@ class LongitudinalPanelTests(unittest.TestCase):
                 created_by="Test",
             )
         self.panel = LongitudinalPanel(self.repository, patient_id=self.patient_id)
+        self.assertTrue(self.wait_until(lambda: self.panel.snapshot is not None))
+
+    def wait_until(self, predicate, timeout=3.0):
+        deadline = time.perf_counter() + timeout
+        while time.perf_counter() < deadline:
+            _APP.processEvents(QEventLoop.ProcessEventsFlag.AllEvents, 20)
+            if predicate():
+                return True
+            time.sleep(0.005)
+        _APP.processEvents(QEventLoop.ProcessEventsFlag.AllEvents, 50)
+        return bool(predicate())
 
     def tearDown(self):
         self.panel.close()
@@ -140,7 +152,7 @@ class LongitudinalPanelTests(unittest.TestCase):
         self.panel.error_occurred.connect(errors.append)
         self.panel.date_from_edit.setText("20251340")
         self.panel._refresh_snapshot()
-        self.assertTrue(errors)
+        self.assertTrue(self.wait_until(lambda: bool(errors)))
         self.assertIsNone(self.panel.snapshot)
 
     def test_dialog_forwards_open_and_overlay_signals(self):
@@ -150,6 +162,7 @@ class LongitudinalPanelTests(unittest.TestCase):
         dialog.exam_open_requested.connect(opened.append)
         dialog.overlay_requested.connect(overlays.append)
 
+        self.assertTrue(self.wait_until(lambda: dialog.panel.snapshot is not None))
         dialog.panel.timeline_table.selectRow(0)
         dialog.panel._open_selected()
         self.assertEqual(len(opened), 1)

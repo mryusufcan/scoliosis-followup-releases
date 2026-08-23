@@ -27,11 +27,12 @@ VERSION_FILE = PROJECT_ROOT / "VERSION"
 UPDATE_FEED_FILE = PROJECT_ROOT / "update.json"
 
 def application_data_dir() -> Path:
-    if getattr(sys, "frozen", False):
-        local_data = os.environ.get("LOCALAPPDATA")
-        base = Path(local_data) if local_data else Path.home() / "AppData" / "Local"
-        return base / "ScoliosisFollowUp"
-    return MODULAR_APP_DIR / "data"
+    override = os.environ.get("SCOLIOSIS_FOLLOWUP_DATA_DIR", "").strip()
+    if override:
+        return Path(override).expanduser().resolve()
+    local_data = os.environ.get("LOCALAPPDATA")
+    base = Path(local_data) if local_data else Path.home() / "AppData" / "Local"
+    return base / "ScoliosisFollowUp"
 
 DATA_DIR = application_data_dir()
 DB_PATH = DATA_DIR / "scoliosis.db"

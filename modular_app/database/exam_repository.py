@@ -470,6 +470,113 @@ class ExamRepository:
                 })
         return issues
 
+    def get_follow_up_report_bundle(
+        self,
+        patient_id: str,
+        *,
+        angle_threshold: float | None = None,
+    ) -> dict[str, Any]:
+        """Read all follow-up report sections using one SQLite connection.
+
+        This is read-only and intentionally returns plain dictionaries so the
+        PDF/CSV generators can run in a worker without touching Qt objects.
+        """
+        normalized_patient_id = str(patient_id)
+        with self.connection() as con:
+            profile_row = con.execute(
+                "SELECT * FROM patient_profiles WHERE patient_id=?",
+                (normalized_patient_id,),
+            ).fetchone()
+            profile = dict(profile_row) if profile_row else {
+                "patient_id": normalized_patient_id,
+                "diagnosis": "",
+                "referring_physician": "",
+                "treatment_plan": "",
+                "next_follow_up_date": "",
+                "notes": "",
+                "updated_by": "",
+                "updated_at": "",
+            }
+            measurements = [
+                dict(row)
+                for row in con.execute(
+                    """SELECT * FROM cobb_measurements WHERE patient_id = ?
+                       ORDER BY exam_date DESC, created_at DESC, id DESC""",
+                    (normalized_patient_id,),
+                ).fetchall()
+            ]
+            exams = [
+                dict(row)
+                for row in con.execute(
+                    """SELECT
+                           e.*,
+                           (SELECT c.angle_degrees
+                            FROM cobb_measurements AS c
+                            WHERE c.patient_id = e.patient_id AND c.dicom_path = e.dicom_path
+                            ORDER BY c.created_at DESC, c.id DESC
+                            LIMIT 1) AS latest_cobb,
+                           (SELECT c.is_locked
+                            FROM cobb_measurements AS c
+                            WHERE c.patient_id = e.patient_id AND c.dicom_path = e.dicom_path
+                            ORDER BY c.created_at DESC, c.id DESC
+                            LIMIT 1) AS latest_cobb_locked,
+                           (SELECT COUNT(*)
+                            FROM comparison_sessions AS s
+                            WHERE s.patient_id = e.patient_id
+                              AND (s.reference_path = e.dicom_path OR s.comparison_path = e.dicom_path)
+                           ) AS overlay_session_count
+                       FROM exams AS e
+                       WHERE e.patient_id = ?
+                       ORDER BY e.exam_date DESC, e.id DESC""",
+                    (normalized_patient_id,),
+                ).fetchall()
+            ]
+            sessions = [
+                dict(row)
+                for row in con.execute(
+                    """SELECT * FROM comparison_sessions
+                       WHERE patient_id = ?
+                       ORDER BY created_at DESC, id DESC""",
+                    (normalized_patient_id,),
+                ).fetchall()
+            ]
+            labels = [
+                dict(row)
+                for row in con.execute(
+                    """SELECT * FROM vertebra_labels
+                       WHERE patient_id = ? ORDER BY created_at, id""",
+                    (normalized_patient_id,),
+                ).fetchall()
+            ]
+            image_notes = [
+                dict(row)
+                for row in con.execute(
+                    """SELECT * FROM image_notes
+                       WHERE patient_id = ? ORDER BY created_at DESC, id DESC""",
+                    (normalized_patient_id,),
+                ).fetchall()
+            ]
+            setting_row = con.execute(
+                "SELECT setting_value FROM app_settings WHERE setting_key=?",
+                ("follow_up/cobb_alert_threshold",),
+            ).fetchone()
+            configured_threshold = setting_row[0] if setting_row else "5"
+
+        try:
+            threshold = float(configured_threshold if angle_threshold is None else angle_threshold)
+        except (TypeError, ValueError):
+            threshold = 5.0
+        alerts = _build_follow_up_alerts(measurements, profile, threshold)
+        return {
+            "profile": profile,
+            "measurements": measurements,
+            "exams": exams,
+            "sessions": sessions,
+            "labels": labels,
+            "image_notes": image_notes,
+            "alerts": alerts,
+        }
+
     def list_patient_follow_up(self, patient_id: str) -> list[dict[str, Any]]:
         """Read-only per-exam overview used by the follow-up timeline window."""
         with self.connection() as con:
@@ -935,6 +1042,41 @@ class ExamRepository:
                 (str(key), str(value)),
             )
 
+    def configure_local_user(self, display_name: str, role: str, *, replace_default: bool = False) -> dict[str, Any]:
+        """Create or update a local user selected by the first-use flow."""
+        name = str(display_name).strip()
+        if not name:
+            raise ValueError("Kullanıcı adı boş bırakılamaz.")
+        if role not in {"Yönetici", "Hekim", "Teknisyen"}:
+            raise ValueError("Geçersiz kullanıcı rolü.")
+        with self.connection() as con:
+            row = con.execute("SELECT * FROM app_users WHERE display_name=?", (name,)).fetchone()
+            if row is not None:
+                con.execute("UPDATE app_users SET role=?, active=1 WHERE id=?", (role, int(row["id"])))
+                user_id = int(row["id"])
+            else:
+                default = con.execute(
+                    "SELECT * FROM app_users WHERE display_name='Yerel Yönetici' AND active=1"
+                ).fetchone()
+                active_count = int(con.execute("SELECT COUNT(*) FROM app_users WHERE active=1").fetchone()[0])
+                if replace_default and default is not None and active_count == 1:
+                    user_id = int(default["id"])
+                    con.execute(
+                        "UPDATE app_users SET display_name=?, role=? WHERE id=?",
+                        (name, role, user_id),
+                    )
+                else:
+                    cur = con.execute(
+                        "INSERT INTO app_users(display_name, role) VALUES (?, ?)",
+                        (name, role),
+                    )
+                    user_id = int(cur.lastrowid)
+            selected = con.execute("SELECT * FROM app_users WHERE id=?", (user_id,)).fetchone()
+        result = dict(selected)
+        result.pop("password_salt", None)
+        result.pop("password_hash", None)
+        return result
+
     @staticmethod
     def _longitudinal_pair_key(row: dict[str, Any]) -> tuple[str, str, str] | None:
         upper = str(row.get("upper_vertebra", "") or "").strip()
@@ -996,43 +1138,92 @@ class ExamRepository:
 
     def follow_up_alerts(self, patient_id: str, angle_threshold: float = 5.0) -> list[dict[str, str]]:
         """Return follow-up flags only; this function never makes a diagnosis."""
-        alerts: list[dict[str, str]] = []
-        limit = abs(float(angle_threshold))
+        return _build_follow_up_alerts(
+            self.list_cobb_measurements(patient_id),
+            self.get_patient_profile(patient_id),
+            angle_threshold,
+        )
 
-        # Longitudinal change must be evaluated within the same end-vertebra pair
-        # and between distinct exam dates. Repeat measurements of the same exam
-        # must never become artificial progression points.
-        for (upper, lower, direction), series in self.longitudinal_cobb_series(patient_id).items():
-            if len(series) < 2:
-                continue
 
-            previous, latest = series[-2], series[-1]
-            previous_angle = float(previous["angle_degrees"])
-            latest_angle = float(latest["angle_degrees"])
-            delta = latest_angle - previous_angle
 
-            if abs(delta) >= limit:
-                alerts.append({
-                    "severity": "Uyarı",
-                    "kind": f"Cobb değişimi ({upper}–{lower}{' | ' + direction if direction else ''})",
-                    "details": (
-                        f"{previous.get('exam_date', '—')} → {latest.get('exam_date', '—')}: "
-                        f"{previous_angle:.2f}° → {latest_angle:.2f}° "
-                        f"(Δ {delta:+.2f}°; eşik: {limit:.1f}°). "
-                        "Bu yalnızca sayısal takip uyarısıdır; klinik değerlendirme gerektirir."
+def _build_follow_up_alerts(
+    measurements: list[dict[str, Any]],
+    profile: dict[str, Any],
+    angle_threshold: float = 5.0,
+) -> list[dict[str, str]]:
+    """Build numeric follow-up flags from already loaded report data."""
+    alerts: list[dict[str, str]] = []
+    limit = abs(float(angle_threshold))
+    groups: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
+    for row in measurements:
+        upper = str(row.get("upper_vertebra", "") or "").strip()
+        lower = str(row.get("lower_vertebra", "") or "").strip()
+        direction = str(row.get("curve_direction", "") or "").strip()
+        if upper and lower:
+            groups.setdefault((upper, lower, direction), []).append(row)
+
+    for (upper, lower, direction), rows in groups.items():
+        by_date: dict[str, list[dict[str, Any]]] = {}
+        for row in rows:
+            exam_date = str(row.get("exam_date", "") or "").strip()
+            if exam_date:
+                by_date.setdefault(exam_date, []).append(row)
+        series: list[dict[str, Any]] = []
+        for same_date in by_date.values():
+            series.append(
+                max(
+                    same_date,
+                    key=lambda row: (
+                        bool(row.get("is_locked")),
+                        str(row.get("created_at", "") or ""),
+                        int(row.get("id", 0) or 0),
                     ),
-                })
-        follow_up = str(self.get_patient_profile(patient_id).get("next_follow_up_date", "")).strip()
-        if follow_up:
-            parsed = None
-            for fmt in ("%Y%m%d", "%Y-%m-%d"):
-                try:
-                    parsed = datetime.strptime(follow_up, fmt).date()
-                    break
-                except ValueError:
-                    pass
-            if parsed is None:
-                alerts.append({"severity": "Bilgi", "kind": "Kontrol tarihi", "details": "Kontrol tarihi YYYYMMDD veya YYYY-AA-GG biçiminde olmalı."})
-            elif parsed <= date.today():
-                alerts.append({"severity": "Uyarı", "kind": "Kontrol zamanı", "details": f"Planlanan takip tarihi geldi/geçti: {follow_up}."})
-        return alerts
+                )
+            )
+        series.sort(
+            key=lambda row: (
+                str(row.get("exam_date", "") or ""),
+                str(row.get("created_at", "") or ""),
+                int(row.get("id", 0) or 0),
+            )
+        )
+        if len(series) < 2:
+            continue
+        previous, latest = series[-2], series[-1]
+        previous_angle = float(previous["angle_degrees"])
+        latest_angle = float(latest["angle_degrees"])
+        delta = latest_angle - previous_angle
+        if abs(delta) >= limit:
+            alerts.append({
+                "severity": "Uyarı",
+                "kind": f"Cobb değişimi ({upper}–{lower}{' | ' + direction if direction else ''})",
+                "details": (
+                    f"{previous.get('exam_date', '—')} → {latest.get('exam_date', '—')}: "
+                    f"{previous_angle:.2f}° → {latest_angle:.2f}° "
+                    f"(Δ {delta:+.2f}°; eşik: {limit:.1f}°). "
+                    "Bu yalnızca sayısal takip uyarısıdır; klinik değerlendirme gerektirir."
+                ),
+            })
+
+    follow_up = str(profile.get("next_follow_up_date", "") or "").strip()
+    if follow_up:
+        parsed = None
+        for fmt in ("%Y%m%d", "%Y-%m-%d"):
+            try:
+                parsed = datetime.strptime(follow_up, fmt).date()
+                break
+            except ValueError:
+                pass
+        if parsed is None:
+            alerts.append({
+                "severity": "Bilgi",
+                "kind": "Kontrol tarihi",
+                "details": "Kontrol tarihi YYYYMMDD veya YYYY-AA-GG biçiminde olmalı.",
+            })
+        elif parsed <= date.today():
+            alerts.append({
+                "severity": "Uyarı",
+                "kind": "Kontrol zamanı",
+                "details": f"Planlanan takip tarihi geldi/geçti: {follow_up}.",
+            })
+    return alerts

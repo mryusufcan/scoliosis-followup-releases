@@ -109,7 +109,8 @@ ACTIONS = {
         ToolAction("Update JSON Oluştur", "Güncelleme bildirim dosyasını yeniden üret.", "bat", "scripts/release/Guncelleme_JSON_Olustur.bat", "blue"),
         ToolAction("Yayın Paketini Doğrula", "Mevcut release paketini kabul testinden geçir.", "bat", "scripts/release/Yayin_Paketini_Dogrula.bat", "green"),
         ToolAction("Dağıtım Güvenlik Denetimi", "Secret/admin dosyası/paketleme güvenliği kontrollerini çalıştır.", "python", "scripts/release/Dagitim_Guvenlik_Denetimi.py", "purple"),
-        ToolAction("Tek Tık Tam Yayın", "Test → build → installer → update → doğrulama zincirini çalıştır.", "python", "scripts/release/Tek_Tik_Yayin.py", "red", True),
+        ToolAction("Tek Tık Yayın Paketi", "Test → build → installer → update → yerel doğrulama zincirini çalıştır ve yüklemeye hazır paketi oluştur.", "python", "scripts/release/Tek_Tik_Yayin.py", "orange", True),
+        ToolAction("GitHub'a Yayımla", "Hazır paketi ayrıntılı sürüm notlarıyla GitHub Releases'a yükle; README ve Pages'i güncelle ve uzaktan doğrula.", "python_args", "scripts/release/GitHub_Yayinla.py --yes", "red", True),
     ],
     "files": [
         ToolAction("Kök Klasörü Sadeleştir", "Teknik kaynakları Windows Gezgini'nde gizle; ana araç, belgeler ve dağıtım/arşiv çıktıları görünür kalsın.", "python_args", "scripts/maintenance/project_root_visibility.py --hide", "purple", True),

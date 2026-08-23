@@ -5,13 +5,18 @@ set "ROOT=%~dp0..\.."
 cd /d "%ROOT%"
 title Scoliosis Follow-Up - Imzali Guncelleme Dosyasi
 
-if not exist ".venv-build\Scripts\python.exe" goto missing_environment
+set "PYTHON_EXE="
+if exist ".venv-build\Scripts\python.exe" set "PYTHON_EXE=.venv-build\Scripts\python.exe"
+if not defined PYTHON_EXE if exist ".venv\Scripts\python.exe" set "PYTHON_EXE=.venv\Scripts\python.exe"
+if not defined PYTHON_EXE goto missing_environment
 if not exist ".\VERSION" goto missing_version
 if not exist ".\installer\ScoliosisFollowUp_Setup.exe" goto missing_installer
-if not exist ".\security_keys\integrity_private.pem" goto missing_key
+if "%SCOLIOSIS_FOLLOWUP_SECURITY_DIR%"=="" set "SCOLIOSIS_FOLLOWUP_SECURITY_DIR=%LOCALAPPDATA%\ScoliosisFollowUp\security_keys"
+set "INTEGRITY_PRIVATE_KEY=%SCOLIOSIS_FOLLOWUP_SECURITY_DIR%\integrity_private.pem"
+if not exist "%INTEGRITY_PRIVATE_KEY%" goto missing_key
 
 set /p "APP_VERSION=" < ".\VERSION"
-set "DEFAULT_URL=https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/v%APP_VERSION%/ScoliosisFollowUp_Setup.exe"
+set "DEFAULT_URL=https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/%APP_VERSION%/ScoliosisFollowUp_Setup_%APP_VERSION%.exe"
 
 echo Surum: %APP_VERSION%
 echo Varsayilan kurulum adresi:
@@ -28,7 +33,7 @@ if /I not "%CONFIRM%"=="EVET" goto cancelled
 
 :generate
 echo.
-".venv-build\Scripts\python.exe" ".\packaging\generate_update_feed.py" --version "%APP_VERSION%" --url "%DOWNLOAD_URL%" --installer ".\installer\ScoliosisFollowUp_Setup.exe" --private-key ".\security_keys\integrity_private.pem" --output ".\update.json"
+"%PYTHON_EXE%" ".\packaging\generate_update_feed.py" --version "%APP_VERSION%" --url "%DOWNLOAD_URL%" --installer ".\installer\ScoliosisFollowUp_Setup.exe" --private-key "%INTEGRITY_PRIVATE_KEY%" --output ".\update.json"
 if errorlevel 1 goto failed
 
 echo.
@@ -40,7 +45,7 @@ pause
 exit /b 0
 
 :missing_environment
-echo Paketleme ortami bulunamadi. Once Tam_Surum_Olustur.bat dosyasini calistirin.
+echo Python ortami bulunamadi. .venv veya .venv-build ortamlarindan biri gerekli.
 goto failed
 
 :missing_version
@@ -52,7 +57,7 @@ echo Kurulum dosyasi bulunamadi. Once Tam_Surum_Olustur.bat dosyasini calistirin
 goto failed
 
 :missing_key
-echo Gizli butunluk anahtari bulunamadi: security_keys\integrity_private.pem
+echo Gizli butunluk anahtari bulunamadi: %INTEGRITY_PRIVATE_KEY%
 goto failed
 
 :cancelled

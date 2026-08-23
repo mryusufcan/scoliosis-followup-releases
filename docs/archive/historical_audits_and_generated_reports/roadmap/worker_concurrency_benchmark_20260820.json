@@ -1,0 +1,137 @@
+{
+  "kind": "real_dicom_worker_concurrency_benchmark",
+  "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+  "cpu_count": 16,
+  "files": [
+    "dev_data\\dicom_samples\\SE00001\\IM00002",
+    "dev_data\\dicom_samples\\SE00001\\IM00003",
+    "dev_data\\dicom_samples\\SE00001\\IM00004",
+    "dev_data\\dicom_samples\\SE00001\\IM00005"
+  ],
+  "measurement_note": "Gerçek DICOM decode; QImage/QPixmap yok; sonuç array'leri benchmark sonunda serbest bırakılır.",
+  "results": [
+    {
+      "workers": 1,
+      "files": 4,
+      "decoded": 4,
+      "failures": [],
+      "wall_ms": 4041.953,
+      "cpu_ms": 4031.25,
+      "cpu_to_wall": 0.997,
+      "throughput_files_per_s": 0.99,
+      "throughput_megapixels_per_s": 6.593,
+      "decoded_array_bytes_retained_by_results": 53296640,
+      "wall_ms_mean": 3980.603,
+      "wall_ms_min": 3919.253,
+      "repeats": [
+        {
+          "workers": 1,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 3919.253,
+          "cpu_ms": 3921.875,
+          "cpu_to_wall": 1.001,
+          "throughput_files_per_s": 1.021,
+          "throughput_megapixels_per_s": 6.799,
+          "decoded_array_bytes_retained_by_results": 53296640
+        },
+        {
+          "workers": 1,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4041.953,
+          "cpu_ms": 4031.25,
+          "cpu_to_wall": 0.997,
+          "throughput_files_per_s": 0.99,
+          "throughput_megapixels_per_s": 6.593,
+          "decoded_array_bytes_retained_by_results": 53296640
+        }
+      ],
+      "speedup_vs_one_worker": 1.0
+    },
+    {
+      "workers": 2,
+      "files": 4,
+      "decoded": 4,
+      "failures": [],
+      "wall_ms": 4021.064,
+      "cpu_ms": 4062.5,
+      "cpu_to_wall": 1.01,
+      "throughput_files_per_s": 0.995,
+      "throughput_megapixels_per_s": 6.627,
+      "decoded_array_bytes_retained_by_results": 53296640,
+      "wall_ms_mean": 4042.341,
+      "wall_ms_min": 4021.064,
+      "repeats": [
+        {
+          "workers": 2,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4063.617,
+          "cpu_ms": 4078.125,
+          "cpu_to_wall": 1.004,
+          "throughput_files_per_s": 0.984,
+          "throughput_megapixels_per_s": 6.558,
+          "decoded_array_bytes_retained_by_results": 53296640
+        },
+        {
+          "workers": 2,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4021.064,
+          "cpu_ms": 4062.5,
+          "cpu_to_wall": 1.01,
+          "throughput_files_per_s": 0.995,
+          "throughput_megapixels_per_s": 6.627,
+          "decoded_array_bytes_retained_by_results": 53296640
+        }
+      ],
+      "speedup_vs_one_worker": 0.985
+    },
+    {
+      "workers": 4,
+      "files": 4,
+      "decoded": 4,
+      "failures": [],
+      "wall_ms": 4065.526,
+      "cpu_ms": 4171.875,
+      "cpu_to_wall": 1.026,
+      "throughput_files_per_s": 0.984,
+      "throughput_megapixels_per_s": 6.555,
+      "decoded_array_bytes_retained_by_results": 53296640,
+      "wall_ms_mean": 4049.986,
+      "wall_ms_min": 4034.446,
+      "repeats": [
+        {
+          "workers": 4,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4034.446,
+          "cpu_ms": 4125.0,
+          "cpu_to_wall": 1.022,
+          "throughput_files_per_s": 0.991,
+          "throughput_megapixels_per_s": 6.605,
+          "decoded_array_bytes_retained_by_results": 53296640
+        },
+        {
+          "workers": 4,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4065.526,
+          "cpu_ms": 4171.875,
+          "cpu_to_wall": 1.026,
+          "throughput_files_per_s": 0.984,
+          "throughput_megapixels_per_s": 6.555,
+          "decoded_array_bytes_retained_by_results": 53296640
+        }
+      ],
+      "speedup_vs_one_worker": 0.983
+    }
+  ]
+}

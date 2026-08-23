@@ -51,11 +51,16 @@ if (-not (Test-Path $venvPython)) {
 }
 
 & $venvPython -m pip install --upgrade pip
-& $venvPython -m pip install -r "$root\requirements.txt"
+& $venvPython -m pip install -r "$root\requirements-dev.txt"
 
 # Her dağıtım kendi Ed25519 bütünlük anahtarını kullanır. Özel anahtar sadece
 # paketleme bilgisayarında kalır; EXE'ye veya kurulum dosyasına eklenmez.
-$securityKeyDirectory = Join-Path $root 'security_keys'
+$securityKeyDirectory = if ($env:SCOLIOSIS_FOLLOWUP_SECURITY_DIR) {
+    $env:SCOLIOSIS_FOLLOWUP_SECURITY_DIR
+} else {
+    Join-Path $env:LOCALAPPDATA 'ScoliosisFollowUp\security_keys'
+}
+New-Item -ItemType Directory -Force -Path $securityKeyDirectory | Out-Null
 $integrityKey = if ($IntegrityPrivateKey) { $IntegrityPrivateKey } else { Join-Path $securityKeyDirectory 'integrity_private.pem' }
 $integrityPublicKey = Join-Path $root 'resources\security\integrity_public_key.pem'
 $integrityIdentity = Join-Path $root 'modular_app\security\integrity_identity.py'
@@ -122,11 +127,24 @@ New-Item -ItemType Directory -Force -Path $specDirectory | Out-Null
   --collect-submodules dicom `
   --collect-submodules anonymization `
   --collect-submodules ai `
-  --collect-all pylibjpeg `
-  --collect-all libjpeg `
-  --collect-all openjpeg `
-  --collect-all rle `
-  --collect-all jpeg_ls `
+  --hidden-import pylibjpeg `
+  --hidden-import libjpeg `
+  --hidden-import openjpeg `
+  --hidden-import jpeg_ls `
+  --hidden-import jpeg_ls.CharLS `
+  --hidden-import rle `
+  --collect-binaries libjpeg `
+  --collect-binaries openjpeg `
+  --collect-binaries jpeg_ls `
+  --collect-binaries rle `
+  --exclude-module libjpeg.tests `
+  --exclude-module openjpeg.tests `
+  --exclude-module rle.tests `
+  --exclude-module rle.benchmarks `
+  --exclude-module pylibjpeg.tests `
+  --exclude-module pylibjpeg.tools.tests `
+  --exclude-module jpeg_ls.tests `
+  --exclude-module jpeg_ls.example `
   "$root\main.py"
 if ($LASTEXITCODE -ne 0) { throw "EXE paketleme başarısız oldu." }
 

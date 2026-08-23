@@ -19,7 +19,7 @@ powershell -ExecutionPolicy Bypass -File .\packaging\build_windows.ps1 -Clean
 ```
 
 Betik, `.venv-build` adlı ayrı bir paketleme ortamı oluşturur; gerekli tüm
-kütüphaneleri `requirements.txt` üzerinden yükler, testleri çalıştırır ve EXE'yi
+kütüphaneleri `requirements-dev.txt` üzerinden yükler, testleri çalıştırır ve EXE'yi
 oluşturur.
 
 ## Çıktı ve dağıtım
@@ -46,7 +46,7 @@ silmez. Yedekleme için uygulamadaki şifreli veritabanı yedeği özelliğini k
 
 ## Dağıtım güvenliği
 
-Paketleme betiği her EXE üretiminde `security_keys\integrity_private.pem`
+Paketleme betiği her EXE üretiminde `%LOCALAPPDATA%\ScoliosisFollowUp\security_keys\integrity_private.pem`
 özel anahtarını oluşturur veya yeniden kullanır. Bu anahtar **yalnızca paketleme
 bilgisayarında** kalır; başka bilgisayara, Git deposuna veya müşteriye asla
 kopyalanmamalıdır. Kaybolmaması için güvenli bir parola kasasına ya da şifreli
@@ -59,8 +59,9 @@ altına yapılır; normal kullanıcılar kod dosyalarını değiştiremez.
 
 Bu koruma, uygulama kodunun kopyalanmasını zorlaştırır ve kurcalamayı tespit
 eder; fiziksel olarak bilgisayarın yönetici yetkisine sahip saldırgana karşı
-mutlak koruma sağlamaz. Kurumsal dağıtımda ayrıca kod imzalama sertifikası
-kullanın.
+mutlak koruma sağlamaz. Kurumsal dağıtımda ayrıca Authenticode kod imzalama
+sertifikası kullanın. Sertifika yoksa paket teknik olarak oluşturulabilir,
+ancak bu paket public release olarak yayımlanamaz.
 
 ## Kurulum sihirbazı (isteğe bağlı)
 
@@ -74,7 +75,7 @@ powershell -ExecutionPolicy Bypass -File .\packaging\build_installer.ps1
 Çıktı: `installer\ScoliosisFollowUp_Setup.exe`. Kurulum kaldırıldığında da
 yerel hasta kayıtları ve lisans durumu silinmez.
 
-## Kod imzalama (isteğe bağlı, kurumsal dağıtım için önerilir)
+## Kod imzalama (public release için zorunlu)
 
 Kod imzalama sertifikası Windows sertifika deposunda kuruluysa, sertifika
 parmak izini kullanarak önce EXE'yi, sonra kurulum dosyasını imzalayabilirsiniz:
@@ -84,10 +85,20 @@ powershell -ExecutionPolicy Bypass -File .\packaging\build_windows.ps1 -Clean -C
 powershell -ExecutionPolicy Bypass -File .\packaging\build_installer.ps1 -CertificateThumbprint "SERTIFIKA_PARMAK_IZI"
 ```
 
-Bu seçenek için Windows SDK içindeki `signtool.exe` gerekir. Sertifika veya
-Windows SDK yoksa parametreyi vermeyin; imzasız paket normal şekilde oluşur.
+Bu seçenek için Windows SDK içindeki `signtool.exe` ve geçerli bir Code Signing
+sertifikası gerekir. Mevcut bilgisayarda yapılan salt-okunur kontrolünde geçerli
+Code Signing sertifikası bulunmadı ve mevcut QA EXE’si `NotSigned` durumundadır.
+Bu yüzden 1.7.8 public release’i Authenticode sertifikası kurulana kadar
+bilinçli olarak yayımlanmayacaktır. Self-signed sertifika son kullanıcı güveni
+sağlamadığı için public release çözümü değildir.
 
-## İmzalı güncelleme bildirimi (isteğe bağlı)
+`.github/workflows/windows-release.yml` etikete push edildiğinde yalnızca build
+ve test çalıştırır. Public GitHub Release için workflow_dispatch ekranında
+`publish=true` açıkça seçilmeli, sertifika kurulmuş güvenilir bir signing runner
+kullanılmalı ve `WINDOWS_CERTIFICATE_THUMBPRINT` tanımlı olmalıdır. Private
+signing key veya PFX dosyası kaynak koduna ya da GitHub artifact’ına konulmaz.
+
+## İmzalı güncelleme bildirimi
 
 Uygulama güncellemeyi kendisi indirmez veya kurmaz; yalnızca HTTPS üzerinde
 yayınlanan imzalı bir bildirimi doğrular ve kullanıcıya indirme adresini gösterir.
@@ -99,7 +110,7 @@ bildirimi oluşturun:
   --version "1.4.0" `
   --url "https://ornek-alanadiniz.com/ScoliosisFollowUp_Setup.exe" `
   --installer .\installer\ScoliosisFollowUp_Setup.exe `
-  --private-key .\security_keys\integrity_private.pem `
+  --private-key "$env:LOCALAPPDATA\ScoliosisFollowUp\security_keys\integrity_private.pem" `
   --output .\update.json
 ```
 

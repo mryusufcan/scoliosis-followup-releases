@@ -9,7 +9,8 @@ from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QFont, QIcon
 from PySide6.QtWidgets import QGraphicsItem, QMenu, QMessageBox, QTreeWidgetItem
 from modular_app.ui.ui_clarity import set_context
-from modular_app.performance_utils import cache_get
+from modular_app.performance_utils import cache_get, cache_put
+from modular_app.ui.dicom_codec import codec_status
 
 
 # AÇILAN GÖRÜNTÜLER AĞACI — önizlemesiz hiyerarşi satırları yoğun kalır;
@@ -31,14 +32,9 @@ def _add_viewer_paths(app, paths):
         app._remember_shared_paths([absolute_path])
         if absolute_path in known_paths:
             continue
-        # Liste ikonu için full-size pixmap cache'leme; büyük DICOM setlerinde
-        # yalnızca küçük bir QPixmap kopyası tutulur.
-        pixmap = app.get_viewer_file_pixmap(absolute_path, cache_result=False)
-        if pixmap.isNull():
-            continue
-        icon_pixmap = pixmap
-        if icon_pixmap.width() > 96 or icon_pixmap.height() > 96:
-            icon_pixmap = icon_pixmap.scaled(96, 96, Qt.KeepAspectRatio, Qt.FastTransformation)
+        # Dosyaları listeye eklerken tam Pixel Data decode etmeyin. Metadata
+        # header cache'ten okunur; ilk seçili görüntünün gerçek render'ı
+        # render_viewer_file içindeki asenkron preload yoluna bırakılır.
         metadata = app._viewer_metadata(absolute_path)
 
         list_label = os.path.basename(absolute_path)
@@ -47,15 +43,13 @@ def _add_viewer_paths(app, paths):
             if series_label:
                 list_label += f"\n{series_label[:36]}"
         item = QTreeWidgetItem([list_label])
-        item.setIcon(0, QIcon(icon_pixmap))
-
-        # Bu satır küçük resim içerir. Grup satırlarına uygulanan sıkı
-        # yükseklik burada kullanılmaz; aksi hâlde görüntü önizlemesi sıkışır.
+        item.setToolTip(0, f"{absolute_path}\nÖnizleme seçildiğinde arka planda hazırlanır.")
+        # Dosya satırı tam görüntü decode edilmeden hemen görünür.
         item.setSizeHint(0, QSize(0, VIEWER_TREE_PREVIEW_ROW_HEIGHT))
-
-        item.setToolTip(0, absolute_path)
         item.setData(0, Qt.UserRole, absolute_path)
+
         parent = app._viewer_tree_group(metadata)
+
         parent.addChild(item)
         _, added_to_tracking = app._ensure_tracking_path(absolute_path)
         if added_to_tracking:
@@ -169,11 +163,8 @@ def show_viewer_file_context_menu(app, pos):
     for item in list(selected):
         app._remove_tree_item_and_empty_groups(app.viewer_file_tree, item)
     for path in paths:
-        app._viewer_dataset_cache.pop(path, None)
-        app._viewer_frame_counts.pop(path, None)
-        for key in list(app._viewer_only_pixmap_cache):
-            if isinstance(key, tuple) and key and key[0] == path:
-                app._viewer_only_pixmap_cache.pop(key, None)
+        app._clear_viewer_path_caches(path)
+
     if app.viewer_current_path and os.path.abspath(app.viewer_current_path) in paths:
         app.stop_viewer_cine()
         app.viewer_scene.clear()
@@ -185,7 +176,7 @@ def show_viewer_file_context_menu(app, pos):
     remaining = app._viewer_file_items()
     if remaining:
         app.viewer_file_tree.setCurrentItem(remaining[0])
-    app.statusBar().showMessage(f"Görüntüleyiciden {len(paths)} dosya kaldırıldı. Diskteki dosyalar silinmedi.")
+        app.statusBar().showMessage(f"Görüntüleyiciden {len(paths)} dosya kaldırıldı. Diskteki dosyalar silinmedi.")
 
 
 def show_selected_viewer_file(app):
@@ -286,31 +277,56 @@ def render_viewer_file(app, path, fit=False, allow_preload=True):
         app._update_viewer_zoom_label()
 
 
+def _viewer_header_for_path(app, file_path):
+    """Return a cached, pixel-free DICOM header for repeated viewer queries."""
+    path = os.path.abspath(file_path)
+    cache = getattr(app, "_viewer_header_cache", None)
+    if cache is None:
+        cache = {}
+        app._viewer_header_cache = cache
+    if path in cache:
+        return cache_get(cache, path)
+
+    try:
+        header = pydicom.dcmread(path, stop_before_pixels=True)
+    except Exception:
+        header = None
+    cache_put(
+        cache,
+        path,
+        header,
+        max_entries=getattr(app, "_viewer_header_cache_limit", 32),
+    )
+    return header
+
+
+def _path_cache_limit(app):
+    return max(1, int(getattr(app, "_viewer_path_cache_limit", 128)))
+
+
 def _viewer_is_dicom(app, file_path):
     path = os.path.abspath(file_path)
     if path in app._viewer_dicom_flags:
-        return app._viewer_dicom_flags[path]
-    try:
-        ds = pydicom.dcmread(path, stop_before_pixels=True)
-        is_dicom = hasattr(ds, 'SOPClassUID') or hasattr(ds, 'Rows')
-    except Exception:
-        is_dicom = False
-    app._viewer_dicom_flags[path] = is_dicom
+        return cache_get(app._viewer_dicom_flags, path)
+    ds = _viewer_header_for_path(app, path)
+    is_dicom = ds is not None and (hasattr(ds, "SOPClassUID") or hasattr(ds, "Rows"))
+    cache_put(app._viewer_dicom_flags, path, is_dicom, max_entries=_path_cache_limit(app))
     return is_dicom
 
 
 def _viewer_frame_count_for_path(app, file_path):
     path = os.path.abspath(file_path)
     if path in app._viewer_frame_counts:
-        return app._viewer_frame_counts[path]
+        return cache_get(app._viewer_frame_counts, path)
     count = 1
     if app._viewer_is_dicom(path):
-        try:
-            ds = pydicom.dcmread(path, stop_before_pixels=True)
-            count = max(1, int(getattr(ds, 'NumberOfFrames', 1) or 1))
-        except Exception:
-            pass
-    app._viewer_frame_counts[path] = count
+        ds = _viewer_header_for_path(app, path)
+        if ds is not None:
+            try:
+                count = max(1, int(getattr(ds, "NumberOfFrames", 1) or 1))
+            except Exception:
+                pass
+    cache_put(app._viewer_frame_counts, path, count, max_entries=_path_cache_limit(app))
     return count
 
 
@@ -318,22 +334,67 @@ def _viewer_pixel_spacing(app):
     if not app.viewer_current_path or not app._viewer_is_dicom(app.viewer_current_path):
         return None
     try:
-        ds = app._viewer_dataset_cache.get(app.viewer_current_path)
+        path = os.path.abspath(app.viewer_current_path)
+        ds = app._viewer_dataset_cache.get(path)
         if ds is None:
-            ds = pydicom.dcmread(app.viewer_current_path, stop_before_pixels=True)
-        spacing = getattr(ds, 'PixelSpacing', None)
+            ds = _viewer_header_for_path(app, path)
+        if ds is None:
+            return None
+        spacing = getattr(ds, "PixelSpacing", None)
         if spacing is None or len(spacing) < 2:
             return None
         values = (float(spacing[0]), float(spacing[1]))
         if any(value <= 0 or not math.isfinite(value) for value in values):
             return None
         return values
-
     except Exception:
         return None
 
 
+def clear_viewer_path_caches(app, file_path):
+    """Evict every viewer-side cache entry associated with one absolute path."""
+    path = os.path.abspath(str(file_path))
+    for cache_name in (
+        "_viewer_header_cache",
+        "_viewer_dicom_flags",
+        "_viewer_metadata_cache",
+        "_viewer_frame_counts",
+        "_viewer_dataset_cache",
+        "_default_window_cache",
+    ):
+        cache = getattr(app, cache_name, None)
+        if isinstance(cache, dict):
+            cache.pop(path, None)
+
+    pixmap_cache = getattr(app, "_viewer_only_pixmap_cache", None)
+    if isinstance(pixmap_cache, dict):
+        for key in list(pixmap_cache):
+            if isinstance(key, tuple) and key and os.path.abspath(str(key[0])) == path:
+                pixmap_cache.pop(key, None)
+
+    decoded_cache = getattr(app, "_viewer_decoded_array_cache", None)
+    if isinstance(decoded_cache, dict):
+        for key in list(decoded_cache):
+            if isinstance(key, tuple) and key and os.path.abspath(str(key[0])) == path:
+                decoded_cache.pop(key, None)
+
+    # A removed active path must not leave a worker result queued for a scene
+    # that no longer represents that file.
+    current = os.path.abspath(str(getattr(app, "viewer_current_path", "") or ""))
+    controller = getattr(app, "_viewer_preload_controller", None)
+    if controller is not None:
+        cancel_path = getattr(controller, "cancel_path", None)
+        if callable(cancel_path):
+            cancel_path(path)
+    if current == path and controller is not None:
+        controller.cancel(slot="viewer")
+        pending = getattr(app, "_viewer_preload_pending", None)
+        if isinstance(pending, dict):
+            pending.clear()
+
+
 def show_viewer_dicom_info(app):
+
     if not app.viewer_current_path:
         app.statusBar().showMessage("Bilgi için önce bir dosya açın.")
         return
@@ -345,6 +406,10 @@ def show_viewer_dicom_info(app):
     spacing_text = "—" if spacing is None else f"{spacing[0]:.4g} × {spacing[1]:.4g} mm/piksel"
     default_wc, default_ww = app._default_window(app.viewer_current_path)
     wc, ww = app.viewer_window_settings.get(app.viewer_current_path, (default_wc, default_ww))
+    header = _viewer_header_for_path(app, app.viewer_current_path)
+    transfer_uid = str(getattr(getattr(header, "file_meta", None), "TransferSyntaxUID", "") or "")
+    decoder_status = codec_status(transfer_uid) if transfer_uid else None
+    decoder_name = decoder_status.selected_plugin if decoder_status and decoder_status.selected_plugin else "otomatik/fallback"
     text = "\n".join([
         f"Hasta: {metadata['patient_name']}",
         f"Hasta ID: {metadata['patient_id']}",
@@ -354,6 +419,8 @@ def show_viewer_dicom_info(app):
         f"Kare: {app.viewer_frame_index + 1}/{app.viewer_frame_count}",
         f"Pixel Spacing: {spacing_text}",
         f"Aktif W/L: WW {ww:.0f} | WL {wc:.0f}",
+        f"Transfer Syntax: {transfer_uid or '—'}",
+        f"Decoder: {decoder_name}",
         f"Dosya: {app.viewer_current_path}",
     ])
     QMessageBox.information(app, "DICOM Bilgileri", text)
@@ -362,30 +429,32 @@ def show_viewer_dicom_info(app):
 def _viewer_metadata(app, file_path):
     path = os.path.abspath(file_path)
     if path in app._viewer_metadata_cache:
-        return app._viewer_metadata_cache[path]
+        return cache_get(app._viewer_metadata_cache, path)
     if not app._viewer_is_dicom(path):
-        app._viewer_metadata_cache[path] = None
+        cache_put(app._viewer_metadata_cache, path, None, max_entries=_path_cache_limit(app))
         return None
     try:
-        ds = pydicom.dcmread(path, stop_before_pixels=True)
+        ds = _viewer_header_for_path(app, path)
+        if ds is None:
+            data = None
+        else:
+            def value(name, default="—"):
+                item = getattr(ds, name, None)
+                text = str(item).strip() if item not in (None, "") else ""
+                return text or default
 
-        def value(name, default="—"):
-            item = getattr(ds, name, None)
-            text = str(item).strip() if item not in (None, "") else ""
-            return text or default
-
-        data = {
-            "patient_name": value("PatientName"),
-            "patient_id": value("PatientID"),
-            "study_date": value("StudyDate"),
-            "modality": value("Modality"),
-            "body_part": value("BodyPartExamined", ""),
-            "description": value("StudyDescription", value("SeriesDescription", "")),
-            "laterality": value("ImageLaterality", value("Laterality", "")),
-        }
+            data = {
+                "patient_name": value("PatientName"),
+                "patient_id": value("PatientID"),
+                "study_date": value("StudyDate"),
+                "modality": value("Modality"),
+                "body_part": value("BodyPartExamined", ""),
+                "description": value("StudyDescription", value("SeriesDescription", "")),
+                "laterality": value("ImageLaterality", value("Laterality", "")),
+            }
     except Exception:
         data = None
-    app._viewer_metadata_cache[path] = data
+    cache_put(app._viewer_metadata_cache, path, data, max_entries=_path_cache_limit(app))
     return data
 
 

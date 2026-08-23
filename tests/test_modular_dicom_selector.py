@@ -16,7 +16,12 @@ from PySide6.QtWidgets import QApplication  # noqa: E402
 
 from main import ScoliosisFollowUpApp, apply_app_theme  # noqa: E402
 from modular_app.run_modular import install_modules  # noqa: E402
-from modular_app.ui.dicom_viewer_components import DicomPreviewDialog, StudySelectionDialog  # noqa: E402
+from modular_app.ui.dicom_viewer_components import (  # noqa: E402
+    DicomPreviewDialog,
+    StudySelectionDialog,
+    _SELECTION_PREVIEW_CACHE,
+    _SELECTION_PREVIEW_MAX_SIZE,
+)
 
 
 class DicomSelectorThemeTests(unittest.TestCase):
@@ -50,6 +55,32 @@ class DicomSelectorThemeTests(unittest.TestCase):
             apply_app_theme(self.app, "dark")
         finally:
             dialog.close()
+
+    def test_selection_preview_is_bounded_and_shared_with_thumbnail(self):
+        candidates = [path for path in sorted((ROOT / "dev_data" / "dicom_samples").rglob("*")) if path.is_file()]
+        if not candidates:
+            self.skipTest("Gerçek DICOM preview fixture bulunamadı")
+        path = str(candidates[0].resolve())
+        _SELECTION_PREVIEW_CACHE.pop(path, None)
+        dialog = StudySelectionDialog(initial_files=[path], parent=self.window)
+        try:
+            item = dialog.file_list.item(0)
+            item.setSelected(True)
+            dialog.on_selection_changed()
+            for _ in range(300):
+                self.app.processEvents()
+                if path in _SELECTION_PREVIEW_CACHE and dialog.preview_scene.items():
+                    break
+                QTest.qWait(20)
+            self.assertIn(path, _SELECTION_PREVIEW_CACHE)
+            image, _info, _error = _SELECTION_PREVIEW_CACHE[path]
+            self.assertFalse(image.isNull())
+            self.assertLessEqual(max(image.width(), image.height()), _SELECTION_PREVIEW_MAX_SIZE)
+            self.assertFalse(dialog._preview_pending)
+            self.assertFalse(item.icon().isNull())
+        finally:
+            dialog.close()
+            self.app.processEvents()
 
     def test_single_file_preview_dialog_has_clear_actions(self):
         dialog = DicomPreviewDialog("servikal", parent=self.window)

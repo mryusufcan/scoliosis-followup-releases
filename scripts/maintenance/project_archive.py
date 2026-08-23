@@ -29,12 +29,8 @@ SOURCE_FILES = {
     "license_app.py",
     "main.py",
     "project_control_center.py",
-    "Proje_Araclari.bat",
-    "Proje_Temizlik_Merkezi_v2.bat",
-    "guncel_proje_zip.bat",
     "requirements.txt",
     "requirements-dev.txt",
-    "ScoliosisFollowUp.spec",
     "update.json",
     "VERSION",
 }

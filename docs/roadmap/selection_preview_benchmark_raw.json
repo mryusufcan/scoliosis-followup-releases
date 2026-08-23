@@ -1,0 +1,46 @@
+{
+  "kind": "real_dicom_selection_preview_benchmark",
+  "schema_version": 1,
+  "dataset": {
+    "root_name": "dicom_samples",
+    "files_selected": 4
+  },
+  "preview_policy": {
+    "max_dimension": 640,
+    "dicom_files_modified": false
+  },
+  "results": [
+    {
+      "file_name": "IM00002",
+      "preview_ms": 2892.713,
+      "width": 612,
+      "height": 479,
+      "bounded": true
+    },
+    {
+      "file_name": "IM00003",
+      "preview_ms": 2082.419,
+      "width": 612,
+      "height": 479,
+      "bounded": true
+    },
+    {
+      "file_name": "IM00004",
+      "preview_ms": 2981.037,
+      "width": 612,
+      "height": 479,
+      "bounded": true
+    },
+    {
+      "file_name": "IM00005",
+      "preview_ms": 1720.753,
+      "width": 306,
+      "height": 617,
+      "bounded": true
+    }
+  ],
+  "summary": {
+    "mean_ms": 2419.231,
+    "all_bounded": true
+  }
+}

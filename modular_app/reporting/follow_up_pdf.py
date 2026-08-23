@@ -27,8 +27,14 @@ from modular_app.database.exam_repository import ExamRepository
 from modular_app.services.measurement_labels import display_measurement_source
 
 
+_FONT_NAME_CACHE: str | None = None
+
+
 def _font_name() -> str:
-    """Türkçe karakterler için Windows'ta Unicode font kullan."""
+    """Türkçe karakterler için Windows'ta Unicode font kullan; bir kez kaydet."""
+    global _FONT_NAME_CACHE
+    if _FONT_NAME_CACHE is not None:
+        return _FONT_NAME_CACHE
     candidates = [
         Path("C:/Windows/Fonts/arial.ttf"),
         Path("C:/Windows/Fonts/calibri.ttf"),
@@ -38,10 +44,12 @@ def _font_name() -> str:
         if font_path.exists():
             try:
                 pdfmetrics.registerFont(TTFont("FollowUpUnicode", str(font_path)))
-                return "FollowUpUnicode"
+                _FONT_NAME_CACHE = "FollowUpUnicode"
+                return _FONT_NAME_CACHE
             except Exception:
                 continue
-    return "Helvetica"
+    _FONT_NAME_CACHE = "Helvetica"
+    return _FONT_NAME_CACHE
 
 
 def _date_text(value: object) -> str:
@@ -417,8 +425,17 @@ def generate_follow_up_report(
         note_style,
     ))
 
+    # Tek bağlantıda salt-okunur rapor verisi
+    bundle = repository.get_follow_up_report_bundle(patient_id)
+    profile = bundle["profile"]
+    raw_measurements = bundle["measurements"]
+    exams = bundle["exams"]
+    sessions = bundle["sessions"]
+    labels = bundle["labels"]
+    image_notes = bundle["image_notes"]
+    alerts = bundle["alerts"]
+
     # Hasta kartı
-    profile = repository.get_patient_profile(patient_id)
     story.extend(_section_title("Hasta Kartı ve Takip Planı", heading_style))
     profile_data = [
         ["Alan", "Kayıt"],
@@ -433,7 +450,6 @@ def generate_follow_up_report(
     ))
 
     # Cobb özet
-    raw_measurements = repository.list_cobb_measurements(patient_id)
     summary = _measurement_summary(raw_measurements)
     story.extend(_section_title("Cobb Takip Özeti", heading_style))
     story.append(_summary_cards(summary, font, table_body_style, table_header_style))
@@ -446,7 +462,6 @@ def generate_follow_up_report(
         story.append(chart)
 
     # Tetkikler
-    exams = repository.list_patient_follow_up(patient_id)
     story.extend(_section_title("Tetkik Geçmişi", heading_style))
     exam_data = [["Tarih", "Bölge", "Modalite", "Tetkik", "Son Cobb", "Overlay"]]
     for row in exams:
@@ -498,7 +513,6 @@ def generate_follow_up_report(
     ))
 
     # Overlay kayıtları
-    sessions = repository.list_comparison_sessions(patient_id)
     story.extend(_section_title("Karşılaştırma / Overlay Oturumları", heading_style))
     session_data = [["Kayıt", "Referans", "Karşılaştırma", "Hizalama", "Not"]]
     for row in sessions:
@@ -523,7 +537,6 @@ def generate_follow_up_report(
     ))
 
     # Omur etiketleri
-    labels = repository.list_vertebra_labels(patient_id)
     if labels:
         story.extend(_section_title("Omur Etiketleri", heading_style))
         label_data = [["Görüntü", "Seviye", "Not", "Ekleyen"]]
@@ -541,7 +554,6 @@ def generate_follow_up_report(
         ))
 
     # Görüntü notları v2
-    image_notes = repository.list_image_notes(patient_id)
     story.extend(_section_title("Hasta / Görüntü Notları", heading_style))
     note_data = [["Tarih", "Tetkik / Görüntü", "Not", "Ekleyen"]]
     for row in image_notes:
@@ -560,12 +572,6 @@ def generate_follow_up_report(
     ))
 
     # Takip uyarıları
-    try:
-        threshold = float(repository.get_setting("follow_up/cobb_alert_threshold", "5") or 5)
-    except (TypeError, ValueError):
-        threshold = 5.0
-    alerts = repository.follow_up_alerts(patient_id, threshold)
-
     story.extend(_section_title("Takip Uyarıları", heading_style))
     alert_data = [["Seviye", "Kontrol", "Ayrıntı"]]
     for row in alerts:

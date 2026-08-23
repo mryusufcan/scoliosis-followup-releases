@@ -1,0 +1,363 @@
+{
+  "generated_at": "2026-08-22T15:27:45",
+  "areas": {
+    ".quarantine\\mazurowski_scoliosis_project": {
+      "bytes": 6999727451,
+      "mib": 6675.46,
+      "files": 23365,
+      "children": [
+        {
+          "name": ".venv",
+          "bytes": 4852934921,
+          "mib": 4628.12,
+          "files": 23253
+        },
+        {
+          "name": "onnx_candidate",
+          "bytes": 1407282596,
+          "mib": 1342.09,
+          "files": 12
+        },
+        {
+          "name": "downloaded_weights",
+          "bytes": 703393140,
+          "mib": 670.81,
+          "files": 4
+        },
+        {
+          "name": "comparison_outputs",
+          "bytes": 6312237,
+          "mib": 6.02,
+          "files": 3
+        },
+        {
+          "name": "patient_outputs",
+          "bytes": 6297418,
+          "mib": 6.01,
+          "files": 2
+        },
+        {
+          "name": ".git",
+          "bytes": 6012716,
+          "mib": 5.73,
+          "files": 33
+        },
+        {
+          "name": "smoke_outputs",
+          "bytes": 4685041,
+          "mib": 4.47,
+          "files": 2
+        },
+        {
+          "name": "inference_1_case.ipynb",
+          "bytes": 4495147,
+          "mib": 4.29,
+          "files": 1
+        },
+        {
+          "name": "raw_train_label_new.json",
+          "bytes": 3297790,
+          "mib": 3.15,
+          "files": 1
+        },
+        {
+          "name": "input_cases",
+          "bytes": 2282938,
+          "mib": 2.18,
+          "files": 1
+        },
+        {
+          "name": "example_case",
+          "bytes": 1654898,
+          "mib": 1.58,
+          "files": 1
+        },
+        {
+          "name": "work_dirs",
+          "bytes": 884244,
+          "mib": 0.84,
+          "files": 1
+        },
+        {
+          "name": "configs",
+          "bytes": 100437,
+          "mib": 0.1,
+          "files": 42
+        },
+        {
+          "name": "raw_val_label_new.json",
+          "bytes": 39700,
+          "mib": 0.04,
+          "files": 1
+        },
+        {
+          "name": "utils_f.py",
+          "bytes": 14816,
+          "mib": 0.01,
+          "files": 1
+        },
+        {
+          "name": "LICENSE",
+          "bytes": 11558,
+          "mib": 0.01,
+          "files": 1
+        },
+        {
+          "name": "__pycache__",
+          "bytes": 11526,
+          "mib": 0.01,
+          "files": 1
+        },
+        {
+          "name": "train_and_val.ipynb",
+          "bytes": 7569,
+          "mib": 0.01,
+          "files": 1
+        },
+        {
+          "name": "isolated_inference_smoke.py",
+          "bytes": 4865,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "README.md",
+          "bytes": 2919,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "Dockerfile.legacy-ai",
+          "bytes": 855,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "Dockerfile.onnx-export",
+          "bytes": 120,
+          "mib": 0.0,
+          "files": 1
+        }
+      ]
+    },
+    ".quarantine\\landmark_lab": {
+      "bytes": 1941406920,
+      "mib": 1851.47,
+      "files": 32214,
+      "children": [
+        {
+          "name": ".venv",
+          "bytes": 1560749279,
+          "mib": 1488.45,
+          "files": 32166
+        },
+        {
+          "name": "weights_quarantine",
+          "bytes": 186782879,
+          "mib": 178.13,
+          "files": 7
+        },
+        {
+          "name": "onnx_candidate",
+          "bytes": 96829029,
+          "mib": 92.34,
+          "files": 5
+        },
+        {
+          "name": "v2_landmark_candidate",
+          "bytes": 96827361,
+          "mib": 92.34,
+          "files": 6
+        },
+        {
+          "name": "fixtures",
+          "bytes": 66160,
+          "mib": 0.06,
+          "files": 1
+        },
+        {
+          "name": "package-details.txt",
+          "bytes": 55768,
+          "mib": 0.05,
+          "files": 1
+        },
+        {
+          "name": "__pycache__",
+          "bytes": 44948,
+          "mib": 0.04,
+          "files": 11
+        },
+        {
+          "name": "dicom_onnx_landmark_pipeline.py",
+          "bytes": 11845,
+          "mib": 0.01,
+          "files": 1
+        },
+        {
+          "name": "build_v2_landmark_candidate.py",
+          "bytes": 6304,
+          "mib": 0.01,
+          "files": 1
+        },
+        {
+          "name": "landmark_cpu_smoke.py",
+          "bytes": 6217,
+          "mib": 0.01,
+          "files": 1
+        },
+        {
+          "name": "verify_onnx_equivalence.py",
+          "bytes": 4284,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "export_checkpoint_to_onnx.py",
+          "bytes": 3571,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "safe_checkpoint_inspect.py",
+          "bytes": 2997,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "test_dicom_onnx_landmark_pipeline.py",
+          "bytes": 2944,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "example_landmark_test.py",
+          "bytes": 2599,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "landmark_contract.py",
+          "bytes": 2499,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "README.md",
+          "bytes": 2092,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "test_landmark_contract.py",
+          "bytes": 1930,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "generate_synthetic_dx_fixture.py",
+          "bytes": 1728,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "onnx-package-details.txt",
+          "bytes": 801,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "installed-packages.txt",
+          "bytes": 592,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "requirements-cpu-py38.txt",
+          "bytes": 465,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "torch-package-details.txt",
+          "bytes": 411,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "LAB_MANIFEST.txt",
+          "bytes": 217,
+          "mib": 0.0,
+          "files": 1
+        }
+      ]
+    },
+    ".quarantine\\release-pages": {
+      "bytes": 18806893,
+      "mib": 17.94,
+      "files": 56,
+      "children": [
+        {
+          "name": ".git",
+          "bytes": 12951545,
+          "mib": 12.35,
+          "files": 51
+        },
+        {
+          "name": "assets",
+          "bytes": 5820784,
+          "mib": 5.55,
+          "files": 3
+        },
+        {
+          "name": "index.html",
+          "bytes": 20094,
+          "mib": 0.02,
+          "files": 1
+        },
+        {
+          "name": "README.md",
+          "bytes": 14470,
+          "mib": 0.01,
+          "files": 1
+        }
+      ]
+    },
+    "resources\\ai": {
+      "bytes": 272739389,
+      "mib": 260.1,
+      "files": 12,
+      "children": [
+        {
+          "name": "mazurowski",
+          "bytes": 175909176,
+          "mib": 167.76,
+          "files": 1
+        },
+        {
+          "name": "vertebra_landmarks_experimental",
+          "bytes": 96826088,
+          "mib": 92.34,
+          "files": 6
+        },
+        {
+          "name": "model_package_template_v2",
+          "bytes": 2909,
+          "mib": 0.0,
+          "files": 3
+        },
+        {
+          "name": "README.md",
+          "bytes": 881,
+          "mib": 0.0,
+          "files": 1
+        },
+        {
+          "name": "vertebra_cobb",
+          "bytes": 335,
+          "mib": 0.0,
+          "files": 1
+        }
+      ]
+    }
+  }
+}

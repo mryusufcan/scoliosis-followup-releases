@@ -1,0 +1,165 @@
+{
+  "generated_at": "2026-08-22T15:34:07",
+  "areas": {
+    ".quarantine\\mazurowski_scoliosis_project": {
+      "extensions": [
+        {
+          "extension": ".onnx",
+          "files": 8,
+          "mib": 1342.08,
+          "example": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn.onnx"
+        },
+        {
+          "extension": ".pth",
+          "files": 2,
+          "mib": 669.96,
+          "example": ".quarantine\\mazurowski_scoliosis_project\\downloaded_weights\\mask_rcnn_r50_fpn_2x_coco_cp4\\epoch_24.pth"
+        },
+        {
+          "extension": ".png",
+          "files": 8,
+          "mib": 20.25,
+          "example": ".quarantine\\mazurowski_scoliosis_project\\comparison_outputs\\IM00005_anon_mask.png"
+        },
+        {
+          "extension": ".json",
+          "files": 7,
+          "mib": 4.87,
+          "example": ".quarantine\\mazurowski_scoliosis_project\\raw_train_label_new.json"
+        },
+        {
+          "extension": ".ipynb",
+          "files": 2,
+          "mib": 4.29,
+          "example": ".quarantine\\mazurowski_scoliosis_project\\inference_1_case.ipynb"
+        },
+        {
+          "extension": ".py",
+          "files": 44,
+          "mib": 0.11,
+          "example": ".quarantine\\mazurowski_scoliosis_project\\isolated_inference_smoke.py"
+        },
+        {
+          "extension": "<no_extension>",
+          "files": 4,
+          "mib": 0.03,
+          "example": ".quarantine\\mazurowski_scoliosis_project\\LICENSE"
+        },
+        {
+          "extension": ".md",
+          "files": 1,
+          "mib": 0.0,
+          "example": ".quarantine\\mazurowski_scoliosis_project\\README.md"
+        },
+        {
+          "extension": ".legacy-ai",
+          "files": 1,
+          "mib": 0.0,
+          "example": ".quarantine\\mazurowski_scoliosis_project\\Dockerfile.legacy-ai"
+        },
+        {
+          "extension": ".onnx-export",
+          "files": 1,
+          "mib": 0.0,
+          "example": ".quarantine\\mazurowski_scoliosis_project\\Dockerfile.onnx-export"
+        }
+      ]
+    },
+    ".quarantine\\landmark_lab": {
+      "extensions": [
+        {
+          "extension": ".onnx",
+          "files": 2,
+          "mib": 184.67,
+          "example": ".quarantine\\landmark_lab\\onnx_candidate\\vertebra_landmarks_68.onnx"
+        },
+        {
+          "extension": ".pth",
+          "files": 1,
+          "mib": 92.47,
+          "example": ".quarantine\\landmark_lab\\weights_quarantine\\model_last.pth"
+        },
+        {
+          "extension": ".zip",
+          "files": 1,
+          "mib": 85.66,
+          "example": ".quarantine\\landmark_lab\\weights_quarantine\\weights.zip"
+        },
+        {
+          "extension": ".dcm",
+          "files": 1,
+          "mib": 0.06,
+          "example": ".quarantine\\landmark_lab\\fixtures\\synthetic_dx_ap.dcm"
+        },
+        {
+          "extension": ".txt",
+          "files": 9,
+          "mib": 0.06,
+          "example": ".quarantine\\landmark_lab\\installed-packages.txt"
+        },
+        {
+          "extension": ".py",
+          "files": 11,
+          "mib": 0.04,
+          "example": ".quarantine\\landmark_lab\\build_v2_landmark_candidate.py"
+        },
+        {
+          "extension": ".json",
+          "files": 10,
+          "mib": 0.02,
+          "example": ".quarantine\\landmark_lab\\onnx_candidate\\example_landmark_report.json"
+        },
+        {
+          "extension": ".md",
+          "files": 2,
+          "mib": 0.0,
+          "example": ".quarantine\\landmark_lab\\README.md"
+        }
+      ]
+    },
+    "resources\\ai": {
+      "extensions": [
+        {
+          "extension": ".onnx",
+          "files": 2,
+          "mib": 260.1,
+          "example": "resources\\ai\\mazurowski\\mazurowski_mask_rcnn.onnx"
+        },
+        {
+          "extension": ".json",
+          "files": 4,
+          "mib": 0.01,
+          "example": "resources\\ai\\vertebra_cobb\\manifest.example.json"
+        },
+        {
+          "extension": ".md",
+          "files": 3,
+          "mib": 0.0,
+          "example": "resources\\ai\\README.md"
+        },
+        {
+          "extension": ".template",
+          "files": 2,
+          "mib": 0.0,
+          "example": "resources\\ai\\model_package_template_v2\\manifest.json.template"
+        },
+        {
+          "extension": ".txt",
+          "files": 1,
+          "mib": 0.0,
+          "example": "resources\\ai\\vertebra_landmarks_experimental\\EXPERIMENTAL_ONLY.txt"
+        }
+      ]
+    },
+    "dev_data": {
+      "extensions": [
+        {
+          "extension": "<no_extension>",
+          "files": 20,
+          "mib": 99.42,
+          "example": "dev_data\\dicom_samples\\SE00001\\IM00002"
+        }
+      ]
+    }
+  }
+}

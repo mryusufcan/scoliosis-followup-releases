@@ -9,7 +9,37 @@ import os
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox
 
+
+def shutdown_runtime(app):
+    """Stop render timers and cancel worker callbacks before the window closes."""
+    setattr(app, "_background_closing", True)
+    background_pool = getattr(app, "_background_pool", None)
+    if background_pool is not None:
+        background_pool.clear()
+    for timer_name in (
+        "_viewer_render_timer",
+        "_workspace_render_timer",
+        "_stitch_render_timer",
+        "_stitch_full_render_timer",
+        "viewer_cine_timer",
+    ):
+        timer = getattr(app, timer_name, None)
+        if timer is not None and timer.isActive():
+            timer.stop()
+
+    controller = getattr(app, "_viewer_preload_controller", None)
+    if controller is not None:
+        controller.shutdown()
+    preload_pool = getattr(app, "_viewer_preload_pool", None)
+    if preload_pool is not None:
+        preload_pool.clear()
+    pending = getattr(app, "_viewer_preload_pending", None)
+    if isinstance(pending, dict):
+        pending.clear()
+
+
 def closeEvent(app, event):
+
     """Kapanırken çalışma oturumunun kaydedilip kaydedilmeyeceğini sor."""
     has_work = bool(app._shared_pool_paths())
     has_work = has_work or bool(getattr(app, "viewer_measurement_records", []))
@@ -24,6 +54,7 @@ def closeEvent(app, event):
                 os.remove(path)
         except OSError:
             pass
+        shutdown_runtime(app)
         event.accept()
         return
 
@@ -59,10 +90,12 @@ def closeEvent(app, event):
         except OSError:
             pass
 
+    shutdown_runtime(app)
     event.accept()
 
 
 def _auto_session_path(app):
+
     """Otomatik oturumu proje dosyalarından ayrı, kullanıcıya ait yazılabilir alanda tutar."""
     root = os.environ.get("LOCALAPPDATA")
     if root:
@@ -353,6 +386,9 @@ def _remove_paths_from_all_modules(app, paths):
                 app._remove_tree_item_and_empty_groups(app.viewer_file_tree, item)
     if getattr(app, "viewer_current_path", None) and os.path.abspath(app.viewer_current_path) in targets:
         app.stop_viewer_cine()
+        controller = getattr(app, "_viewer_preload_controller", None)
+        if controller is not None:
+            controller.cancel(slot="viewer")
         app.viewer_scene.clear()
         app.viewer_current_path = None
         app.viewer_pixmap_item = None
@@ -381,17 +417,26 @@ def _remove_paths_from_all_modules(app, paths):
         if path and os.path.abspath(path) in targets:
             app.remove_stitch_part(part)
 
-    # İlgili önbellekler
+        # İlgili önbellekler. Viewer tarafındaki tüm path cache'leri tek helper
+    # üzerinden temizlenir; stitch cache'leri de aynı yaşam döngüsünde boşaltılır.
     for path in targets:
-        app._viewer_dataset_cache.pop(path, None)
-        app._viewer_frame_counts.pop(path, None)
+        clear_viewer = getattr(app, "_clear_viewer_path_caches", None)
+        if callable(clear_viewer):
+            clear_viewer(path)
+        else:
+            app._viewer_dataset_cache.pop(path, None)
+            app._viewer_frame_counts.pop(path, None)
+            for key in list(app._viewer_only_pixmap_cache):
+                if isinstance(key, tuple) and key and os.path.abspath(str(key[0])) == path:
+                    app._viewer_only_pixmap_cache.pop(key, None)
+            for key in list(getattr(app, "_viewer_decoded_array_cache", {})):
+                if isinstance(key, tuple) and key and os.path.abspath(str(key[0])) == path:
+                    app._viewer_decoded_array_cache.pop(key, None)
         app._stitch_pixmap_cache.pop(path, None)
         app._stitch_array_cache.pop(path, None)
         app._stitch_gray_cache.pop(path, None)
         app._stitch_gray_flag_cache.pop(path, None)
-        for key in list(app._viewer_only_pixmap_cache):
-            if isinstance(key, tuple) and key and os.path.abspath(str(key[0])) == path:
-                app._viewer_only_pixmap_cache.pop(key, None)
+
     if hasattr(app, "update_viewers"):
         app.update_viewers()
 

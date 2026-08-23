@@ -127,21 +127,52 @@ class LongitudinalService:
         )
         curves = tuple(domain_snapshot.series)
         selected_series = _select_series(curves, normalized_filters.curve_key)
-        warnings = list(self._build_warnings(exam_rows, filtered_records, selected_series))
-
         timeline_records = (
             [record for record in filtered_records if record.status == MeasurementStatus.VERIFIED]
             if normalized_filters.locked_only
             else filtered_records
         )
+        record_index: dict[str, list[MeasurementRecord]] = {}
+        for record in timeline_records:
+            path = str(record.source_context.dicom_path or "")
+            if normalized_filters.curve_key is not None and curve_key(record) != normalized_filters.curve_key:
+                continue
+            record_index.setdefault(path, []).append(record)
+
         patient_name = self._patient_name(patient_id)
         overlay_sessions = self.repository.list_comparison_sessions(patient_id)
+        overlay_counts: dict[str, int] = {}
+        for session in overlay_sessions:
+            session_paths = {
+                str(session.get("reference_path", "") or ""),
+                str(session.get("comparison_path", "") or ""),
+            }
+            for path in session_paths:
+                if path:
+                    overlay_counts[path] = overlay_counts.get(path, 0) + 1
+
+        source_exists_by_path = {
+            path: Path(path).is_file()
+            for path in {str(row.get("dicom_path", "") or "") for row in exam_rows}
+            if path
+        }
+        warnings = list(
+            self._build_warnings(
+                exam_rows,
+                filtered_records,
+                selected_series,
+                source_exists_by_path=source_exists_by_path,
+            )
+        )
         exams = tuple(
             _exam_timeline_item(
                 row,
                 records=timeline_records,
                 selected_curve=normalized_filters.curve_key,
                 overlay_sessions=overlay_sessions,
+                record_index=record_index,
+                overlay_count=overlay_counts.get(str(row.get("dicom_path", "") or ""), 0),
+                source_exists=source_exists_by_path.get(str(row.get("dicom_path", "") or ""), False),
             )
             for row in exam_rows
         )
@@ -271,7 +302,7 @@ class LongitudinalService:
         )
 
     def _patient_name(self, patient_id: str) -> str:
-        for option in self.list_patients():
+        for option in self.list_patients(patient_id):
             if option.patient_id == patient_id:
                 return option.display_name
         return ""
@@ -281,6 +312,8 @@ class LongitudinalService:
         exam_rows: Iterable[Mapping[str, Any]],
         records: Iterable[MeasurementRecord],
         selected_series: CurveSeries | None,
+        *,
+        source_exists_by_path: Mapping[str, bool] | None = None,
     ) -> tuple[str, ...]:
         warnings: list[str] = []
         exam_rows = list(exam_rows)
@@ -290,7 +323,14 @@ class LongitudinalService:
         missing_sources = sum(
             1
             for row in exam_rows
-            if (str(row.get("dicom_path", "") or "") and not Path(str(row.get("dicom_path"))).is_file())
+            if (
+                str(row.get("dicom_path", "") or "")
+                and not (
+                    source_exists_by_path.get(str(row.get("dicom_path", "") or ""), False)
+                    if source_exists_by_path is not None
+                    else Path(str(row.get("dicom_path"))).is_file()
+                )
+            )
         )
         if missing_sources:
             warnings.append(f"{missing_sources} tetkik kaydının kaynak DICOM dosyası bulunamadı.")
@@ -418,27 +458,36 @@ def _exam_timeline_item(
     records: Iterable[MeasurementRecord],
     selected_curve: CurveKey | None,
     overlay_sessions: Iterable[Mapping[str, Any]],
+    record_index: Mapping[str, Iterable[MeasurementRecord]] | None = None,
+    overlay_count: int | None = None,
+    source_exists: bool | None = None,
 ) -> ExamTimelineItem:
     exam_id = _as_int(row.get("id"))
     patient_id = str(row.get("patient_id", "") or "")
     path = str(row.get("dicom_path", "") or "")
-    matching = [
-        record
-        for record in records
-        if str(record.source_context.dicom_path or "") == path
-        and (selected_curve is None or curve_key(record) == selected_curve)
-    ]
+    if record_index is None:
+        matching = [
+            record
+            for record in records
+            if str(record.source_context.dicom_path or "") == path
+            and (selected_curve is None or curve_key(record) == selected_curve)
+        ]
+    else:
+        matching = list(record_index.get(path, ()))
     matching.sort(key=_record_sort_key, reverse=True)
     latest = matching[0] if matching else None
-    overlay_count = sum(
-        1
-        for session in overlay_sessions
-        if path
-        and path in {
-            str(session.get("reference_path", "") or ""),
-            str(session.get("comparison_path", "") or ""),
-        }
-    )
+    if overlay_count is None:
+        overlay_count = sum(
+            1
+            for session in overlay_sessions
+            if path
+            and path in {
+                str(session.get("reference_path", "") or ""),
+                str(session.get("comparison_path", "") or ""),
+            }
+        )
+    if source_exists is None:
+        source_exists = Path(path).is_file() if path else False
     return ExamTimelineItem(
         exam_id=exam_id,
         patient_id=patient_id,
@@ -452,8 +501,8 @@ def _exam_timeline_item(
         latest_measurement_id=latest.measurement_id if latest is not None else None,
         latest_cobb_locked=(latest.status == MeasurementStatus.VERIFIED) if latest is not None else False,
         measurement_count=len(matching),
-        overlay_session_count=overlay_count,
-        source_exists=Path(path).is_file() if path else False,
+        overlay_session_count=int(overlay_count or 0),
+        source_exists=bool(source_exists),
         notes=str(row.get("notes", "") or ""),
     )
 

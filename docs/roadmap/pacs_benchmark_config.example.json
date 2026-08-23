@@ -1,0 +1,7 @@
+{
+  "host": "PACS_HOST",
+  "port": 104,
+  "called_ae_title": "REMOTE_AE",
+  "calling_ae_title": "SCOLIOSIS_APP",
+  "timeout_seconds": 15
+}

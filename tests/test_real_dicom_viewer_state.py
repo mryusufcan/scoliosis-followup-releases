@@ -20,6 +20,7 @@ from PySide6.QtCore import QEventLoop
 from PySide6.QtWidgets import QApplication
 
 from main import ScoliosisFollowUpApp
+from modular_app.core import app_session
 from modular_app.run_modular import install_modules
 
 
@@ -120,6 +121,17 @@ class RealDicomViewerStateTests(unittest.TestCase):
         bone_pixel = self.window.viewer_pixmap_item.pixmap().toImage().pixelColor(10, 10).value()
         self.assertNotEqual(initial_pixel, bone_pixel, "W/L değişimi görüntü pikselini değiştirmedi")
 
+    def test_pixmap_cache_key_includes_file_signature(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "signature.bin"
+            path.write_bytes(b"first")
+            first_key = self.window._viewer_pixmap_cache_key(str(path), 0)
+            self.window._viewer_only_pixmap_cache[first_key] = object()
+            path.write_bytes(b"replacement-with-different-size")
+            second_key = self.window._viewer_pixmap_cache_key(str(path), 0)
+            self.assertNotEqual(first_key, second_key)
+            self.assertNotIn(first_key, self.window._viewer_only_pixmap_cache)
+
     def test_brightness_change_is_coalesced_and_old_cache_entry_is_not_reused(self):
         if not self.samples:
             self.skipTest("Gerçek DICOM örneği bulunamadı")
@@ -161,6 +173,44 @@ class RealDicomViewerStateTests(unittest.TestCase):
         self.assertTrue(self.wait_until(lambda: reset_key in self.window._viewer_only_pixmap_cache))
         self.assertEqual(self.window.viewer_rotation, 0)
         self.assertFalse(self.window.viewer_inverted)
+
+    def test_viewer_path_cache_cleanup_evicts_all_path_entries(self):
+        path = os.path.abspath("cache-cleanup.dcm")
+        caches = {
+            "_viewer_header_cache": object(),
+            "_viewer_dicom_flags": True,
+            "_viewer_metadata_cache": {"patient_id": "P"},
+            "_viewer_frame_counts": 3,
+            "_viewer_dataset_cache": object(),
+            "_default_window_cache": (100.0, 200.0),
+        }
+        for name, value in caches.items():
+            getattr(self.window, name)[path] = value
+        self.window._viewer_only_pixmap_cache[(path, 0, 100.0)] = object()
+        self.window.viewer_current_path = None
+
+        self.window._clear_viewer_path_caches(path)
+
+        for name in caches:
+            self.assertNotIn(path, getattr(self.window, name))
+        self.assertFalse(self.window._viewer_only_pixmap_cache)
+
+    def test_shutdown_runtime_stops_render_timers_and_clears_pending_requests(self):
+        timers = (
+            self.window._viewer_render_timer,
+            self.window._workspace_render_timer,
+            self.window._stitch_render_timer,
+            self.window._stitch_full_render_timer,
+            self.window.viewer_cine_timer,
+        )
+        for timer in timers:
+            timer.start(10_000)
+        self.window._viewer_preload_pending[42] = True
+
+        app_session.shutdown_runtime(self.window)
+
+        self.assertTrue(all(not timer.isActive() for timer in timers))
+        self.assertFalse(self.window._viewer_preload_pending)
 
     def test_multiframe_frame_transition_replaces_display_and_cine_stops_on_new_file(self):
         with tempfile.TemporaryDirectory() as folder:

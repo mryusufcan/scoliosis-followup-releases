@@ -2,6 +2,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -75,8 +76,10 @@ class LongitudinalServiceTests(unittest.TestCase):
         measurement_1 = self.add_measurement("20240101", self.source_1, 30.0, locked=True)
         measurement_2 = self.add_measurement("20250101", self.source_2, 34.0)
 
-        snapshot = self.service.load_snapshot(FilterState(patient_id=self.patient_id))
+        with patch.object(self.service, "list_patients", wraps=self.service.list_patients) as list_patients:
+            snapshot = self.service.load_snapshot(FilterState(patient_id=self.patient_id))
 
+        list_patients.assert_called_once_with(self.patient_id)
         self.assertEqual(snapshot.patient_name, "Test Hasta")
         self.assertEqual(snapshot.total_exams, 2)
         self.assertEqual(snapshot.total_measurements, 2)

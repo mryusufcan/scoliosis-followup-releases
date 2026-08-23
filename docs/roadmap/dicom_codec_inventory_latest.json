@@ -1,0 +1,171 @@
+{
+  "root_name": "dicom_samples",
+  "files": 16,
+  "transfer_syntaxes": {
+    "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])": 16
+  },
+  "compressed_files": 16,
+  "multiframe_files": 0,
+  "rows": [
+    {
+      "file_name": "IM00002",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00003",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00004",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00005",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 3082,
+      "columns": 1528,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00003",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 960,
+      "columns": 960,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00005",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 2757,
+      "columns": 3056,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00006",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00007",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 2757,
+      "columns": 3056,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00008",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 7257,
+      "columns": 3056,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00009",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 3081,
+      "columns": 1528,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00009",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 2757,
+      "columns": 3056,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00010",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 2757,
+      "columns": 3056,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00011",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 2757,
+      "columns": 3056,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00012",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 7257,
+      "columns": 3056,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00011",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 2100,
+      "columns": 2970,
+      "frames": 1,
+      "bits_allocated": 16
+    },
+    {
+      "file_name": "IM00013",
+      "transfer_syntax_uid": "1.2.840.10008.1.2.4.70",
+      "transfer_syntax_name": "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
+      "compressed": true,
+      "rows": 2100,
+      "columns": 2970,
+      "frames": 1,
+      "bits_allocated": 16
+    }
+  ]
+}

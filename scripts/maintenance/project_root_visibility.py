@@ -10,41 +10,51 @@ ROOT = Path(__file__).resolve().parents[2]
 HIDDEN = 0x2
 INVALID_ATTRIBUTES = 0xFFFFFFFF
 
+# Yalnızca yerel, yeniden üretilebilir veya güvenlik nedeniyle gizli tutulması
+# gereken alanlar saklanır. Kaynak kodu ve Proje Kontrol Merkezi görünür kalır.
 TECHNICAL_NAMES = {
     ".git",
     ".github",
     ".gitignore",
-    ".quarantine",
     ".pytest_cache",
+    ".quarantine",
     ".restore_points",
     ".venv",
     ".venv-build",
     "__pycache__",
-    "ai",
-    "anonymization",
     "artifacts",
     "build",
     "dev_data",
-    "dicom",
-    "guncel_proje_zip.bat",
-    "license_app.py",
-    "main.py",
-    "modular_app",
-    "packaging",
-    "pacs",
-    "Proje_Temizlik_Merkezi_v2.bat",
-    "project_control_center.py",
-    "requirements-dev.txt",
-    "requirements.txt",
-    "resources",
-    "scripts",
+    "dist",
+    "installer",
+    "project_archives",
+    "releases",
     "security_keys",
-    "ScoliosisFollowUp.spec",
-    "tests",
-    "todo.md",
-    "tools",
-    "update.json",
+    "requirements-dev.txt",
+}
+
+# Önceden gizlenmiş olabilecek çekirdek öğeler show modunda daima açılır.
+# Böylece eski geniş gizleme listesinden kalan Hidden attribute'ları temizlenir.
+VISIBLE_CORE_NAMES = {
+    "README.md",
+    "Uygulamayi_Baslat.bat",
+    "main.py",
+    "project_control_center.py",
+    "license_app.py",
+    "requirements.txt",
     "VERSION",
+    "update.json",
+    "modular_app",
+    "ai",
+    "dicom",
+    "pacs",
+    "anonymization",
+    "resources",
+    "tests",
+    "scripts",
+    "tools",
+    "packaging",
+    "docs",
 }
 
 
@@ -70,7 +80,8 @@ def main() -> int:
         return 1
 
     changed = 0
-    for name in sorted(TECHNICAL_NAMES, key=str.lower):
+    names = TECHNICAL_NAMES if args.hide else TECHNICAL_NAMES | VISIBLE_CORE_NAMES
+    for name in sorted(names, key=str.lower):
         path = ROOT / name
         if not path.exists():
             continue

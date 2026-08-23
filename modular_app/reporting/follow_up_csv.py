@@ -27,9 +27,10 @@ def export_follow_up_csv(
     """
     output = Path(destination)
     output.parent.mkdir(parents=True, exist_ok=True)
-    exams = repository.list_patient_follow_up(patient_id)
-    measurements = list(reversed(repository.list_cobb_measurements(patient_id)))
-    image_notes = list(reversed(repository.list_image_notes(patient_id)))
+    bundle = repository.get_follow_up_report_bundle(patient_id)
+    exams = bundle["exams"]
+    measurements = list(reversed(bundle["measurements"]))
+    image_notes = list(reversed(bundle["image_notes"]))
     with output.open("w", newline="", encoding="utf-8-sig") as handle:
         writer = csv.DictWriter(handle, fieldnames=CSV_HEADERS)
         writer.writeheader()

@@ -98,6 +98,100 @@ class DicomPreloadWorkerTests(unittest.TestCase):
         self.assertEqual(ready[0].request.request_id, newest.request_id)
         self.assertNotIn("slow.dcm", ready[0].decoded.path)
 
+    def test_priority_current_runs_before_queued_prefetch(self):
+        started = []
+        release = Event()
+
+        def priority_decoder(path: str, frame_index: int, cancel_event: Event) -> DecodedImage:
+            name = Path(path).name
+            started.append(name)
+            if name == "blocker.dcm":
+                while not release.is_set():
+                    if cancel_event.is_set():
+                        raise DecodeCancelled()
+                    time.sleep(0.002)
+            return fixture_decoder(path, frame_index, cancel_event)
+
+        self.controller.shutdown()
+        self.controller = DicomPreloadController(
+            pool=self.pool,
+            decoder=priority_decoder,
+            max_queue=3,
+        )
+        ready = []
+        self.controller.image_ready.connect(ready.append)
+        self.controller.request("blocker.dcm", slot="blocker", priority=5, reason="test-blocker")
+        self.assertTrue(wait_until(lambda: started == ["blocker.dcm"]))
+        self.controller.request("prefetch.dcm", slot="prefetch", priority=10, reason="prefetch-neighbor")
+        current = self.controller.request("current.dcm", slot="viewer", priority=0, reason="current")
+        self.assertEqual(current.priority, 0)
+        release.set()
+        self.assertTrue(wait_until(lambda: len(ready) == 1))
+        self.assertEqual(started[:2], ["blocker.dcm", "current.dcm"])
+        self.assertNotIn("prefetch.dcm", started)
+        self.assertGreaterEqual(self.controller.queue_stats()["cancelled"], 1)
+
+    def test_queue_depth_is_bounded_for_prefetch_requests(self):
+        started = []
+        release = Event()
+
+        def bounded_decoder(path: str, frame_index: int, cancel_event: Event) -> DecodedImage:
+            name = Path(path).name
+            started.append(name)
+            if name == "blocker.dcm":
+                while not release.is_set():
+                    if cancel_event.is_set():
+                        raise DecodeCancelled()
+                    time.sleep(0.002)
+            return fixture_decoder(path, frame_index, cancel_event)
+
+        self.controller.shutdown()
+        self.controller = DicomPreloadController(pool=self.pool, decoder=bounded_decoder, max_queue=2)
+        self.controller.request("blocker.dcm", slot="blocker", priority=5)
+        self.assertTrue(wait_until(lambda: started == ["blocker.dcm"]))
+        for index in range(4):
+            self.controller.request(f"prefetch-{index}.dcm", slot=f"prefetch-{index}", priority=10, reason="prefetch-next")
+        self.assertLessEqual(self.controller.queue_stats()["queue_depth"], 2)
+        release.set()
+        self.assertTrue(wait_until(lambda: self.controller.queue_stats()["inflight"] == 0))
+
+    def test_duplicate_inflight_request_reuses_identity(self):
+        first = self.controller.request("ready.dcm", slot="viewer", priority=0, reason="current")
+        duplicate = self.controller.request("ready.dcm", slot="viewer", priority=0, reason="current")
+        self.assertEqual(first.request_id, duplicate.request_id)
+        self.assertTrue(wait_until(lambda: self.controller.queue_stats()["completed"] == 1))
+        self.assertEqual(self.controller.queue_stats()["submitted"], 1)
+
+    def test_request_has_source_signature_generation_and_reason(self):
+        request = self.controller.request(
+            "ready.dcm",
+            source_signature=(123, 456),
+            priority=7,
+            reason="prefetch-next",
+        )
+        self.assertEqual(request.source_signature, (123, 456))
+        self.assertEqual(request.generation, 1)
+        self.assertEqual(request.reason, "prefetch-next")
+        self.assertEqual(request.priority, 7)
+        self.assertTrue(wait_until(lambda: self.controller.queue_stats()["completed"] == 1))
+
+    def test_stale_result_is_not_emitted_when_decoder_ignores_cancellation(self):
+        ready = []
+
+        def stubborn_decoder(path: str, frame_index: int, cancel_event: Event) -> DecodedImage:
+            if Path(path).name == "stubborn.dcm":
+                time.sleep(0.03)
+            return fixture_decoder(path, frame_index, cancel_event)
+
+        self.controller.shutdown()
+        self.controller = DicomPreloadController(pool=self.pool, decoder=stubborn_decoder)
+        self.controller.image_ready.connect(ready.append)
+        self.controller.request("stubborn.dcm", slot="viewer")
+        newest = self.controller.request("ready.dcm", slot="viewer")
+        self.assertTrue(wait_until(lambda: len(ready) == 1))
+        self.assertEqual(ready[0].request.request_id, newest.request_id)
+        self.assertGreaterEqual(self.controller.queue_stats()["cancelled"], 1)
+
     def test_decode_error_is_surface_as_data(self):
         errors = []
         self.controller.decode_failed.connect(errors.append)

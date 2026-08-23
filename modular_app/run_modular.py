@@ -18,7 +18,8 @@ _BOOTSTRAP_ROOT = Path(__file__).resolve().parent.parent
 if str(_BOOTSTRAP_ROOT) not in sys.path:
     sys.path.append(str(_BOOTSTRAP_ROOT))
 
-from PySide6.QtCore import QEvent, QPointF, QSize, Qt, QTimer
+from PySide6.QtCore import QEvent, QPointF, QSize, QThreadPool, Qt, QTimer
+
 from PySide6.QtWidgets import QStyle
 from PySide6.QtWidgets import QApplication, QDialog, QFileDialog, QGraphicsItem, QInputDialog, QLineEdit, QMessageBox, QProgressDialog, QSplashScreen
 from PySide6.QtGui import QActionGroup, QFont, QIcon, QPen, QPixmap
@@ -35,7 +36,6 @@ from modular_app.timeline.cobb_history import CobbHistoryDialog
 from modular_app.timeline.follow_up_summary import FollowUpSummaryDialog
 from modular_app.timeline.cobb_trend import CobbTrendDialog
 from modular_app.timeline.longitudinal_center_dialog import LongitudinalCenterDialog
-from modular_app.timeline.longitudinal_panel import LongitudinalPanelDialog
 from modular_app.timeline.audit_history import AuditHistoryDialog
 from modular_app.timeline.patient_manager import PatientManagerDialog
 from modular_app.timeline.quality_check import QualityCheckDialog
@@ -54,14 +54,22 @@ from modular_app.ui.ai_model_candidate_review_dialog import AIModelCandidateRevi
 from modular_app.ui.ai_model_inspector_dialog import AIModelInspectorDialog
 from modular_app.ui.ai_training_dialog import AITrainingDataDialog
 from modular_app.ui.user_guide_dialog import UserGuideDialog
+from modular_app.ui.first_run_wizard import (
+    FirstRunChoices,
+    FirstRunWizard,
+    mark_onboarding_complete,
+    save_pacs_choices,
+    should_show_onboarding,
+)
 from modular_app.ui.image_quality_dialog import ImageQualityDialog
 from modular_app.ui import workspace_actions
+from modular_app.ui.background_task import FunctionTask
+
 from modular_app.services.system_services import APP_VERSION, BackupError, backup_reminder_message, check_for_update, check_local_database_health, configure_logging, export_diagnostic_bundle, export_encrypted_backup, restore_encrypted_backup
 from modular_app.services.license_policy import evaluate_license_gate
 from modular_app.security.integrity import verify_distribution_integrity
 from ai.model_runtime import CobbSuggestion, LocalCobbModel, calculate_cobb_angle
 from ai.landmark_runtime import LandmarkSuggestion, LocalLandmarkModel
-from ai.mazurowski_runtime import MazurowskiOnnxModel
 from ai.draft_workflow import approve_ai_draft, create_ai_draft_record, persist_approved_ai_draft, reject_ai_draft
 from modular_app.domain.contracts import CoordinateSystem, SourceContext
 from modular_app.domain.measurement_adapter import LegacyCobbRepositoryAdapter
@@ -78,7 +86,15 @@ MODULAR_CHECKPOINT = BASE / "Scoliosis_FollowUp_OVERLAY_ALIGN_v9_PRESET_FIX_WW40
 # kullanarak modüler özellikleri uygulamaya bağlamaya devam eder.
 CHECKPOINT = MODULAR_CHECKPOINT if MODULAR_CHECKPOINT.is_file() else PROJECT_ROOT / "main.py"
 
+# QTimer.singleShot(int, ...) signed 32-bit milliseconds kullanır; uzak bir
+# lisans bitiş tarihi doğrudan verilirse yaklaşık 24.8 gün üstünde OverflowError
+# oluşabilir. Uzun süreleri güvenli aralıklarla yeniden kontrol ederiz.
+_MAX_QT_TIMER_MS = 2_000_000_000
 
+
+def _runtime_timer_delay_ms(remaining) -> int:
+    seconds = max(0.0, float(remaining.total_seconds()))
+    return max(1000, min(_MAX_QT_TIMER_MS, int(seconds * 1000)))
 
 
 def create_startup_splash(app: QApplication, icon_path: Path) -> QSplashScreen | None:
@@ -132,7 +148,7 @@ def schedule_runtime_license_check(app, window, gate_result):
     """Çevrimdışı/deneme süresi açık oturumda da dolunca yeniden denetler."""
     if gate_result.remaining is None:
         return
-    milliseconds = max(1000, int(gate_result.remaining.total_seconds() * 1000))
+    milliseconds = _runtime_timer_delay_ms(gate_result.remaining)
 
     def enforce_at_expiry():
         refreshed = evaluate_license_gate(window.exam_repository)
@@ -168,13 +184,18 @@ def read_exam_metadata(path: str) -> dict:
     }
 
 
-def install_modules(AppClass):
+def install_modules(AppClass, *, database_existed: bool = True):
     repo = ExamRepository(DB_PATH)
 
     class ModularApp(AppClass):
         def __init__(self):
             super().__init__()
             self.exam_repository = repo
+            self._background_pool = QThreadPool(self)
+            self._background_pool.setMaxThreadCount(2)
+            self._background_tasks = set()
+            self._background_closing = False
+
             if not self._theme_settings.contains("ui/theme"):
                 repository_theme = repo.get_setting("ui/theme", "")
                 if repository_theme in {"dark", "light"}:
@@ -196,9 +217,9 @@ def install_modules(AppClass):
             self.current_user_role = repo.get_setting("active_user_role", "Yönetici")
             self.ai_cobb_model = LocalCobbModel(AI_RESOURCES_DIR / "vertebra_cobb")
             self.ai_landmark_model = LocalLandmarkModel(AI_RESOURCES_DIR / "vertebra_landmarks_experimental")
-            self.mazurowski_ai_model = MazurowskiOnnxModel(
-                AI_RESOURCES_DIR / "mazurowski" / "mazurowski_mask_rcnn.onnx"
-            )
+            # SciPy/OpenCV tabanlı deneysel model yalnız ilgili araç
+            # açıldığında yüklenir; normal uygulama başlangıcını geciktirmez.
+            self.mazurowski_ai_model = None
             self._ai_cobb_draft_items = []
             self._ai_landmark_draft_items = []
             self.ai_training_capture_active = False
@@ -449,6 +470,9 @@ def install_modules(AppClass):
 
             guide_action = help_menu.addAction("Kullanım Rehberi", self.show_user_guide)
             guide_action.setIcon(_icon(QStyle.SP_DialogHelpButton))
+            setup_action = help_menu.addAction("İlk Kurulum Sihirbazını Yeniden Aç")
+            setup_action.triggered.connect(lambda _checked=False: self.show_first_run_wizard())
+            setup_action.setIcon(_icon(QStyle.SP_FileDialogDetailedView))
             help_menu.addSeparator()
 
             license_status_action = help_menu.addAction("Lisans Durumu", self.check_license_status)
@@ -540,6 +564,53 @@ def install_modules(AppClass):
 
         def show_user_guide(self):
             UserGuideDialog(self).exec()
+
+        def _apply_first_run_choices(self, choices: FirstRunChoices, *, replace_default: bool) -> None:
+            user = self.exam_repository.configure_local_user(
+                choices.display_name,
+                choices.role,
+                replace_default=replace_default,
+            )
+            self.current_user_name = str(user.get("display_name", choices.display_name))
+            self.current_user_role = str(user.get("role", choices.role))
+            self.exam_repository.set_setting("active_user_name", self.current_user_name)
+            self.exam_repository.set_setting("active_user_role", self.current_user_role)
+            self.exam_repository.set_setting("ui/start_page", choices.start_page)
+            self.set_theme(choices.theme)
+            save_pacs_choices(choices)
+            mark_onboarding_complete()
+            self.exam_repository.record_audit_event(
+                "SYSTEM",
+                "initial_setup_completed" if replace_default else "initial_setup_reopened",
+                f"Başlangıç alanı: {choices.start_page}; tema: {choices.theme}",
+                actor=self.current_user_name,
+                actor_role=self.current_user_role,
+            )
+
+        def show_first_run_wizard(self, *, automatic: bool = False) -> bool:
+            wizard = FirstRunWizard(self)
+            if wizard.exec() != QDialog.DialogCode.Accepted:
+                return False
+            choices = wizard.choices()
+            try:
+                self._apply_first_run_choices(choices, replace_default=bool(automatic and not database_existed))
+            except Exception as exc:
+                QMessageBox.warning(self, "İlk kurulum", f"Tercihler kaydedilemedi:\n{exc}")
+                return False
+            self.apply_start_page_preference()
+            self._open_guide_after_onboarding = bool(choices.open_guide)
+            self.statusBar().showMessage("İlk kurulum tercihleri kaydedildi.", 10000)
+            return True
+
+        def apply_start_page_preference(self) -> None:
+            key = self.exam_repository.get_setting("ui/start_page", "viewer")
+            target = {
+                "viewer": getattr(self, "viewer_tab", None),
+                "workspace": getattr(self, "workspace_tab", None),
+                "stitcher": getattr(self, "stitcher_tab", None),
+            }.get(key)
+            if target is not None and getattr(self, "tabs", None) is not None:
+                self.tabs.setCurrentWidget(target)
 
         def check_license_status(self):
             """Lisans durumunu, çevrimdışı toleransı ve deneme süresini denetler."""
@@ -1156,6 +1227,12 @@ def install_modules(AppClass):
 
         def show_mazurowski_ai_assistant(self):
             """Run the local mask-curve model and submit its draft to expert review."""
+            if self.mazurowski_ai_model is None:
+                from ai.mazurowski_runtime import MazurowskiOnnxModel
+
+                self.mazurowski_ai_model = MazurowskiOnnxModel(
+                    AI_RESOURCES_DIR / "mazurowski" / "mazurowski_mask_rcnn.onnx"
+                )
             dialog = AICobbAssistantDialog(self.mazurowski_ai_model, self._active_ai_dicom_path(), self)
             dialog.draft_requested.connect(self._apply_ai_cobb_draft)
             dialog.exec()
@@ -1679,6 +1756,9 @@ def install_modules(AppClass):
 
         def show_longitudinal_panel(self):
             """İlerleme panelini ana uygulamaya aç ve viewer köprülerini bağla."""
+            # PyQtGraph ve panel bağımlılıklarını yalnız özellik istendiğinde yükle.
+            from modular_app.timeline.longitudinal_panel import LongitudinalPanelDialog
+
             patient = self._current_patient()
             patient_id = patient["patient_id"] if patient else ""
             dialog = LongitudinalPanelDialog(
@@ -1738,7 +1818,38 @@ def install_modules(AppClass):
                 5000,
             )
 
+        def _run_background_task(self, function, on_success, title, cleanup=None):
+            task = FunctionTask(function)
+            self._background_tasks.add(task)
+            self.statusBar().showMessage(f"{title} arka planda hazırlanıyor…")
+
+            def finish(value):
+                self._background_tasks.discard(task)
+                if self._background_closing:
+                    if cleanup is not None:
+                        cleanup()
+                    return
+                try:
+                    on_success(value)
+                finally:
+                    if cleanup is not None:
+                        cleanup()
+
+            def fail(error):
+                self._background_tasks.discard(task)
+                if cleanup is not None:
+                    cleanup()
+                if self._background_closing:
+                    return
+                message = str(error) or error.__class__.__name__
+                QMessageBox.warning(self, title, f"{title} tamamlanamadı:\n{message}")
+
+            task.signals.finished.connect(finish)
+            task.signals.failed.connect(fail)
+            self._background_pool.start(task)
+
         def _export_longitudinal_csv(self, snapshot):
+
             """Panel filtresine göre zaman çizelgesini CSV olarak dışa aktar."""
             if not self._require_role({"Yönetici", "Hekim"}, "Takip verisini CSV olarak dışa aktarma"):
                 return
@@ -1755,7 +1866,7 @@ def install_modules(AppClass):
                 return
             if not path.lower().endswith(".csv"):
                 path += ".csv"
-            try:
+            def write_csv():
                 from modular_app.timeline.longitudinal_service import LongitudinalService
 
                 rows = LongitudinalService(self.exam_repository).build_csv_rows(snapshot)
@@ -1764,16 +1875,24 @@ def install_modules(AppClass):
                     writer = csv.DictWriter(handle, fieldnames=fieldnames)
                     writer.writeheader()
                     writer.writerows(rows)
+                return path, len(rows)
+
+            def csv_done(result):
+                output_path, row_count = result
                 self.exam_repository.record_audit_event(
                     patient_id,
                     "longitudinal_panel_csv_exported",
-                    os.path.basename(path),
+                    os.path.basename(output_path),
                     actor=self.current_user_name,
                     actor_role=self.current_user_role,
                 )
-                QMessageBox.information(self, "CSV dışa aktarımı", f"Panel verisi kaydedildi:\n{path}")
-            except Exception as exc:
-                QMessageBox.warning(self, "CSV dışa aktarımı", f"Panel verisi kaydedilemedi:\n{exc}")
+                QMessageBox.information(
+                    self,
+                    "CSV dışa aktarımı",
+                    f"Panel verisi kaydedildi ({row_count} satır):\n{output_path}",
+                )
+
+            self._run_background_task(write_csv, csv_done, "CSV dışa aktarımı")
 
         def _export_longitudinal_pdf(self, snapshot):
             """Panelde seçili hastanın takip raporunu PDF olarak üret."""
@@ -1797,10 +1916,10 @@ def install_modules(AppClass):
             if not accepted:
                 return
             overlay_snapshot = self._capture_overlay_snapshot(path)
-            try:
+            def write_pdf():
                 from modular_app.reporting.follow_up_pdf import generate_follow_up_report
 
-                output = generate_follow_up_report(
+                return generate_follow_up_report(
                     self.exam_repository,
                     patient_id,
                     patient_name,
@@ -1810,6 +1929,8 @@ def install_modules(AppClass):
                     prepared_by=self.current_user_name,
                     prepared_role=self.current_user_role,
                 )
+
+            def pdf_done(output):
                 self.exam_repository.record_audit_event(
                     patient_id,
                     "longitudinal_panel_pdf_exported",
@@ -1818,14 +1939,20 @@ def install_modules(AppClass):
                     actor_role=self.current_user_role,
                 )
                 QMessageBox.information(self, "PDF raporu", f"Panel raporu kaydedildi:\n{output}")
-            except Exception as exc:
-                QMessageBox.warning(self, "PDF raporu", f"Panel raporu oluşturulamadı:\n{exc}")
-            finally:
+
+            def cleanup_overlay():
                 if overlay_snapshot:
                     try:
                         os.remove(overlay_snapshot)
                     except OSError:
                         pass
+
+            self._run_background_task(
+                write_pdf,
+                pdf_done,
+                "PDF raporu",
+                cleanup=cleanup_overlay,
+            )
 
         def show_audit_history(self):
             patient = self._current_patient()
@@ -2777,6 +2904,7 @@ def main(checkpoint_class=None):
         return 3
 
     configure_logging(DB_PATH.parent)
+    database_existed = DB_PATH.is_file()
 
     # Repository açılmadan önce yalnızca-okunur SQLite denetimi yapılır.
     # Bozuk bir dosyada şema yükseltmesi veya yeni yazım gerçekleştirilmez.
@@ -2801,7 +2929,7 @@ def main(checkpoint_class=None):
     if checkpoint_class is None:
         checkpoint = load_checkpoint()
         checkpoint_class = checkpoint.ScoliosisFollowUpApp
-    AppClass = install_modules(checkpoint_class)
+    AppClass = install_modules(checkpoint_class, database_existed=database_existed)
     window = AppClass()
     if icon_path.is_file():
         window.setWindowIcon(QIcon(str(icon_path)))
@@ -2838,12 +2966,26 @@ def main(checkpoint_class=None):
     if license_gate.mode != "licensed":
         window.statusBar().showMessage(license_gate.message, 15000)
     schedule_runtime_license_check(app, window, license_gate)
+
+    automatic_onboarding = should_show_onboarding(database_existed=database_existed)
+    if automatic_onboarding:
+        if splash is not None:
+            splash.hide()
+        if not window.show_first_run_wizard(automatic=True):
+            return
+        if splash is not None:
+            splash.show()
+    else:
+        window.apply_start_page_preference()
+
     QTimer.singleShot(1800, window.run_startup_safety_checks)
 
     # Hazır olduktan sonra sabit 1,5 saniye bekletme; ana pencereyi hemen aç.
     window.show()
     if splash is not None:
         splash.finish(window)
+    if getattr(window, "_open_guide_after_onboarding", False):
+        QTimer.singleShot(0, window.show_user_guide)
     startup_dicom = _startup_dicom_path(sys.argv)
     if startup_dicom is not None:
         QTimer.singleShot(0, lambda: _open_startup_dicom(window, startup_dicom))

@@ -186,6 +186,19 @@ GUIDE_SECTIONS = (
         """,
     ),
     (
+        "İlk Kurulum Tercihleri",
+        """
+        <h2>İlk Kurulum Tercihleri</h2>
+        <p>İlk kullanım sihirbazı yeni bir yerel kurulumda kullanıcı, rol, tema, başlangıç alanı ve isteğe bağlı PACS bilgilerini hazırlar.</p>
+        <ul>
+          <li>Tema daha sonra <b>Görüntüleme → Tema</b> menüsünden değiştirilebilir.</li>
+          <li>Yerel kullanıcılar <b>Hasta Takibi → Yerel Kullanıcı ve Roller</b> ekranından yönetilebilir.</li>
+          <li>PACS bilgileri PACS bağlantı ekranından güncellenip bağlantı testi yapılabilir.</li>
+          <li>Sihirbazı yeniden çalıştırmak için <b>Yardım → İlk Kurulum Sihirbazını Yeniden Aç</b> yolunu kullanın.</li>
+        </ul>
+        """,
+    ),
+    (
         "Yedekleme ve Geri Dönüş",
         """
         <h2>Yedekleme ve Geri Dönüş</h2>

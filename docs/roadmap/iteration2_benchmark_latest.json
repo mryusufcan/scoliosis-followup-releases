@@ -1,0 +1,76 @@
+{
+  "kind": "scoliosis_follow_up_iteration2_benchmark",
+  "schema_version": 1,
+  "measurement_policy": {
+    "real_dicom_dataset_required": true,
+    "warmup_runs": 1,
+    "reported_repetitions": 3,
+    "patient_identifiers_omitted_from_output": true,
+    "pacs_live_calls_opt_in": true
+  },
+  "environment": {
+    "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 23 Model 113 Stepping 0, AuthenticAMD",
+    "cpu_count": 16,
+    "pydicom": "3.0.2",
+    "numpy": "2.5.2",
+    "pynetdicom": "3.0.4",
+    "reportlab": "5.0.1"
+  },
+  "dataset": {
+    "root_name": "dicom_samples",
+    "files_selected": 16,
+    "total_bytes": 104113868,
+    "file_names": [
+      "IM00002",
+      "IM00003",
+      "IM00004",
+      "IM00005",
+      "IM00003",
+      "IM00005",
+      "IM00006",
+      "IM00007",
+      "IM00008",
+      "IM00009",
+      "IM00009",
+      "IM00010",
+      "IM00011",
+      "IM00012",
+      "IM00011",
+      "IM00013"
+    ]
+  },
+  "benchmarks": {
+    "dicom_metadata_scan": {
+      "status": "ok",
+      "files": 16,
+      "readable_images": 16,
+      "total": {
+        "repetitions": 3,
+        "mean_ms": 17.927,
+        "median_ms": 17.844,
+        "min_ms": 17.776,
+        "max_ms": 18.162,
+        "p95_ms": 18.162
+      },
+      "per_file_mean_ms": 1.12
+    },
+    "dicom_decode": {
+      "status": "not_run",
+      "reason": "Süreyi sınırlamak için --decode verilmedi; worker benchmarkı ayrı çalıştırılabilir."
+    },
+    "longitudinal": {
+      "status": "not_run",
+      "reason": "--db ve --patient-id birlikte verilmedi; veritabanı benchmarkları çalıştırılmadı."
+    },
+    "reports": {
+      "status": "not_run",
+      "reason": "--db ve --patient-id birlikte verilmedi; veritabanı benchmarkları çalıştırılmadı."
+    },
+    "pacs": {
+      "status": "not_run",
+      "reason": "--pacs-config verilmedi; ağ işlemi çalıştırılmadı."
+    }
+  }
+}

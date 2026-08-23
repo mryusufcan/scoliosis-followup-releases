@@ -8,6 +8,7 @@ import sys
 import time
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,6 +29,7 @@ from modular_app.performance_utils import (
 )  # noqa: E402
 from modular_app.run_modular import install_modules  # noqa: E402
 from modular_app.ui.dicom_viewer_components import process_dicom_array  # noqa: E402
+from modular_app.ui import viewer_core  # noqa: E402
 
 
 BUDGET_PATH = ROOT / "docs" / "roadmap" / "performance_budgets.json"
@@ -72,7 +74,13 @@ class PerformanceBudgetIntegrationTests(unittest.TestCase):
         read_ms: list[float] = []
         decode_ms: list[float] = []
         render_ms: list[float] = []
-        for path in self.samples[:3]:
+        benchmark_paths = self.samples[:3]
+        # Align the integration gate with performance_budgets.json: warm the
+        # filesystem/codec once, then measure reported repetitions.
+        for path in benchmark_paths:
+            warm_dataset = pydicom.dcmread(str(path))
+            _ = warm_dataset.pixel_array
+        for path in benchmark_paths:
             started = time.perf_counter()
             dataset = pydicom.dcmread(str(path))
             read_ms.append((time.perf_counter() - started) * 1000.0)
@@ -119,6 +127,54 @@ class PerformanceBudgetIntegrationTests(unittest.TestCase):
             window.close()
             app.processEvents()
 
+    def test_viewer_preload_pool_is_bounded(self):
+        app = QApplication.instance() or QApplication([])
+        window = install_modules(ScoliosisFollowUpApp)()
+        try:
+            self.assertEqual(window._viewer_preload_pool.maxThreadCount(), 1)
+        finally:
+            window.close()
+            app.processEvents()
+
+    def test_decoded_array_cache_reuses_pixels_across_view_changes(self):
+        if not self.samples:
+            self.skipTest("dev_data/dicom_samples altında gerçek DICOM yok")
+        app = QApplication.instance() or QApplication([])
+        window = install_modules(ScoliosisFollowUpApp)()
+        path = str(self.samples[0].resolve())
+        try:
+            window.viewer_current_path = path
+            window._viewer_only_pixmap_cache.clear()
+            window._viewer_decoded_array_cache.clear()
+            window._viewer_dataset_cache.clear()
+            window.get_viewer_file_pixmap(path)
+            self.assertEqual(len(window._viewer_decoded_array_cache), 1)
+            window._viewer_only_pixmap_cache.clear()
+            window._viewer_dataset_cache.clear()
+            window._viewer_header_cache.clear()
+            window.viewer_brightness_value = 15
+            original_reader = pydicom.dcmread
+            read_calls = []
+
+            def guarded_reader(*args, **kwargs):
+                read_calls.append(kwargs)
+                if kwargs.get("stop_before_pixels") is not True:
+                    raise AssertionError("decoded array cache hit tam DICOM decode çağırdı")
+                return original_reader(*args, **kwargs)
+
+            with patch("main.pydicom.dcmread", side_effect=guarded_reader):
+                pixmap = window.get_viewer_file_pixmap(path)
+            self.assertFalse(pixmap.isNull())
+            self.assertTrue(read_calls)
+            self.assertTrue(all(call.get("stop_before_pixels") is True for call in read_calls))
+            self.assertLessEqual(
+                cache_bytes(window._viewer_decoded_array_cache),
+                window._viewer_decoded_array_cache_bytes,
+            )
+        finally:
+            window.close()
+            app.processEvents()
+
     def test_cache_entry_and_byte_limits_are_enforced(self):
         cache: dict[str, object] = {}
         for index in range(4):
@@ -157,6 +213,14 @@ class PerformanceBudgetIntegrationTests(unittest.TestCase):
             self.assertLessEqual(
                 len(window._viewer_only_pixmap_cache),
                 window._viewer_pixmap_cache_limit,
+            )
+            self.assertLessEqual(
+                cache_bytes(window._viewer_decoded_array_cache),
+                window._viewer_decoded_array_cache_bytes,
+            )
+            self.assertLessEqual(
+                len(window._viewer_decoded_array_cache),
+                window._viewer_decoded_array_cache_limit,
             )
         finally:
             window.close()

@@ -1,0 +1,114 @@
+{
+  "kind": "scoliosis_follow_up_iteration2_benchmark",
+  "schema_version": 1,
+  "measurement_policy": {
+    "real_dicom_dataset_required": true,
+    "warmup_runs": 1,
+    "reported_repetitions": 3,
+    "patient_identifiers_omitted_from_output": true,
+    "pacs_live_calls_opt_in": true
+  },
+  "environment": {
+    "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 23 Model 113 Stepping 0, AuthenticAMD",
+    "cpu_count": 16,
+    "pydicom": "3.0.2",
+    "numpy": "2.5.2",
+    "pynetdicom": "3.0.4",
+    "reportlab": "5.0.1"
+  },
+  "dataset": {
+    "root_name": "dicom_samples",
+    "files_selected": 16,
+    "total_bytes": 104113868,
+    "file_names": [
+      "IM00002",
+      "IM00003",
+      "IM00004",
+      "IM00005",
+      "IM00003",
+      "IM00005",
+      "IM00006",
+      "IM00007",
+      "IM00008",
+      "IM00009",
+      "IM00009",
+      "IM00010",
+      "IM00011",
+      "IM00012",
+      "IM00011",
+      "IM00013"
+    ]
+  },
+  "benchmarks": {
+    "dicom_metadata_scan": {
+      "status": "ok",
+      "files": 16,
+      "readable_images": 16,
+      "total": {
+        "repetitions": 3,
+        "mean_ms": 17.948,
+        "median_ms": 17.764,
+        "min_ms": 17.538,
+        "max_ms": 18.542,
+        "p95_ms": 18.542
+      },
+      "per_file_mean_ms": 1.122
+    },
+    "dicom_decode": {
+      "status": "not_run",
+      "reason": "Süreyi sınırlamak için --decode verilmedi; worker benchmarkı ayrı çalıştırılabilir."
+    },
+    "longitudinal": {
+      "status": "ok",
+      "patient_id_recorded": true,
+      "snapshot": {
+        "total_exams": 7,
+        "total_measurements": 0,
+        "total_hidden_repeats": 0,
+        "curve_count": 0
+      },
+      "load_snapshot": {
+        "repetitions": 3,
+        "mean_ms": 2.473,
+        "median_ms": 2.603,
+        "min_ms": 2.082,
+        "max_ms": 2.734,
+        "p95_ms": 2.734
+      }
+    },
+    "reports": {
+      "status": "ok",
+      "patient_id_recorded": true,
+      "last_output_bytes": {
+        "csv": 989,
+        "pdf": 47308
+      },
+      "csv_export": {
+        "repetitions": 3,
+        "mean_ms": 2.338,
+        "median_ms": 2.262,
+        "min_ms": 2.069,
+        "max_ms": 2.685,
+        "p95_ms": 2.685
+      },
+      "pdf_export": {
+        "repetitions": 3,
+        "mean_ms": 49.054,
+        "median_ms": 49.96,
+        "min_ms": 45.297,
+        "max_ms": 51.906,
+        "p95_ms": 51.906
+      }
+    },
+    "database_source": {
+      "kind": "temporary_db_derived_from_real_dicom_headers",
+      "patient_id_recorded": true
+    },
+    "pacs": {
+      "status": "not_run",
+      "reason": "--pacs-config verilmedi; ağ işlemi çalıştırılmadı."
+    }
+  }
+}

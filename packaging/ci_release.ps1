@@ -19,9 +19,12 @@ if ($version -notmatch '^\d+\.\d+\.\d+$') {
     throw "VERSION dosyasında geçerli bir sürüm bulunamadı: $version"
 }
 
-$tagName = if ($Tag.Trim()) { $Tag.Trim() } else { "v$version" }
-if ($tagName -notmatch '^v\d+\.\d+\.\d+$') {
-    throw "Tag vX.Y.Z biçiminde olmalıdır: $tagName"
+$tagName = if ($Tag.Trim()) { $Tag.Trim() } else { $version }
+if ($tagName -notmatch '^v?\d+\.\d+\.\d+$') {
+    throw "Tag X.Y.Z veya vX.Y.Z biçiminde olmalıdır: $tagName"
+}
+if ($PublishGitHubRelease -and -not $CertificateThumbprint.Trim()) {
+    Write-Warning "Authenticode sertifikası verilmedi; release imzasız yayımlanacak ve Windows yayıncı uyarısı görülebilir."
 }
 
 $logDir = Join-Path $root 'build\ci-release'
@@ -76,10 +79,39 @@ if (-not (Test-Path -LiteralPath $python)) {
     throw "Build Python ortamı bulunamadı: $python"
 }
 
+$exe = Join-Path $root 'dist\ScoliosisFollowUp\ScoliosisFollowUp.exe'
+$installer = Join-Path $root 'installer\ScoliosisFollowUp_Setup.exe'
+$securityKeyDirectory = if ($env:SCOLIOSIS_FOLLOWUP_SECURITY_DIR) {
+    $env:SCOLIOSIS_FOLLOWUP_SECURITY_DIR
+} else {
+    Join-Path $env:LOCALAPPDATA 'ScoliosisFollowUp\security_keys'
+}
+$integrityKey = if ($IntegrityPrivateKey.Trim()) { $IntegrityPrivateKey.Trim() } else { Join-Path $securityKeyDirectory 'integrity_private.pem' }
+if (-not (Test-Path -LiteralPath $integrityKey)) {
+    throw "Update feed için bütünlük özel anahtarı bulunamadı: $integrityKey"
+}
+$feedScript = Join-Path $root 'packaging\generate_update_feed.py'
+$feedPath = Join-Path $root 'update.json'
+$downloadUrl = "https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/$tagName/ScoliosisFollowUp_Setup_$version.exe"
+$feedArgs = @(
+    $feedScript,
+    '--version', $version,
+    '--url', $downloadUrl,
+    '--installer', $installer,
+    '--private-key', $integrityKey,
+    '--output', $feedPath
+)
+Invoke-ExternalStep 'generate-update-feed' $python $feedArgs
+
 $verifyScript = Join-Path $root 'packaging\verify_release.py'
 $verifyArgs = @($verifyScript, '--root', $root)
 if ($FeedUrl.Trim()) { $verifyArgs += @('--feed-url', $FeedUrl.Trim()) }
 Invoke-ExternalStep 'verify-release' $python $verifyArgs
+
+$securityAuditScript = Join-Path $root 'tools\audit_distribution_security.py'
+$securityAuditPath = Join-Path $logDir 'distribution_security_audit.json'
+$securityAuditArgs = @($securityAuditScript, '--distribution', (Join-Path $root 'dist\ScoliosisFollowUp'), '--output', $securityAuditPath)
+Invoke-ExternalStep 'distribution-security-audit' $python $securityAuditArgs
 
 if ($RunBenchmarks) {
     $benchmarkScript = Join-Path $root 'tools\benchmark_worker_concurrency.py'
@@ -87,8 +119,6 @@ if ($RunBenchmarks) {
     Invoke-ExternalStep 'worker-concurrency-benchmark' $python $benchmarkArgs
 }
 
-$exe = Join-Path $root 'dist\ScoliosisFollowUp\ScoliosisFollowUp.exe'
-$installer = Join-Path $root 'installer\ScoliosisFollowUp_Setup.exe'
 $manifest = Join-Path $root 'dist\ScoliosisFollowUp\runtime_integrity.json'
 $artifacts = @($exe, $manifest)
 if (Test-Path -LiteralPath $installer) { $artifacts += $installer }
@@ -118,13 +148,17 @@ if ($PublishGitHubRelease) {
     if (-not $env:GITHUB_TOKEN -and -not $env:GH_TOKEN) {
         throw 'GitHub yayınlama istendi ancak GITHUB_TOKEN veya GH_TOKEN tanımlı değil.'
     }
-    $releaseFiles = @($exe)
-    if (Test-Path -LiteralPath $installer) { $releaseFiles += $installer }
-    $releaseFiles += (Join-Path $logDir 'artifacts.json')
+    if (-not (Test-Path -LiteralPath $installer)) { throw "GitHub release için installer bulunamadı." }
+    $releaseInstaller = Join-Path $logDir "ScoliosisFollowUp_Setup_$version.exe"
+    Copy-Item -LiteralPath $installer -Destination $releaseInstaller -Force
+    $releaseFiles = @($exe, $releaseInstaller, $feedPath, (Join-Path $logDir 'artifacts.json'))
     $releaseArgs = @('release', 'create', $tagName) + $releaseFiles + @('--title', "Scoliosis-Follow-Up $version", '--generate-notes', '--verify-tag')
     Invoke-ExternalStep 'github-release' $gh.Source $releaseArgs
 }
 
+if (-not $CertificateThumbprint.Trim()) {
+    Write-Warning "Bu release Authenticode imzası olmadan hazırlandı."
+}
 Write-Host "[CI] Release hazır: $version / $tagName"
 Write-Host "[CI] Artifact manifest: $logDir\artifacts.json"
 Write-Host "[CI] Kullanıcı verileri: %LOCALAPPDATA%\ScoliosisFollowUp"

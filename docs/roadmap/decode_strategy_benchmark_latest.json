@@ -1,0 +1,288 @@
+{
+  "kind": "real_dicom_decode_strategy_benchmark",
+  "schema_version": 1,
+  "environment": {
+    "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu_count": 16
+  },
+  "dataset": {
+    "root_name": "dicom_samples",
+    "files_selected": 4,
+    "file_names": [
+      "IM00002",
+      "IM00003",
+      "IM00004",
+      "IM00005"
+    ]
+  },
+  "measurement_note": "Gerçek DICOM decode; process/thread sonuçları yalnızca scalar boyut döndürür; DICOM dosyaları değiştirilmez.",
+  "results": [
+    {
+      "mode": "serial",
+      "workers": 1,
+      "files": 4,
+      "decoded": 4,
+      "failures": [],
+      "wall_ms": 4173.546,
+      "throughput_files_per_s": 0.958,
+      "throughput_megapixels_per_s": 6.385,
+      "decoded_array_bytes": 53296640,
+      "wall_ms_mean": 4117.5,
+      "wall_ms_min": 4061.454,
+      "speedup_vs_serial": 1.0,
+      "repeats": [
+        {
+          "mode": "serial",
+          "workers": 1,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4061.454,
+          "throughput_files_per_s": 0.985,
+          "throughput_megapixels_per_s": 6.561,
+          "decoded_array_bytes": 53296640
+        },
+        {
+          "mode": "serial",
+          "workers": 1,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4173.546,
+          "throughput_files_per_s": 0.958,
+          "throughput_megapixels_per_s": 6.385,
+          "decoded_array_bytes": 53296640
+        }
+      ]
+    },
+    {
+      "mode": "thread",
+      "workers": 1,
+      "files": 4,
+      "decoded": 4,
+      "failures": [],
+      "wall_ms": 4134.038,
+      "throughput_files_per_s": 0.968,
+      "throughput_megapixels_per_s": 6.446,
+      "decoded_array_bytes": 53296640,
+      "wall_ms_mean": 4092.765,
+      "wall_ms_min": 4051.492,
+      "speedup_vs_serial": 1.006,
+      "repeats": [
+        {
+          "mode": "thread",
+          "workers": 1,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4051.492,
+          "throughput_files_per_s": 0.987,
+          "throughput_megapixels_per_s": 6.577,
+          "decoded_array_bytes": 53296640
+        },
+        {
+          "mode": "thread",
+          "workers": 1,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4134.038,
+          "throughput_files_per_s": 0.968,
+          "throughput_megapixels_per_s": 6.446,
+          "decoded_array_bytes": 53296640
+        }
+      ]
+    },
+    {
+      "mode": "thread",
+      "workers": 2,
+      "files": 4,
+      "decoded": 4,
+      "failures": [],
+      "wall_ms": 4023.673,
+      "throughput_files_per_s": 0.994,
+      "throughput_megapixels_per_s": 6.623,
+      "decoded_array_bytes": 53296640,
+      "wall_ms_mean": 4049.063,
+      "wall_ms_min": 4023.673,
+      "speedup_vs_serial": 1.017,
+      "repeats": [
+        {
+          "mode": "thread",
+          "workers": 2,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4074.453,
+          "throughput_files_per_s": 0.982,
+          "throughput_megapixels_per_s": 6.54,
+          "decoded_array_bytes": 53296640
+        },
+        {
+          "mode": "thread",
+          "workers": 2,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4023.673,
+          "throughput_files_per_s": 0.994,
+          "throughput_megapixels_per_s": 6.623,
+          "decoded_array_bytes": 53296640
+        }
+      ]
+    },
+    {
+      "mode": "thread",
+      "workers": 4,
+      "files": 4,
+      "decoded": 4,
+      "failures": [],
+      "wall_ms": 4063.471,
+      "throughput_files_per_s": 0.984,
+      "throughput_megapixels_per_s": 6.558,
+      "decoded_array_bytes": 53296640,
+      "wall_ms_mean": 4131.627,
+      "wall_ms_min": 4063.471,
+      "speedup_vs_serial": 0.997,
+      "repeats": [
+        {
+          "mode": "thread",
+          "workers": 4,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4199.783,
+          "throughput_files_per_s": 0.952,
+          "throughput_megapixels_per_s": 6.345,
+          "decoded_array_bytes": 53296640
+        },
+        {
+          "mode": "thread",
+          "workers": 4,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4063.471,
+          "throughput_files_per_s": 0.984,
+          "throughput_megapixels_per_s": 6.558,
+          "decoded_array_bytes": 53296640
+        }
+      ]
+    },
+    {
+      "mode": "process",
+      "workers": 1,
+      "files": 4,
+      "decoded": 4,
+      "failures": [],
+      "wall_ms": 4382.355,
+      "throughput_files_per_s": 0.913,
+      "throughput_megapixels_per_s": 6.081,
+      "decoded_array_bytes": 53296640,
+      "wall_ms_mean": 4441.399,
+      "wall_ms_min": 4382.355,
+      "speedup_vs_serial": 0.927,
+      "repeats": [
+        {
+          "mode": "process",
+          "workers": 1,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4500.443,
+          "throughput_files_per_s": 0.889,
+          "throughput_megapixels_per_s": 5.921,
+          "decoded_array_bytes": 53296640
+        },
+        {
+          "mode": "process",
+          "workers": 1,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 4382.355,
+          "throughput_files_per_s": 0.913,
+          "throughput_megapixels_per_s": 6.081,
+          "decoded_array_bytes": 53296640
+        }
+      ]
+    },
+    {
+      "mode": "process",
+      "workers": 2,
+      "files": 4,
+      "decoded": 4,
+      "failures": [],
+      "wall_ms": 2690.267,
+      "throughput_files_per_s": 1.487,
+      "throughput_megapixels_per_s": 9.905,
+      "decoded_array_bytes": 53296640,
+      "wall_ms_mean": 2680.199,
+      "wall_ms_min": 2670.131,
+      "speedup_vs_serial": 1.536,
+      "repeats": [
+        {
+          "mode": "process",
+          "workers": 2,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 2670.131,
+          "throughput_files_per_s": 1.498,
+          "throughput_megapixels_per_s": 9.98,
+          "decoded_array_bytes": 53296640
+        },
+        {
+          "mode": "process",
+          "workers": 2,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 2690.267,
+          "throughput_files_per_s": 1.487,
+          "throughput_megapixels_per_s": 9.905,
+          "decoded_array_bytes": 53296640
+        }
+      ]
+    },
+    {
+      "mode": "process",
+      "workers": 4,
+      "files": 4,
+      "decoded": 4,
+      "failures": [],
+      "wall_ms": 1858.326,
+      "throughput_files_per_s": 2.152,
+      "throughput_megapixels_per_s": 14.34,
+      "decoded_array_bytes": 53296640,
+      "wall_ms_mean": 1835.468,
+      "wall_ms_min": 1812.61,
+      "speedup_vs_serial": 2.243,
+      "repeats": [
+        {
+          "mode": "process",
+          "workers": 4,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 1812.61,
+          "throughput_files_per_s": 2.207,
+          "throughput_megapixels_per_s": 14.702,
+          "decoded_array_bytes": 53296640
+        },
+        {
+          "mode": "process",
+          "workers": 4,
+          "files": 4,
+          "decoded": 4,
+          "failures": [],
+          "wall_ms": 1858.326,
+          "throughput_files_per_s": 2.152,
+          "throughput_megapixels_per_s": 14.34,
+          "decoded_array_bytes": 53296640
+        }
+      ]
+    }
+  ]
+}

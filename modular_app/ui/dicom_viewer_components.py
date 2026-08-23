@@ -35,6 +35,7 @@ _SELECTION_THUMBNAIL_CACHE = {}
 _SELECTION_THUMBNAIL_CACHE_LIMIT = 256
 _SELECTION_PREVIEW_CACHE = {}
 _SELECTION_PREVIEW_CACHE_LIMIT = 8
+_SELECTION_PREVIEW_MAX_SIZE = 640
 
 def process_dicom_array(
     ds,
@@ -301,50 +302,78 @@ class DicomPreviewDialog(QDialog):
             self.accept()
 
 
-class _SelectionThumbnailSignals(QObject):
-    ready = Signal(str, QImage, str)
+def _fast_uncompressed_preview_source(dataset, max_size):
+    """Sample native PixelData without materializing a full decoded ndarray.
+
+    This path is intentionally limited to native, uncompressed grayscale data.
+    Encapsulated/compressed transfer syntaxes fall back to pydicom's decoder so
+    codec correctness is preserved.
+    """
+    try:
+        transfer = getattr(getattr(dataset, "file_meta", None), "TransferSyntaxUID", None)
+        if transfer is not None and pydicom.uid.UID(str(transfer)).is_compressed:
+            return None
+        rows = int(getattr(dataset, "Rows", 0) or 0)
+        columns = int(getattr(dataset, "Columns", 0) or 0)
+        frames = int(getattr(dataset, "NumberOfFrames", 1) or 1)
+        samples = int(getattr(dataset, "SamplesPerPixel", 1) or 1)
+        bits = int(getattr(dataset, "BitsAllocated", 0) or 0)
+        representation = int(getattr(dataset, "PixelRepresentation", 0) or 0)
+        if rows <= 0 or columns <= 0 or frames <= 0 or samples <= 0 or bits not in (8, 16, 32, 64):
+            return None
+        if samples != 1:
+            return None
+        if not hasattr(dataset, "PixelData"):
+            return None
+        dtype_map = {
+            (8, 0): np.uint8,
+            (8, 1): np.int8,
+            (16, 0): np.uint16,
+            (16, 1): np.int16,
+            (32, 0): np.uint32,
+            (32, 1): np.int32,
+            (64, 0): np.uint64,
+            (64, 1): np.int64,
+        }
+        dtype = np.dtype(dtype_map[(bits, representation)])
+        if bits > 8:
+            dtype = dtype.newbyteorder(">" if getattr(dataset, "is_little_endian", True) is False else "<")
+        expected_values = rows * columns * frames * samples
+        expected_bytes = expected_values * dtype.itemsize
+        raw = dataset.PixelData
+        if len(raw) < expected_bytes:
+            return None
+        source = np.frombuffer(raw, dtype=dtype, count=expected_values)
+        if samples > 1:
+            source = source.reshape((frames, rows, columns, samples))[0, ..., 0]
+        elif frames > 1:
+            source = source.reshape((frames, rows, columns))[0]
+        else:
+            source = source.reshape((rows, columns))
+        step = max(1, int(math.ceil(max(rows, columns) / float(max_size))))
+        if step > 1:
+            source = source[::step, ::step]
+        return np.ascontiguousarray(source)
+    except Exception:
+        return None
 
 
-class _SelectionThumbnailWorker(QRunnable):
-    """Decode one small list preview away from the UI thread."""
-
-    def __init__(self, path):
-        super().__init__()
-        self.path = str(path)
-        self.signals = _SelectionThumbnailSignals()
-
-    def run(self):
-        image = QImage()
-        detail = ""
-        try:
-            ds = pydicom.dcmread(self.path)
-            date = str(getattr(ds, "StudyDate", "") or "")
-            desc = str(
-                getattr(ds, "StudyDescription", "")
-                or getattr(ds, "SeriesDescription", "")
-                or ""
-            )
-            modality = str(getattr(ds, "Modality", "") or "")
-            detail = "  ".join(value for value in (date, modality, desc) if value)
-            arr = process_dicom_array(ds)
-            if arr is not None:
-                arr = np.asarray(arr)
-                if arr.ndim == 3:
-                    samples = int(getattr(ds, "SamplesPerPixel", 1) or 1)
-                    arr = arr[..., 0] if samples > 1 and arr.shape[-1] in (3, 4) else arr[0]
-                if arr.ndim == 2:
-                    arr = np.ascontiguousarray(arr, dtype=np.uint8)
-                    height, width = arr.shape
-                    image = QImage(
-                        arr.data, width, height, width, QImage.Format_Grayscale8
-                    ).copy()
-        except Exception:
-            image = QImage(self.path)
-        if not image.isNull():
-            image = image.scaled(
-                68, 68, Qt.KeepAspectRatio, Qt.SmoothTransformation
-            )
-        self.signals.ready.emit(self.path, image, detail)
+def _preview_source_array(dataset, max_size):
+    """Return a bounded preview sample while preserving the DICOM render path."""
+    fast_source = _fast_uncompressed_preview_source(dataset, max_size)
+    if fast_source is not None:
+        return fast_source
+    source = np.asarray(dataset.pixel_array)
+    if source.ndim == 3:
+        samples = int(getattr(dataset, "SamplesPerPixel", 1) or 1)
+        source = source[..., 0] if samples > 1 and source.shape[-1] in (3, 4) else source[0]
+    if source.ndim != 2 or source.size == 0:
+        return None
+    height, width = source.shape
+    step = max(1, int(math.ceil(max(height, width) / float(max_size))))
+    if step > 1:
+        source = source[::step, ::step]
+    return np.ascontiguousarray(source)
 
 
 class _SelectionPreviewSignals(QObject):
@@ -365,7 +394,8 @@ class _SelectionPreviewWorker(QRunnable):
         error = ""
         try:
             ds = pydicom.dcmread(self.path)
-            arr = process_dicom_array(ds)
+            source = _preview_source_array(ds, _SELECTION_PREVIEW_MAX_SIZE)
+            arr = process_dicom_array(ds, source_array=source) if source is not None else None
             if arr is not None:
                 arr = np.asarray(arr)
                 if arr.ndim == 2:
@@ -374,9 +404,12 @@ class _SelectionPreviewWorker(QRunnable):
                     image = QImage(
                         arr.data, width, height, width, QImage.Format_Grayscale8
                     ).copy()
-                    if width > 900 or height > 900:
+                    if width > _SELECTION_PREVIEW_MAX_SIZE or height > _SELECTION_PREVIEW_MAX_SIZE:
                         image = image.scaled(
-                            900, 900, Qt.KeepAspectRatio, Qt.FastTransformation
+                            _SELECTION_PREVIEW_MAX_SIZE,
+                            _SELECTION_PREVIEW_MAX_SIZE,
+                            Qt.KeepAspectRatio,
+                            Qt.FastTransformation,
                         )
 
             def tag(name, default="-"):
@@ -400,6 +433,13 @@ class _SelectionPreviewWorker(QRunnable):
         except Exception as exc:
             image = QImage(self.path)
             error = str(exc)
+        if not image.isNull() and (image.width() > _SELECTION_PREVIEW_MAX_SIZE or image.height() > _SELECTION_PREVIEW_MAX_SIZE):
+            image = image.scaled(
+                _SELECTION_PREVIEW_MAX_SIZE,
+                _SELECTION_PREVIEW_MAX_SIZE,
+                Qt.KeepAspectRatio,
+                Qt.FastTransformation,
+            )
         self.signals.ready.emit(self.path, image, info, error)
 
 class StudySelectionDialog(QDialog):
@@ -415,6 +455,7 @@ class StudySelectionDialog(QDialog):
         self._thumbnail_items = {}
         self._thumbnail_pool = _SELECTION_THUMBNAIL_POOL
         self._requested_preview_path = ""
+        self._preview_pending = set()
 
         root = QVBoxLayout(self)
         root.setContentsMargins(10, 10, 10, 10)
@@ -511,9 +552,22 @@ class StudySelectionDialog(QDialog):
             image, detail = cached
             self._apply_list_thumbnail(path, image, detail)
             return
-        worker = _SelectionThumbnailWorker(path)
-        worker.signals.ready.connect(self._apply_list_thumbnail)
-        self._thumbnail_pool.start(worker)
+        self._start_preview_worker(path)
+
+    def _start_preview_worker(self, path):
+        if path in _SELECTION_PREVIEW_CACHE or path in self._preview_pending:
+            return
+        self._preview_pending.add(path)
+        worker = _SelectionPreviewWorker(path)
+        worker.signals.ready.connect(self._on_preview_worker_ready)
+        # The same bounded image serves both the list thumbnail and the
+        # selected preview, so one DICOM Pixel Data decode is enough.
+        self._thumbnail_pool.start(worker, 10)
+
+    def _on_preview_worker_ready(self, path, image, info, error=""):
+        self._preview_pending.discard(path)
+        self._apply_list_thumbnail(path, image, info)
+        self._apply_large_preview(path, image, info, error)
 
     def _apply_list_thumbnail(self, path, image, detail=""):
         item = self._thumbnail_items.get(path)
@@ -522,7 +576,10 @@ class StudySelectionDialog(QDialog):
         if detail:
             item.setText(f"{os.path.basename(path)}  |  {detail}")
         if not image.isNull():
-            item.setIcon(QIcon(QPixmap.fromImage(image)))
+            icon_image = image
+            if image.width() > 68 or image.height() > 68:
+                icon_image = image.scaled(68, 68, Qt.KeepAspectRatio, Qt.FastTransformation)
+            item.setIcon(QIcon(QPixmap.fromImage(icon_image)))
             item.setSizeHint(QSize(0, 76))
         _SELECTION_THUMBNAIL_CACHE[path] = (image, detail)
         while len(_SELECTION_THUMBNAIL_CACHE) > _SELECTION_THUMBNAIL_CACHE_LIMIT:
@@ -615,10 +672,7 @@ class StudySelectionDialog(QDialog):
             self._apply_large_preview(path, *cached)
             return
         self.info_label.setText("Önizleme hazırlanıyor…")
-        worker = _SelectionPreviewWorker(path)
-        worker.signals.ready.connect(self._apply_large_preview)
-        # Seçilen görüntü, sıradaki küçük liste önizlemelerinden önce işlensin.
-        self._thumbnail_pool.start(worker, 10)
+        self._start_preview_worker(path)
 
     def _apply_large_preview(self, path, image, info, error=""):
         _SELECTION_PREVIEW_CACHE[path] = (image, info, error)
@@ -646,7 +700,13 @@ class StudySelectionDialog(QDialog):
         else:
             self.lbl_hint.setText(self.selection_hint)
 
+    def closeEvent(self, event):
+        self._requested_preview_path = ""
+        self._preview_pending.clear()
+        super().closeEvent(event)
+
     def accept_selection(self):
+
         selected = [i.data(Qt.UserRole) for i in self.file_list.selectedItems()]
         if not selected:
             return

@@ -1,0 +1,213 @@
+{
+  "generated_at": "2026-08-22T17:51:01",
+  "root": "C:\\Users\\yusuf\\Desktop\\Scoliosis Follow Up",
+  "dry_run": false,
+  "older_than_days": 14,
+  "protected_directories": [
+    ".git",
+    ".quarantine",
+    ".restore_points",
+    ".venv",
+    ".venv-build",
+    "build",
+    "dist",
+    "installer",
+    "project_archives",
+    "releases",
+    "security_keys"
+  ],
+  "summary": {
+    "candidate_count": 23,
+    "candidate_bytes": 2699482,
+    "candidate_mib": 2.57,
+    "cache_count": 23,
+    "old_test_log_count": 0
+  },
+  "entries": [
+    {
+      "path": "tests\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 794977,
+      "modified_at": "2026-08-22T17:49:35",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "modular_app\\ui\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 560486,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "modular_app\\timeline\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 316500,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "modular_app\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 189203,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "__pycache__",
+      "kind": "cache_directory",
+      "bytes": 175238,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "ai\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 130104,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "tools\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 87833,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "modular_app\\core\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 83249,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "modular_app\\database\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 65753,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "scripts\\maintenance\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 61664,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "modular_app\\services\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 39501,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "modular_app\\reporting\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 35428,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "modular_app\\domain\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 32757,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "packaging\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 24947,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": ".pytest_cache",
+      "kind": "cache_directory",
+      "bytes": 22049,
+      "modified_at": "2026-08-22T17:50:49",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "scripts\\release\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 18574,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "dicom\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 17953,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "modular_app\\security\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 12300,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "pacs\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 10283,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "anonymization\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 7916,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "docs\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 6205,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "scripts\\dev\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 3971,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    },
+    {
+      "path": "modular_app\\config\\__pycache__",
+      "kind": "cache_directory",
+      "bytes": 2591,
+      "modified_at": "2026-08-22T17:49:28",
+      "action": "delete_candidate",
+      "reason": "Yeniden üretilebilir Python/test önbelleği."
+    }
+  ],
+  "note": "Varsayılan çalışma dry-run'dır; korunan alanlar taranmadı."
+}

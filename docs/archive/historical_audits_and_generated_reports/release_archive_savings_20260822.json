@@ -1,0 +1,102 @@
+{
+  "generated_at": "2026-08-22T15:43:43",
+  "releases": [
+    {
+      "version": "1.7.0",
+      "path": "releases\\1.7.0",
+      "bytes": 378567737,
+      "mib": 361.03
+    },
+    {
+      "version": "1.7.2",
+      "path": "releases\\1.7.2",
+      "bytes": 739544768,
+      "mib": 705.28
+    },
+    {
+      "version": "1.7.3",
+      "path": "releases\\1.7.3",
+      "bytes": 739715404,
+      "mib": 705.45
+    },
+    {
+      "version": "1.7.4",
+      "path": "releases\\1.7.4",
+      "bytes": 739625137,
+      "mib": 705.36
+    },
+    {
+      "version": "1.7.5",
+      "path": "releases\\1.7.5",
+      "bytes": 739961040,
+      "mib": 705.68
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "En yeni 1 sürüm yerelde tutulur",
+      "keep_versions": [
+        "1.7.5"
+      ],
+      "archive_versions": [
+        "1.7.0",
+        "1.7.2",
+        "1.7.3",
+        "1.7.4"
+      ],
+      "reclaim_mib": 2477.12,
+      "reclaim_gib": 2.419
+    },
+    {
+      "name": "En yeni 2 sürüm yerelde tutulur",
+      "keep_versions": [
+        "1.7.4",
+        "1.7.5"
+      ],
+      "archive_versions": [
+        "1.7.0",
+        "1.7.2",
+        "1.7.3"
+      ],
+      "reclaim_mib": 1771.76,
+      "reclaim_gib": 1.73
+    },
+    {
+      "name": "En yeni 3 sürüm yerelde tutulur",
+      "keep_versions": [
+        "1.7.3",
+        "1.7.4",
+        "1.7.5"
+      ],
+      "archive_versions": [
+        "1.7.0",
+        "1.7.2"
+      ],
+      "reclaim_mib": 1066.31,
+      "reclaim_gib": 1.041
+    }
+  ],
+  "installer_files": [
+    {
+      "path": "installer\\ScoliosisFollowUp_Setup.exe",
+      "bytes": 370180642,
+      "mib": 353.03,
+      "sha256": "12f5004e2595100eb165a396a132116d167e8de251b92a3f255fa679eae1a6e8",
+      "same_as_current_1_7_5_release": true
+    },
+    {
+      "path": "installer\\ScoliosisFollowUp_Setup_1.7.1.exe",
+      "bytes": 370099250,
+      "mib": 352.95,
+      "sha256": "20768eb1573350d38804badb504b0e9a9cf78e28d5cfda501bd76e058fc8c6db",
+      "same_as_current_1_7_5_release": false
+    }
+  ],
+  "root_installer_duplicates_of_release_1_7_5": {
+    "files": [
+      "installer\\ScoliosisFollowUp_Setup.exe"
+    ],
+    "mib": 353.03
+  },
+  "note": "Arşivleme senaryoları yalnızca hesaplandı; hiçbir dosya taşınmadı veya silinmedi."
+}

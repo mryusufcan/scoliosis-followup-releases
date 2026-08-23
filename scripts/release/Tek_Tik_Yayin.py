@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -12,7 +13,13 @@ ROOT = Path(__file__).resolve().parents[2]
 VERSION_FILE = ROOT / "VERSION"
 UPDATE_FILE = ROOT / "update.json"
 INSTALLER = ROOT / "installer" / "ScoliosisFollowUp_Setup.exe"
-PRIVATE_KEY = ROOT / "security_keys" / "integrity_private.pem"
+SECURITY_KEY_DIR = Path(
+    os.environ.get("SCOLIOSIS_FOLLOWUP_SECURITY_DIR")
+    or Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
+    / "ScoliosisFollowUp"
+    / "security_keys"
+)
+PRIVATE_KEY = SECURITY_KEY_DIR / "integrity_private.pem"
 BUILD_PS1 = ROOT / "packaging" / "build_windows.ps1"
 INSTALLER_PS1 = ROOT / "packaging" / "build_installer.ps1"
 GENERATE_FEED = ROOT / "packaging" / "generate_update_feed.py"
@@ -83,7 +90,7 @@ def generate_update_feed(version: str, python_exe: Path) -> None:
     if not INSTALLER.is_file():
         fail("Installer olusturulmamis.")
     if not PRIVATE_KEY.is_file():
-        fail("security_keys/integrity_private.pem bulunamadi.")
+        fail(f"Butunluk ozel anahtari bulunamadi: {PRIVATE_KEY}")
     if not GENERATE_FEED.is_file():
         fail("packaging/generate_update_feed.py bulunamadi.")
 

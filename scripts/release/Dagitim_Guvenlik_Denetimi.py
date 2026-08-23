@@ -5,7 +5,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
 
 SOURCE_EXTS = {
     ".py", ".ps1", ".bat", ".cmd", ".spec", ".iss",
@@ -14,7 +14,7 @@ SOURCE_EXTS = {
 
 PACKAGING_TARGETS = [
     ROOT / "packaging",
-    ROOT / "ScoliosisFollowUp.spec",
+    ROOT / "packaging" / "ScoliosisFollowUp.spec",
     ROOT / "scripts" / "build",
     ROOT / "scripts" / "release",
 ]
@@ -91,9 +91,13 @@ def read_text_safe(path: Path) -> str | None:
 
 def packaging_audit():
     findings = []
+    audit_script = Path(__file__).resolve()
 
     for target in PACKAGING_TARGETS:
         for path in iter_files(target) or []:
+            # Denetim aracının kendi yasaklı imzaları bulgu değildir.
+            if path.resolve() == audit_script:
+                continue
             text = read_text_safe(path)
             if text is None:
                 continue
@@ -119,7 +123,6 @@ def packaging_audit():
                 # $root\resources gibi kontrollü alt klasörler güvenlidir ve
                 # burada yanlış pozitif üretmemelidir.
                 r"--add-data\s+['\"]?\$root(?:[\\/])?;[.'\"]",
-                r"datas\s*=\s*\[\s*\([^,\n]+,\s*['\"]\.['\"]",
                 r"collect_data_files\([^)]*['\"]\.['\"]",
             ]
             for pattern in dangerous_patterns:

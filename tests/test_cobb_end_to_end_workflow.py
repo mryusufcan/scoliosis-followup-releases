@@ -192,6 +192,7 @@ class CobbEndToEndWorkflowTests(unittest.TestCase):
         self.assertEqual(len(snapshot.points), 2)
 
         panel = LongitudinalPanel(self.repository, patient_id=self.patient_id)
+        self.assertTrue(self.wait_until(lambda: panel.snapshot is not None))
         self.assertEqual(panel.timeline_model.rowCount(), 2)
         self.assertTrue(panel.chart.available)
         panel.close()

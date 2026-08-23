@@ -92,11 +92,13 @@ class ReleaseMetadataTests(unittest.TestCase):
         self.assertRegex(version, r"^\d+\.\d+\.\d+$")
         self.assertEqual(APP_VERSION, version)
         build_script = (ROOT / "packaging" / "build_windows.ps1").read_text(encoding="utf-8")
+        ci_release_script = (ROOT / "packaging" / "ci_release.ps1").read_text(encoding="utf-8")
         installer_script = (ROOT / "packaging" / "build_installer.ps1").read_text(encoding="utf-8")
         installer_definition = (ROOT / "packaging" / "ScoliosisFollowUp.iss").read_text(encoding="utf-8")
         requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8")
         acceptance_script = (ROOT / "packaging" / "verify_release.py").read_text(encoding="utf-8")
         acceptance_wrapper = (ROOT / "tools" / "release_acceptance.ps1").read_text(encoding="utf-8")
+        security_audit = (ROOT / "tools" / "audit_distribution_security.py").read_text(encoding="utf-8")
         beginner_guide = (ROOT / "docs" / "ACEMI_KULLANICI_REHBERI.md").read_text(encoding="utf-8")
         in_app_guide = (ROOT / "modular_app" / "ui" / "user_guide_dialog.py").read_text(encoding="utf-8")
         integration = (ROOT / "modular_app" / "run_modular.py").read_text(encoding="utf-8")
@@ -109,11 +111,16 @@ class ReleaseMetadataTests(unittest.TestCase):
         self.assertIn("pylibjpeg-rle>=", requirements)
         self.assertIn("pyjpegls>=", requirements)
         self.assertIn("Pillow>=", requirements)
-        self.assertIn("--collect-all pylibjpeg", build_script)
-        self.assertIn("--collect-all libjpeg", build_script)
-        self.assertIn("--collect-all openjpeg", build_script)
-        self.assertIn("--collect-all rle", build_script)
-        self.assertIn("--collect-all jpeg_ls", build_script)
+        self.assertIn("--hidden-import pylibjpeg", build_script)
+        for codec_package in ("libjpeg", "openjpeg", "rle", "jpeg_ls"):
+            self.assertIn(f"--collect-binaries {codec_package}", build_script)
+            self.assertNotIn(f"--collect-all {codec_package}", build_script)
+        self.assertNotIn("--collect-all pylibjpeg", build_script)
+        for excluded_module in (
+            "libjpeg.tests", "openjpeg.tests", "rle.tests", "rle.benchmarks",
+            "pylibjpeg.tests", "pylibjpeg.tools.tests", "jpeg_ls.tests", "jpeg_ls.example",
+        ):
+            self.assertIn(f"--exclude-module {excluded_module}", build_script)
         self.assertIn("--collect-submodules ai", build_script)
         self.assertIn('--add-data "$root\\VERSION;."', build_script)
         for package in (
@@ -128,10 +135,15 @@ class ReleaseMetadataTests(unittest.TestCase):
         self.assertIn("--hidden-import cv2", build_script)
         self.assertIn('"application version metadata": "_internal/VERSION"', acceptance_script)
         self.assertIn("test-results.txt", build_script)
+        self.assertIn("audit_distribution_security.py", ci_release_script)
+        self.assertIn("distribution_security_audit.json", ci_release_script)
+        self.assertIn("ScoliosisFollowUpDistributionSecurityAuditV1", security_audit)
         self.assertIn("Start-Process -FilePath $venvPython", build_script)
         self.assertIn("verify_distribution_integrity", acceptance_script)
         self.assertIn("verify_update_feed", acceptance_script)
         self.assertIn("verify_release.py", acceptance_wrapper)
+        self.assertIn("$PublishGitHubRelease -and -not $CertificateThumbprint.Trim()", ci_release_script)
+        self.assertIn("release imzasız yayımlanacak", ci_release_script)
         self.assertIn("GitHub Releases", beginner_guide)
         self.assertIn("release_acceptance.ps1", beginner_guide)
         for heading in (

@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-08-23T19:25:02",
+  "root": "C:\\Users\\yusuf\\Desktop\\Scoliosis Follow Up",
+  "mode": "dry-run",
+  "policy": {
+    "active_resources_are_never_deleted": true,
+    "venvs_require_explicit_apply_venvs": true,
+    "model_confirmation": "QUARANTINE_MODEL_SIL"
+  },
+  "summary": {
+    "total_entries": 0,
+    "model_duplicate_candidates": 0,
+    "model_duplicate_candidate_mib": 0.0,
+    "protected_model_entries": 0,
+    "protected_venvs": 0,
+    "protected_venv_mib": 0.0
+  },
+  "entries": []
+}

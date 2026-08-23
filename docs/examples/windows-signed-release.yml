@@ -1,0 +1,126 @@
+# Reference workflow. Do not enable unchanged without reviewing the release
+# repository, certificate provider, timestamp policy and artifact retention.
+name: Windows signed release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing release tag, e.g. 1.7.8"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-sign-verify-release:
+    runs-on: windows-2022
+    environment: production-release
+    env:
+      RELEASE_TAG: ${{ inputs.tag }}
+      CERT_THUMBPRINT: ${{ secrets.WINDOWS_CERT_THUMBPRINT }}
+      PFX_PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD }}
+      PFX_BASE64: ${{ secrets.WINDOWS_CERT_PFX_BASE64 }}
+      INTEGRITY_PRIVATE_KEY: ${{ secrets.INTEGRITY_PRIVATE_KEY_PEM }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Import signing certificate into CurrentUser certificate store
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (-not $env:PFX_BASE64 -or -not $env:PFX_PASSWORD) {
+            throw 'Signing certificate secrets are missing.'
+          }
+          $pfxPath = Join-Path $env:RUNNER_TEMP 'release-signing.pfx'
+          try {
+            [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String($env:PFX_BASE64))
+            $securePassword = ConvertTo-SecureString $env:PFX_PASSWORD -AsPlainText -Force
+            $certificate = Import-PfxCertificate -FilePath $pfxPath -CertStoreLocation Cert:\CurrentUser\My -Password $securePassword
+            if (-not $certificate) { throw 'PFX import failed.' }
+            "CERT_THUMBPRINT=$($certificate.Thumbprint)" >> $env:GITHUB_ENV
+          }
+          finally {
+            Remove-Item -LiteralPath $pfxPath -Force -ErrorAction SilentlyContinue
+          }
+
+      - name: Materialize integrity private key only for the build
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (-not $env:INTEGRITY_PRIVATE_KEY) { throw 'Integrity private key secret is missing.' }
+          $keyPath = Join-Path $env:RUNNER_TEMP 'integrity_private.pem'
+          [IO.File]::WriteAllText($keyPath, $env:INTEGRITY_PRIVATE_KEY, [Text.Encoding]::ASCII)
+          "INTEGRITY_PRIVATE_KEY_PATH=$keyPath" >> $env:GITHUB_ENV
+
+      - name: Build, sign, verify and audit distribution
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\packaging\ci_release.ps1 `
+            -Clean `
+            -CertificateThumbprint $env:CERT_THUMBPRINT `
+            -IntegrityPrivateKey $env:INTEGRITY_PRIVATE_KEY_PATH `
+            -Tag $env:RELEASE_TAG
+
+      - name: Verify Authenticode signatures and timestamp
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $paths = @(
+            '.\dist\ScoliosisFollowUp\ScoliosisFollowUp.exe',
+            '.\installer\ScoliosisFollowUp_Setup.exe'
+          )
+          foreach ($path in $paths) {
+            $signature = Get-AuthenticodeSignature -LiteralPath $path
+            if ($signature.Status -ne 'Valid') {
+              throw "Authenticode verification failed: $path ($($signature.Status))"
+            }
+            if (-not $signature.SignerCertificate) {
+              throw "Signer certificate missing: $path"
+            }
+          }
+
+      - name: Generate release hashes
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Get-FileHash -Algorithm SHA256 .\installer\ScoliosisFollowUp_Setup.exe |
+            ConvertTo-Json | Out-File .\build\ci-release\installer-sha256.json -Encoding utf8
+
+      - name: Create GitHub Release
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          gh release create $env:RELEASE_TAG `
+            .\dist\ScoliosisFollowUp\ScoliosisFollowUp.exe `
+            .\installer\ScoliosisFollowUp_Setup.exe `
+            .\build\ci-release\artifacts.json `
+            --repo mryusufcan/scoliosis-followup-releases `
+            --title "Scoliosis Follow-Up $env:RELEASE_TAG" `
+            --generate-notes `
+            --verify-tag
+
+      - name: Remove temporary secret material
+        if: always()
+        shell: pwsh
+        run: |
+          Remove-Item -LiteralPath $env:INTEGRITY_PRIVATE_KEY_PATH -Force -ErrorAction SilentlyContinue
+          Get-ChildItem Cert:\CurrentUser\My |
+            Where-Object Thumbprint -eq $env:CERT_THUMBPRINT |
+            Remove-Item -Force -ErrorAction SilentlyContinue
+
+# Production recommendation:
+# Prefer a remote/HSM signing provider or GitHub OIDC-based signing service over
+# storing exportable PFX material in GitHub Secrets. If a PFX is used, keep the
+# environment protected, require reviewers, disable fork access and retain audit
+# logs. Never print the PFX, password, private key or full device identifiers.

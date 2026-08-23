@@ -1,0 +1,152 @@
+{
+  "generated_at": "2026-08-22T15:21:34",
+  "releases": [
+    {
+      "version": "1.7.0",
+      "bytes": 378567737,
+      "mib": 361.03,
+      "files": 4,
+      "files_by_size": [
+        {
+          "path": "ScoliosisFollowUp_Setup_1.7.0.exe",
+          "bytes": 189511461,
+          "mib": 180.73
+        },
+        {
+          "path": "ScoliosisFollowUp_1.7.0_release.zip",
+          "bytes": 189055884,
+          "mib": 180.3
+        },
+        {
+          "path": "update.json",
+          "bytes": 386,
+          "mib": 0.0
+        },
+        {
+          "path": "VERSION",
+          "bytes": 6,
+          "mib": 0.0
+        }
+      ]
+    },
+    {
+      "version": "1.7.2",
+      "bytes": 739544768,
+      "mib": 705.28,
+      "files": 4,
+      "files_by_size": [
+        {
+          "path": "ScoliosisFollowUp_Setup_1.7.2.exe",
+          "bytes": 369972943,
+          "mib": 352.83
+        },
+        {
+          "path": "ScoliosisFollowUp_1.7.2_release.zip",
+          "bytes": 369571433,
+          "mib": 352.45
+        },
+        {
+          "path": "update.json",
+          "bytes": 386,
+          "mib": 0.0
+        },
+        {
+          "path": "VERSION",
+          "bytes": 6,
+          "mib": 0.0
+        }
+      ]
+    },
+    {
+      "version": "1.7.3",
+      "bytes": 739715404,
+      "mib": 705.45,
+      "files": 4,
+      "files_by_size": [
+        {
+          "path": "ScoliosisFollowUp_Setup_1.7.3.exe",
+          "bytes": 370057905,
+          "mib": 352.91
+        },
+        {
+          "path": "ScoliosisFollowUp_1.7.3_release.zip",
+          "bytes": 369657107,
+          "mib": 352.53
+        },
+        {
+          "path": "update.json",
+          "bytes": 386,
+          "mib": 0.0
+        },
+        {
+          "path": "VERSION",
+          "bytes": 6,
+          "mib": 0.0
+        }
+      ]
+    },
+    {
+      "version": "1.7.4",
+      "bytes": 739625137,
+      "mib": 705.36,
+      "files": 4,
+      "files_by_size": [
+        {
+          "path": "ScoliosisFollowUp_Setup_1.7.4.exe",
+          "bytes": 370012812,
+          "mib": 352.87
+        },
+        {
+          "path": "ScoliosisFollowUp_1.7.4_release.zip",
+          "bytes": 369611933,
+          "mib": 352.49
+        },
+        {
+          "path": "update.json",
+          "bytes": 386,
+          "mib": 0.0
+        },
+        {
+          "path": "VERSION",
+          "bytes": 6,
+          "mib": 0.0
+        }
+      ]
+    },
+    {
+      "version": "1.7.5",
+      "bytes": 739961040,
+      "mib": 705.68,
+      "files": 4,
+      "files_by_size": [
+        {
+          "path": "ScoliosisFollowUp_Setup_1.7.5.exe",
+          "bytes": 370180642,
+          "mib": 353.03
+        },
+        {
+          "path": "ScoliosisFollowUp_1.7.5_release.zip",
+          "bytes": 369780005,
+          "mib": 352.65
+        },
+        {
+          "path": "update.json",
+          "bytes": 386,
+          "mib": 0.0
+        },
+        {
+          "path": "VERSION",
+          "bytes": 7,
+          "mib": 0.0
+        }
+      ]
+    }
+  ],
+  "project_archives": [
+    {
+      "path": "project_archives\\ScoliosisFollowUp_Source_v1.6.0_20260820_221517.zip",
+      "bytes": 92355363,
+      "mib": 88.08
+    }
+  ]
+}

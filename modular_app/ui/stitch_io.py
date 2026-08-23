@@ -920,6 +920,11 @@ def _save_as_dicom(app, gray_arr, path):
     ds.BitsStored = 8
     ds.HighBit = 7
     ds.PixelRepresentation = 0
+    ds.RescaleSlope = 1
+    ds.RescaleIntercept = 0
+    ds.WindowCenter = 127.5
+    ds.WindowWidth = 255
+    ds.VOILUTFunction = "LINEAR"
     ds.PixelData = np.ascontiguousarray(gray_arr).tobytes()
 
     ds.save_as(path, enforce_file_format=True)
@@ -956,20 +961,38 @@ def load_dicoms(app):
 def _default_window(app, file_path):
     key = os.path.abspath(file_path)
     if key in app._default_window_cache:
-        return app._default_window_cache[key]
+        return cache_get(app._default_window_cache, key)
     try:
-        ds = pydicom.dcmread(file_path, stop_before_pixels=True)
+        header_loader = getattr(app, "_viewer_header_for_path", None)
+        if callable(header_loader):
+            ds = header_loader(file_path)
+        else:
+            ds = pydicom.dcmread(file_path, stop_before_pixels=True)
+        if ds is None:
+            raise ValueError("DICOM başlığı okunamadı")
         wc = getattr(ds, 'WindowCenter', None)
         ww = getattr(ds, 'WindowWidth', None)
         if isinstance(wc, (list, pydicom.multival.MultiValue)):
             wc = wc[0] if wc else None
         if isinstance(ww, (list, pydicom.multival.MultiValue)):
             ww = ww[0] if ww else None
-        wc = float(wc) if wc is not None else 1000.0
-        ww = max(1.0, float(ww)) if ww is not None else 2000.0
+        if wc is None or ww is None:
+            bits_stored = int(getattr(ds, 'BitsStored', 0) or 0)
+            if bits_stored == 8 and int(getattr(ds, 'PixelRepresentation', 0) or 0) == 0:
+                wc, ww = 127.5, 255.0
+            else:
+                wc, ww = 1000.0, 2000.0
+        else:
+            wc = float(wc)
+            ww = max(1.0, float(ww))
     except Exception:
         wc, ww = 1000.0, 2000.0
-    app._default_window_cache[key] = (wc, ww)
+    cache_put(
+        app._default_window_cache,
+        key,
+        (wc, ww),
+        getattr(app, "_default_window_cache_limit", 128),
+    )
     return wc, ww
 
 

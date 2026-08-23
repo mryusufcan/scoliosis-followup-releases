@@ -49,14 +49,21 @@ class LicensePolicyTests(unittest.TestCase):
 
         self.patches = [
             patch.object(policy, "MACHINE_STATE_DIR", root),
-            patch.object(
+                        patch.object(
                 policy,
                 "MACHINE_STATE_FILE",
                 root / ".license_state.json",
             ),
+            patch.object(policy, "LOCAL_LICENSE_DIR", root),
+            patch.object(
+                policy,
+                "OFFLINE_LICENSE_FILE",
+                root / "offline_license.json",
+            ),
             patch.object(
                 policy,
                 "_get_hwid",
+
                 return_value="TEST-HWID-1234567890",
             ),
         ]

@@ -1,0 +1,391 @@
+{
+  "root": "C:\\Users\\yusuf\\Desktop\\Scoliosis Follow Up",
+  "total": {
+    "bytes": 18116357026,
+    "mib": 17277.1
+  },
+  "top_level": [
+    {
+      "name": ".quarantine",
+      "bytes": 8986667452,
+      "mib": 8570.35,
+      "files": 56937,
+      "exists": true
+    },
+    {
+      "name": "releases",
+      "bytes": 3337414086,
+      "mib": 3182.81,
+      "files": 20,
+      "exists": true
+    },
+    {
+      "name": ".restore_points",
+      "bytes": 1533580550,
+      "mib": 1462.54,
+      "files": 7,
+      "exists": true
+    },
+    {
+      "name": ".venv",
+      "bytes": 1142008701,
+      "mib": 1089.1,
+      "files": 16347,
+      "exists": true
+    },
+    {
+      "name": ".venv-build",
+      "bytes": 1121066099,
+      "mib": 1069.13,
+      "files": 13783,
+      "exists": true
+    },
+    {
+      "name": "installer",
+      "bytes": 740279892,
+      "mib": 705.99,
+      "files": 2,
+      "exists": true
+    },
+    {
+      "name": "dist",
+      "bytes": 706856196,
+      "mib": 674.11,
+      "files": 1558,
+      "exists": true
+    },
+    {
+      "name": "resources",
+      "bytes": 273845547,
+      "mib": 261.16,
+      "files": 16,
+      "exists": true
+    },
+    {
+      "name": "dev_data",
+      "bytes": 104252588,
+      "mib": 99.42,
+      "files": 20,
+      "exists": true
+    },
+    {
+      "name": "project_archives",
+      "bytes": 92355363,
+      "mib": 88.08,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "build",
+      "bytes": 72613451,
+      "mib": 69.25,
+      "files": 66,
+      "exists": true
+    },
+    {
+      "name": "modular_app",
+      "bytes": 2479658,
+      "mib": 2.36,
+      "files": 143,
+      "exists": true
+    },
+    {
+      "name": "docs",
+      "bytes": 1168127,
+      "mib": 1.11,
+      "files": 95,
+      "exists": true
+    },
+    {
+      "name": "tests",
+      "bytes": 972658,
+      "mib": 0.93,
+      "files": 158,
+      "exists": true
+    },
+    {
+      "name": "ai",
+      "bytes": 220871,
+      "mib": 0.21,
+      "files": 20,
+      "exists": true
+    },
+    {
+      "name": "scripts",
+      "bytes": 116837,
+      "mib": 0.11,
+      "files": 31,
+      "exists": true
+    },
+    {
+      "name": "__pycache__",
+      "bytes": 104948,
+      "mib": 0.1,
+      "files": 2,
+      "exists": true
+    },
+    {
+      "name": "tools",
+      "bytes": 70220,
+      "mib": 0.07,
+      "files": 17,
+      "exists": true
+    },
+    {
+      "name": "main.py",
+      "bytes": 65577,
+      "mib": 0.06,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "project_control_center.py",
+      "bytes": 54383,
+      "mib": 0.05,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "packaging",
+      "bytes": 52441,
+      "mib": 0.05,
+      "files": 11,
+      "exists": true
+    },
+    {
+      "name": "dicom",
+      "bytes": 30484,
+      "mib": 0.03,
+      "files": 6,
+      "exists": true
+    },
+    {
+      "name": ".pytest_cache",
+      "bytes": 22148,
+      "mib": 0.02,
+      "files": 5,
+      "exists": true
+    },
+    {
+      "name": "pacs",
+      "bytes": 16831,
+      "mib": 0.02,
+      "files": 4,
+      "exists": true
+    },
+    {
+      "name": "anonymization",
+      "bytes": 14629,
+      "mib": 0.01,
+      "files": 4,
+      "exists": true
+    },
+    {
+      "name": "license_app.py",
+      "bytes": 9687,
+      "mib": 0.01,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "todo.md",
+      "bytes": 8342,
+      "mib": 0.01,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": ".github",
+      "bytes": 2303,
+      "mib": 0.0,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "ScoliosisFollowUp.spec",
+      "bytes": 2172,
+      "mib": 0.0,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "artifacts",
+      "bytes": 1050,
+      "mib": 0.0,
+      "files": 6,
+      "exists": true
+    },
+    {
+      "name": "Proje_Araclari.bat",
+      "bytes": 846,
+      "mib": 0.0,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": ".gitignore",
+      "bytes": 775,
+      "mib": 0.0,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "Uygulamayi_Baslat.bat",
+      "bytes": 650,
+      "mib": 0.0,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "requirements.txt",
+      "bytes": 599,
+      "mib": 0.0,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "update.json",
+      "bytes": 386,
+      "mib": 0.0,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "guncel_proje_zip.bat",
+      "bytes": 158,
+      "mib": 0.0,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "Proje_Temizlik_Merkezi_v2.bat",
+      "bytes": 157,
+      "mib": 0.0,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "security_keys",
+      "bytes": 119,
+      "mib": 0.0,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "requirements-dev.txt",
+      "bytes": 38,
+      "mib": 0.0,
+      "files": 1,
+      "exists": true
+    },
+    {
+      "name": "VERSION",
+      "bytes": 7,
+      "mib": 0.0,
+      "files": 1,
+      "exists": true
+    }
+  ],
+  "critical_paths": {
+    "main.py": {
+      "bytes": 65577,
+      "mib": 0.06,
+      "files": 1
+    },
+    "project_control_center.py": {
+      "bytes": 54383,
+      "mib": 0.05,
+      "files": 1
+    },
+    "requirements.txt": {
+      "bytes": 599,
+      "mib": 0.0,
+      "files": 1
+    },
+    "requirements-dev.txt": {
+      "bytes": 38,
+      "mib": 0.0,
+      "files": 1
+    },
+    ".gitignore": {
+      "bytes": 775,
+      "mib": 0.0,
+      "files": 1
+    },
+    "ScoliosisFollowUp.spec": {
+      "bytes": 2172,
+      "mib": 0.0,
+      "files": 1
+    },
+    "scripts": {
+      "bytes": 116837,
+      "mib": 0.11,
+      "files": 31
+    },
+    "modular_app": {
+      "bytes": 2479658,
+      "mib": 2.36,
+      "files": 143
+    },
+    "tests": {
+      "bytes": 972658,
+      "mib": 0.93,
+      "files": 158
+    },
+    "docs": {
+      "bytes": 1168127,
+      "mib": 1.11,
+      "files": 95
+    },
+    ".quarantine": {
+      "bytes": 8986667452,
+      "mib": 8570.35,
+      "files": 56937
+    },
+    ".restore_points": {
+      "bytes": 1533580550,
+      "mib": 1462.54,
+      "files": 7
+    },
+    ".venv": {
+      "bytes": 1142008701,
+      "mib": 1089.1,
+      "files": 16347
+    },
+    ".venv-build": {
+      "bytes": 1121066099,
+      "mib": 1069.13,
+      "files": 13783
+    },
+    "build": {
+      "bytes": 72613451,
+      "mib": 69.25,
+      "files": 66
+    },
+    "dist": {
+      "bytes": 706856196,
+      "mib": 674.11,
+      "files": 1558
+    },
+    "installer": {
+      "bytes": 740279892,
+      "mib": 705.99,
+      "files": 2
+    },
+    "releases": {
+      "bytes": 3337414086,
+      "mib": 3182.81,
+      "files": 20
+    },
+    "artifacts": {
+      "bytes": 1050,
+      "mib": 0.0,
+      "files": 6
+    },
+    "project_archives": {
+      "bytes": 92355363,
+      "mib": 88.08,
+      "files": 1
+    }
+  }
+}

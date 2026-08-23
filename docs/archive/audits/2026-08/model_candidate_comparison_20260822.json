@@ -1,0 +1,201 @@
+{
+  "generated_at": "2026-08-22T15:40:47",
+  "files": [
+    {
+      "path": "resources\\ai\\mazurowski\\mazurowski_mask_rcnn.onnx",
+      "bytes": 175909176,
+      "mib": 167.76,
+      "sha256": "454daa1761a7975433b90bb3a00e9c8d2ddcb8e05ba17b0ebade11e39b495726",
+      "area": "active_resources",
+      "same_hash_paths": [
+        "resources\\ai\\mazurowski\\mazurowski_mask_rcnn.onnx",
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_meta397_standard.onnx",
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_standard.onnx"
+      ]
+    },
+    {
+      "path": "resources\\ai\\vertebra_landmarks_experimental\\vertebra_landmarks_68.onnx",
+      "bytes": 96820263,
+      "mib": 92.33,
+      "sha256": "f3e1e6b319064a2288a792678d92dabf1e56e8004813fff3b372be1c214c440f",
+      "area": "active_resources",
+      "same_hash_paths": [
+        "resources\\ai\\vertebra_landmarks_experimental\\vertebra_landmarks_68.onnx",
+        ".quarantine\\landmark_lab\\onnx_candidate\\vertebra_landmarks_68.onnx",
+        ".quarantine\\landmark_lab\\v2_landmark_candidate\\vertebra_landmarks_68.onnx"
+      ]
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn.onnx",
+      "bytes": 175909158,
+      "mib": 167.76,
+      "sha256": "a9dbcc3bc33c7c06e0c9410fab903d22a4e373a85b282eed3336edf61614c58e",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn.onnx"
+      ]
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416.onnx",
+      "bytes": 175909158,
+      "mib": 167.76,
+      "sha256": "1640e2b3f7527e7cc36b1438c3b85d4fd75bd17b04ed2b6d4f62e32fc5d0281d",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416.onnx",
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_meta397.onnx"
+      ]
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_meta397.onnx",
+      "bytes": 175909158,
+      "mib": 167.76,
+      "sha256": "1640e2b3f7527e7cc36b1438c3b85d4fd75bd17b04ed2b6d4f62e32fc5d0281d",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416.onnx",
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_meta397.onnx"
+      ]
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_meta397_standard.onnx",
+      "bytes": 175909176,
+      "mib": 167.76,
+      "sha256": "454daa1761a7975433b90bb3a00e9c8d2ddcb8e05ba17b0ebade11e39b495726",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        "resources\\ai\\mazurowski\\mazurowski_mask_rcnn.onnx",
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_meta397_standard.onnx",
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_standard.onnx"
+      ]
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_standard.onnx",
+      "bytes": 175909176,
+      "mib": 167.76,
+      "sha256": "454daa1761a7975433b90bb3a00e9c8d2ddcb8e05ba17b0ebade11e39b495726",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        "resources\\ai\\mazurowski\\mazurowski_mask_rcnn.onnx",
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_meta397_standard.onnx",
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_standard.onnx"
+      ]
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_dynamic.onnx",
+      "bytes": 175909211,
+      "mib": 167.76,
+      "sha256": "400ba7031ac06ebc90cbd3f22de5e1d749f51c0f59f195931e67b8b02af59a3f",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_dynamic.onnx"
+      ]
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_dynamic_standard.onnx",
+      "bytes": 175909229,
+      "mib": 167.76,
+      "sha256": "a1e92cbc1823f8b6a54407052030e1ddcf5e758869da425247e0b83bbde71646",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_dynamic_standard.onnx"
+      ]
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_standard.onnx",
+      "bytes": 175909176,
+      "mib": 167.76,
+      "sha256": "2b0b671712d705ae50f9a65b5edcdefe01ae23a5bf7ee90e1bfd5c689143e5a4",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_standard.onnx"
+      ]
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\downloaded_weights\\mask_rcnn_r50_fpn_2x_coco_cp4\\epoch_24.pth",
+      "bytes": 351253056,
+      "mib": 334.98,
+      "sha256": "5036206197a145d58334918263ded9eb34b0eeb3e83cf48f83ef911ada7112dc",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        ".quarantine\\mazurowski_scoliosis_project\\downloaded_weights\\mask_rcnn_r50_fpn_2x_coco_cp4\\epoch_24.pth",
+        ".quarantine\\mazurowski_scoliosis_project\\downloaded_weights\\mask_rcnn_r50_fpn_2x_coco_cp4\\latest.pth"
+      ]
+    },
+    {
+      "path": ".quarantine\\mazurowski_scoliosis_project\\downloaded_weights\\mask_rcnn_r50_fpn_2x_coco_cp4\\latest.pth",
+      "bytes": 351253056,
+      "mib": 334.98,
+      "sha256": "5036206197a145d58334918263ded9eb34b0eeb3e83cf48f83ef911ada7112dc",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        ".quarantine\\mazurowski_scoliosis_project\\downloaded_weights\\mask_rcnn_r50_fpn_2x_coco_cp4\\epoch_24.pth",
+        ".quarantine\\mazurowski_scoliosis_project\\downloaded_weights\\mask_rcnn_r50_fpn_2x_coco_cp4\\latest.pth"
+      ]
+    },
+    {
+      "path": ".quarantine\\landmark_lab\\onnx_candidate\\vertebra_landmarks_68.onnx",
+      "bytes": 96820263,
+      "mib": 92.33,
+      "sha256": "f3e1e6b319064a2288a792678d92dabf1e56e8004813fff3b372be1c214c440f",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        "resources\\ai\\vertebra_landmarks_experimental\\vertebra_landmarks_68.onnx",
+        ".quarantine\\landmark_lab\\onnx_candidate\\vertebra_landmarks_68.onnx",
+        ".quarantine\\landmark_lab\\v2_landmark_candidate\\vertebra_landmarks_68.onnx"
+      ]
+    },
+    {
+      "path": ".quarantine\\landmark_lab\\v2_landmark_candidate\\vertebra_landmarks_68.onnx",
+      "bytes": 96820263,
+      "mib": 92.33,
+      "sha256": "f3e1e6b319064a2288a792678d92dabf1e56e8004813fff3b372be1c214c440f",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        "resources\\ai\\vertebra_landmarks_experimental\\vertebra_landmarks_68.onnx",
+        ".quarantine\\landmark_lab\\onnx_candidate\\vertebra_landmarks_68.onnx",
+        ".quarantine\\landmark_lab\\v2_landmark_candidate\\vertebra_landmarks_68.onnx"
+      ]
+    },
+    {
+      "path": ".quarantine\\landmark_lab\\weights_quarantine\\model_last.pth",
+      "bytes": 96958693,
+      "mib": 92.47,
+      "sha256": "6a779e01b9a41601334e0a9541278fc557a95bd650c6c8de311204821509d19b",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        ".quarantine\\landmark_lab\\weights_quarantine\\model_last.pth"
+      ]
+    },
+    {
+      "path": ".quarantine\\landmark_lab\\weights_quarantine\\weights.zip",
+      "bytes": 89819955,
+      "mib": 85.66,
+      "sha256": "1b088004614c09ad6605f444c39b160144b07704b58bae13f21dd19665d7a1d2",
+      "area": "quarantine_candidate",
+      "same_hash_paths": [
+        ".quarantine\\landmark_lab\\weights_quarantine\\weights.zip"
+      ]
+    }
+  ],
+  "exact_duplicate_groups": [
+    [
+      "resources\\ai\\mazurowski\\mazurowski_mask_rcnn.onnx",
+      ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_meta397_standard.onnx",
+      ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_standard.onnx"
+    ],
+    [
+      "resources\\ai\\vertebra_landmarks_experimental\\vertebra_landmarks_68.onnx",
+      ".quarantine\\landmark_lab\\onnx_candidate\\vertebra_landmarks_68.onnx",
+      ".quarantine\\landmark_lab\\v2_landmark_candidate\\vertebra_landmarks_68.onnx"
+    ],
+    [
+      ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416.onnx",
+      ".quarantine\\mazurowski_scoliosis_project\\onnx_candidate\\mazurowski_mask_rcnn_800x416_meta397.onnx"
+    ],
+    [
+      ".quarantine\\mazurowski_scoliosis_project\\downloaded_weights\\mask_rcnn_r50_fpn_2x_coco_cp4\\epoch_24.pth",
+      ".quarantine\\mazurowski_scoliosis_project\\downloaded_weights\\mask_rcnn_r50_fpn_2x_coco_cp4\\latest.pth"
+    ]
+  ]
+}

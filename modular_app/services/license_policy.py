@@ -11,6 +11,8 @@ import os
 from pathlib import Path
 from typing import Callable
 
+from modular_app.config.paths import PROJECT_ROOT, VERSION_FILE
+
 OFFLINE_GRACE_PERIOD = timedelta(hours=6)
 TRIAL_PERIOD = timedelta(days=14)
 CLOCK_TOLERANCE = timedelta(minutes=5)
@@ -23,8 +25,15 @@ MACHINE_STATE_DIR = Path(
 
 MACHINE_STATE_FILE = MACHINE_STATE_DIR / ".license_state.json"
 
+LOCAL_LICENSE_DIR = Path(
+    os.environ.get("LOCALAPPDATA") or Path.home() / "AppData" / "Local"
+) / "ScoliosisFollowUp"
+OFFLINE_LICENSE_FILE = LOCAL_LICENSE_DIR / "offline_license.json"
+OFFLINE_LICENSE_PUBLIC_KEY_FILE = PROJECT_ROOT / "resources" / "security" / "offline_license_public_key.pem"
+
 
 @dataclass(frozen=True)
+
 class LicenseGateResult:
     allowed: bool
     mode: str
@@ -146,7 +155,92 @@ def _clock_is_valid(repository, now: datetime, machine_state: dict | None) -> bo
     return True
 
 
+def _application_version() -> str:
+    try:
+        value = VERSION_FILE.read_text(encoding="utf-8").strip()
+        return value or "0.0.0"
+    except OSError:
+        return "0.0.0"
+
+
+def _verify_offline_license_file(path: Path, now: datetime):
+    from modular_app.security.device_fingerprint import calculate_device_fingerprint
+    from modular_app.security.offline_license import load_public_key, verify_license
+
+    if not OFFLINE_LICENSE_PUBLIC_KEY_FILE.is_file():
+        raise FileNotFoundError("Offline lisans public key bulunamadı.")
+    if not path.is_file() or path.stat().st_size > 64 * 1024:
+        raise ValueError("Offline lisans dosyası yok veya boyutu geçersiz.")
+    return verify_license(
+        path.read_bytes(),
+        load_public_key(OFFLINE_LICENSE_PUBLIC_KEY_FILE),
+        device_fingerprint=calculate_device_fingerprint(),
+        app_version=_application_version(),
+        now=now,
+    )
+
+
+def _install_offline_license_bytes(raw: bytes, *, now: datetime):
+    LOCAL_LICENSE_DIR.mkdir(parents=True, exist_ok=True)
+    temporary = OFFLINE_LICENSE_FILE.with_suffix(".tmp")
+    try:
+        temporary.write_bytes(raw)
+        verified = _verify_offline_license_file(temporary, now)
+        os.replace(temporary, OFFLINE_LICENSE_FILE)
+        return verified
+    finally:
+        try:
+            temporary.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+
+def install_offline_license(source_path: str | Path, *, now: datetime | None = None):
+    """Validate then atomically install a signed offline license for this user."""
+    source = Path(source_path)
+    return _install_offline_license_bytes(source.read_bytes(), now=now or _utc_now())
+
+
+def install_offline_license_text(document: str | bytes, *, now: datetime | None = None):
+    """Validate and atomically install a signed entitlement received from RPC."""
+    raw = document.encode("utf-8") if isinstance(document, str) else bytes(document)
+    return _install_offline_license_bytes(raw, now=now or _utc_now())
+
+
+def _offline_license_result(repository, now: datetime) -> LicenseGateResult | None:
+    """Return a verified offline entitlement or None when it is not installed.
+
+    An invalid/stale offline file never grants access. The caller can still use
+    the existing Supabase online/grace/trial flow, so a user can recover by
+    connecting online without deleting local data.
+    """
+    if not OFFLINE_LICENSE_FILE.is_file():
+        return None
+    try:
+        verified = _verify_offline_license_file(OFFLINE_LICENSE_FILE, now)
+    except Exception:
+        # Do not disclose parser/key details to the end user and do not let a
+        # broken local license block a valid online activation path.
+        return None
+
+    expires_at = verified.expires_at.isoformat()
+    repository.set_setting("license/offline_license_id", verified.license_id)
+    repository.set_setting("license/offline_last_verified_at", now.isoformat())
+    repository.set_setting("license/expires_at", expires_at)
+    repository.set_setting("license/last_status", "offline_licensed")
+    remaining = verified.expires_at - now
+    return LicenseGateResult(
+        True,
+        "offline_licensed",
+        "İmzalı offline lisans doğrulandı. "
+        f"Geçerlilik: {verified.expires_at.date().isoformat()}.",
+        remaining,
+        expires_at,
+    )
+
+
 def _server_trial_status(trial_checker=None):
+
     if trial_checker is None:
         from license_app import check_or_create_device_trial
         trial_checker = check_or_create_device_trial
@@ -173,7 +267,12 @@ def evaluate_license_gate(
     local_now = now or _utc_now()
     stored_expiry = repository.get_setting("license/expires_at", "") or None
 
+    offline_result = _offline_license_result(repository, local_now)
+    if offline_result is not None:
+        return offline_result
+
     machine_state, state_error = _read_machine_state()
+
     if state_error:
         if checker is None:
             from license_app import check_license_status

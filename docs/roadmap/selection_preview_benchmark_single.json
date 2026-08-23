@@ -1,0 +1,25 @@
+{
+  "kind": "real_dicom_selection_preview_benchmark",
+  "schema_version": 1,
+  "dataset": {
+    "root_name": "dicom_samples",
+    "files_selected": 1
+  },
+  "preview_policy": {
+    "max_dimension": 640,
+    "dicom_files_modified": false
+  },
+  "results": [
+    {
+      "file_name": "IM00002",
+      "preview_ms": 5209.169,
+      "width": 612,
+      "height": 479,
+      "bounded": true
+    }
+  ],
+  "summary": {
+    "mean_ms": 5209.169,
+    "all_bounded": true
+  }
+}

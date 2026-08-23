@@ -11,8 +11,23 @@ htmlcov/
 build/
 dist/
 installer/
+artifacts/
 .restore_points/
+project_archives/
 security_keys/
+
+# Yanlış kopyalama/arsiv açma sonucu oluşabilen iç içe proje ağaçları
+/.github/.github/
+/ai/ai/
+/anonymization/anonymization/
+/dicom/dicom/
+/pacs/pacs/
+/resources/resources/
+
+# Supabase Edge Function production/local secrets
+supabase/functions/.env
+supabase/functions/.env.*
+supabase/.temp/
 
 # Yerel deneysel AI/model alanları
 .quarantine/
@@ -55,5 +70,5 @@ Thumbs.db
 .idea/
 .vscode/
 
-# PyInstaller generated spec
-ScoliosisFollowUp.spec
+# PyInstaller'ın kökte üretebileceği geçici spec; kalıcı tanım packaging/ altındadır.
+/ScoliosisFollowUp.spec

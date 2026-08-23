@@ -1,0 +1,1077 @@
+{
+  "pydicom": "3.0.2",
+  "root_name": "dicom_samples",
+  "file_count": 16,
+  "repeats": 1,
+  "max_files": 16,
+  "plugins_tested": [
+    "pylibjpeg",
+    "pillow",
+    "pyjpegls",
+    "gdcm",
+    "default"
+  ],
+  "aggregate": {
+    "pylibjpeg": {
+      "successes": 16,
+      "failures": 0,
+      "median_ms": 1209.6005499988678,
+      "mismatches": 0,
+      "mean_median_ms": 1409.7915187494436
+    },
+    "pillow": {
+      "successes": 0,
+      "failures": 16,
+      "median_ms": null,
+      "mismatches": 0,
+      "mean_median_ms": null
+    },
+    "pyjpegls": {
+      "successes": 0,
+      "failures": 16,
+      "median_ms": null,
+      "mismatches": 0,
+      "mean_median_ms": null
+    },
+    "gdcm": {
+      "successes": 0,
+      "failures": 16,
+      "median_ms": null,
+      "mismatches": 0,
+      "mean_median_ms": null
+    },
+    "default": {
+      "successes": 16,
+      "failures": 0,
+      "median_ms": 1174.7334999963641,
+      "mismatches": 0,
+      "mean_median_ms": 1397.1338062456198
+    }
+  },
+  "files": [
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00002",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            2393,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "4f8384abc3eb8949525d082b3c296a5f3cf268cd3ca0673d4484bfe651c598e2",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 2064.0,
+          "mean": 628.0270713501202,
+          "timings_ms": [
+            1035.3909999976167
+          ],
+          "median_ms": 1035.3909999976167
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            2393,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "4f8384abc3eb8949525d082b3c296a5f3cf268cd3ca0673d4484bfe651c598e2",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 2064.0,
+          "mean": 628.0270713501202,
+          "timings_ms": [
+            1147.0899999985704
+          ],
+          "median_ms": 1147.0899999985704
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00003",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            2393,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "2c0707798f52b72da902505cc28e7666f1fbdc6593486365786bb0435a998ba9",
+          "matches_first_success": true,
+          "min": 93.0,
+          "max": 1865.0,
+          "mean": 763.2302080074301,
+          "timings_ms": [
+            1123.354900002596
+          ],
+          "median_ms": 1123.354900002596
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            2393,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "2c0707798f52b72da902505cc28e7666f1fbdc6593486365786bb0435a998ba9",
+          "matches_first_success": true,
+          "min": 93.0,
+          "max": 1865.0,
+          "mean": 763.2302080074301,
+          "timings_ms": [
+            1135.134600001038
+          ],
+          "median_ms": 1135.134600001038
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00004",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            2393,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "9a7bf6e9159c6c81eb8d541218720f7da4fad0a5120603fe31e01b523d6babae",
+          "matches_first_success": true,
+          "min": 64.0,
+          "max": 967.0,
+          "mean": 336.0046422757913,
+          "timings_ms": [
+            1227.1006999944802
+          ],
+          "median_ms": 1227.1006999944802
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            2393,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "9a7bf6e9159c6c81eb8d541218720f7da4fad0a5120603fe31e01b523d6babae",
+          "matches_first_success": true,
+          "min": 64.0,
+          "max": 967.0,
+          "mean": 336.0046422757913,
+          "timings_ms": [
+            1127.1912999945926
+          ],
+          "median_ms": 1127.1912999945926
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 3082,
+      "columns": 1528,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00005",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            3082,
+            1528
+          ],
+          "dtype": "uint16",
+          "digest": "ab4bef5fb13ac6e9d9046020c5c8e128ef307e938c6db3006b9b35d1e04112fc",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 4095.0,
+          "mean": 1205.4804998454122,
+          "timings_ms": [
+            951.979699995718
+          ],
+          "median_ms": 951.979699995718
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            3082,
+            1528
+          ],
+          "dtype": "uint16",
+          "digest": "ab4bef5fb13ac6e9d9046020c5c8e128ef307e938c6db3006b9b35d1e04112fc",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 4095.0,
+          "mean": 1205.4804998454122,
+          "timings_ms": [
+            786.4360999956261
+          ],
+          "median_ms": 786.4360999956261
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 960,
+      "columns": 960,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00003",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            960,
+            960
+          ],
+          "dtype": "uint16",
+          "digest": "29b620f0d0a9722dcb72f6cb7164162324b3feca18e9198bb32f4bd0799830da",
+          "matches_first_success": true,
+          "min": 65.0,
+          "max": 4095.0,
+          "mean": 1497.5958637152778,
+          "timings_ms": [
+            164.42410000308882
+          ],
+          "median_ms": 164.42410000308882
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            960,
+            960
+          ],
+          "dtype": "uint16",
+          "digest": "29b620f0d0a9722dcb72f6cb7164162324b3feca18e9198bb32f4bd0799830da",
+          "matches_first_success": true,
+          "min": 65.0,
+          "max": 4095.0,
+          "mean": 1497.5958637152778,
+          "timings_ms": [
+            141.59479999216273
+          ],
+          "median_ms": 141.59479999216273
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 2757,
+      "columns": 3056,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00005",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            2757,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "fa497a6f3b85f9349327c4be9affa8b2dc32a6ce348e6f708fa59d6ddd97985e",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 1920.0,
+          "mean": 552.6237973259879,
+          "timings_ms": [
+            1415.0249999947846
+          ],
+          "median_ms": 1415.0249999947846
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            2757,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "fa497a6f3b85f9349327c4be9affa8b2dc32a6ce348e6f708fa59d6ddd97985e",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 1920.0,
+          "mean": 552.6237973259879,
+          "timings_ms": [
+            1316.073999987566
+          ],
+          "median_ms": 1316.073999987566
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 2393,
+      "columns": 3056,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00006",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            2393,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "cb283e78298d5432276eb62a0ed98ab90c1409ccb8026bfe6055eec40a655401",
+          "matches_first_success": true,
+          "min": 7.0,
+          "max": 2329.0,
+          "mean": 850.7521423468975,
+          "timings_ms": [
+            1192.1004000032553
+          ],
+          "median_ms": 1192.1004000032553
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            2393,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "cb283e78298d5432276eb62a0ed98ab90c1409ccb8026bfe6055eec40a655401",
+          "matches_first_success": true,
+          "min": 7.0,
+          "max": 2329.0,
+          "mean": 850.7521423468975,
+          "timings_ms": [
+            1202.3769999941578
+          ],
+          "median_ms": 1202.3769999941578
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 2757,
+      "columns": 3056,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00007",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            2757,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "cc8bb5cdec0cf0e7355a329683c4c1b308a219bf764bb3f3db545e447679195f",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 1333.0,
+          "mean": 611.8465108804434,
+          "timings_ms": [
+            1306.1443000042345
+          ],
+          "median_ms": 1306.1443000042345
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            2757,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "cc8bb5cdec0cf0e7355a329683c4c1b308a219bf764bb3f3db545e447679195f",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 1333.0,
+          "mean": 611.8465108804434,
+          "timings_ms": [
+            1338.996499995119
+          ],
+          "median_ms": 1338.996499995119
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 7257,
+      "columns": 3056,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00008",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            7257,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "a42c4b0110db7d3d2203b602860abfeba38a0d771cc91551ce7824d1fde05ca7",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 4095.0,
+          "mean": 1403.7545123430202,
+          "timings_ms": [
+            3639.113500001258
+          ],
+          "median_ms": 3639.113500001258
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            7257,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "a42c4b0110db7d3d2203b602860abfeba38a0d771cc91551ce7824d1fde05ca7",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 4095.0,
+          "mean": 1403.7545123430202,
+          "timings_ms": [
+            3705.7319000014104
+          ],
+          "median_ms": 3705.7319000014104
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 3081,
+      "columns": 1528,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00009",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            3081,
+            1528
+          ],
+          "dtype": "uint16",
+          "digest": "3d41e347843d7ab3da74175916a60278f53556deebc075342c953904c685fd41",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 4095.0,
+          "mean": 1397.4877540694445,
+          "timings_ms": [
+            826.7725000041537
+          ],
+          "median_ms": 826.7725000041537
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            3081,
+            1528
+          ],
+          "dtype": "uint16",
+          "digest": "3d41e347843d7ab3da74175916a60278f53556deebc075342c953904c685fd41",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 4095.0,
+          "mean": 1397.4877540694445,
+          "timings_ms": [
+            793.9551000017673
+          ],
+          "median_ms": 793.9551000017673
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 2757,
+      "columns": 3056,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00009",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            2757,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "fdac5cd43a45f40cb646f004f6766c0b8d14d2dfd10a5c6fdde267b356926f7e",
+          "matches_first_success": true,
+          "min": 17.0,
+          "max": 2540.0,
+          "mean": 911.9009300694852,
+          "timings_ms": [
+            1472.5687000027392
+          ],
+          "median_ms": 1472.5687000027392
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            2757,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "fdac5cd43a45f40cb646f004f6766c0b8d14d2dfd10a5c6fdde267b356926f7e",
+          "matches_first_success": true,
+          "min": 17.0,
+          "max": 2540.0,
+          "mean": 911.9009300694852,
+          "timings_ms": [
+            1352.5895999919157
+          ],
+          "median_ms": 1352.5895999919157
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 2757,
+      "columns": 3056,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00010",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            2757,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "418d6c53b3446e2d15dced1d64f3d41e28c421936c56dced9f500114e70c9e8e",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 2478.0,
+          "mean": 1021.3456678336154,
+          "timings_ms": [
+            1412.309399995138
+          ],
+          "median_ms": 1412.309399995138
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            2757,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "418d6c53b3446e2d15dced1d64f3d41e28c421936c56dced9f500114e70c9e8e",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 2478.0,
+          "mean": 1021.3456678336154,
+          "timings_ms": [
+            1419.4846999889705
+          ],
+          "median_ms": 1419.4846999889705
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 2757,
+      "columns": 3056,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00011",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            2757,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "9e6efd25dfed2b6c903ae51d0b54b1e427eb3551e08488d4c0fc2ca987b2cb61",
+          "matches_first_success": true,
+          "min": 45.0,
+          "max": 2374.0,
+          "mean": 1102.505000479503,
+          "timings_ms": [
+            1337.3290000017732
+          ],
+          "median_ms": 1337.3290000017732
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            2757,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "9e6efd25dfed2b6c903ae51d0b54b1e427eb3551e08488d4c0fc2ca987b2cb61",
+          "matches_first_success": true,
+          "min": 45.0,
+          "max": 2374.0,
+          "mean": 1102.505000479503,
+          "timings_ms": [
+            1485.9189999988303
+          ],
+          "median_ms": 1485.9189999988303
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 7257,
+      "columns": 3056,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00012",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            7257,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "e77c7f4d03c26c60be077e6f936772501aefca8a45f3b68ee02559a0daf84f90",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 4095.0,
+          "mean": 1602.7834416688852,
+          "timings_ms": [
+            3907.0841999928234
+          ],
+          "median_ms": 3907.0841999928234
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            7257,
+            3056
+          ],
+          "dtype": "uint16",
+          "digest": "e77c7f4d03c26c60be077e6f936772501aefca8a45f3b68ee02559a0daf84f90",
+          "matches_first_success": true,
+          "min": 0.0,
+          "max": 4095.0,
+          "mean": 1602.7834416688852,
+          "timings_ms": [
+            3877.8836999990745
+          ],
+          "median_ms": 3877.8836999990745
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 2100,
+      "columns": 2970,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00011",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            2100,
+            2970
+          ],
+          "dtype": "uint16",
+          "digest": "1e733b5e3aa3379a14da43ad57e0115af058b9823cd1decfdea905ad3994cb09",
+          "matches_first_success": true,
+          "min": 1.0,
+          "max": 4080.0,
+          "mean": 3696.643097162097,
+          "timings_ms": [
+            779.1501000028802
+          ],
+          "median_ms": 779.1501000028802
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            2100,
+            2970
+          ],
+          "dtype": "uint16",
+          "digest": "1e733b5e3aa3379a14da43ad57e0115af058b9823cd1decfdea905ad3994cb09",
+          "matches_first_success": true,
+          "min": 1.0,
+          "max": 4080.0,
+          "mean": 3696.643097162097,
+          "timings_ms": [
+            739.1972999903373
+          ],
+          "median_ms": 739.1972999903373
+        }
+      ]
+    },
+    {
+      "uid": "1.2.840.10008.1.2.4.70",
+      "rows": 2100,
+      "columns": 2970,
+      "frames": 1,
+      "bits_stored": 12,
+      "file_name": "IM00013",
+      "plugins": [
+        {
+          "plugin": "pylibjpeg",
+          "success": true,
+          "shape": [
+            2100,
+            2970
+          ],
+          "dtype": "uint16",
+          "digest": "0b2a299ddb0fdea0ef6016d4ecb9743230afc89dd424c03f5d29e66fe83d5429",
+          "matches_first_success": true,
+          "min": 1.0,
+          "max": 4080.0,
+          "mean": 3697.405086419753,
+          "timings_ms": [
+            766.8167999945581
+          ],
+          "median_ms": 766.8167999945581
+        },
+        {
+          "plugin": "pillow",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pillow' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "pyjpegls",
+          "success": false,
+          "error_type": "ValueError",
+          "error": "No plugin named 'pyjpegls' has been added to 'JPEGLosslessSV1Decoder', available plugins are: pylibjpeg"
+        },
+        {
+          "plugin": "gdcm",
+          "success": false,
+          "error_type": "RuntimeError",
+          "error": "Unable to decompress 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])' pixel data because the specified plugin is missing dependencies:\n\tgdcm - requires gdcm>=3.0.10"
+        },
+        {
+          "plugin": "default",
+          "success": true,
+          "shape": [
+            2100,
+            2970
+          ],
+          "dtype": "uint16",
+          "digest": "0b2a299ddb0fdea0ef6016d4ecb9743230afc89dd424c03f5d29e66fe83d5429",
+          "matches_first_success": true,
+          "min": 1.0,
+          "max": 4080.0,
+          "mean": 3697.405086419753,
+          "timings_ms": [
+            784.4852999987779
+          ],
+          "median_ms": 784.4852999987779
+        }
+      ]
+    }
+  ]
+}
