@@ -179,6 +179,25 @@ body.lightbox-open{
   .media-frame::after{opacity:.85;transform:none}
 }
 
+/* Okunabilirlik ayarı: başlık ölçüleri ve lightbox davranışı korunur. */
+.feature-copy p{font-size:16px}
+.check-list li{font-size:14px}
+.section-intro{font-size:17px}
+.subline,
+.hero-note,
+.media-label,
+.version-chip,
+.release-link,
+footer,
+.media-frame::after,
+.lightbox-hint{font-size:12px}
+
+@media(max-width:760px){
+  .feature-copy p{line-height:1.7}
+  .section-intro{line-height:1.65}
+  .subline{align-items:flex-start;line-height:1.55}
+}
+
 </style>
 </head>
 <body>
