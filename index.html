@@ -41,6 +41,144 @@ footer{padding:28px 0 36px;border-top:1px solid var(--line);color:var(--muted);f
 @media(max-width:1000px){.hero-grid{grid-template-columns:1fr;gap:48px}.hero-copy{max-width:700px}.hero-visual{max-width:720px}.feature{gap:42px}.download-card{grid-template-columns:1fr}.download-meta{text-align:left}.nav-links{gap:15px}}
 @media(max-width:760px){.wrap{width:min(var(--max),calc(100% - 32px))}.nav-inner{height:68px}.nav-links{display:none}.version-chip{font-size:10px}.hero{padding:60px 0 48px}.hero-grid{gap:36px}h1{font-size:clamp(46px,14vw,70px)}.hero-copy{font-size:16px}.hero-screen img{height:250px}.screen-tag{transform:scale(.88);transform-origin:top right}.screen-tag.bottom{transform-origin:bottom left}.logo-stage{min-height:260px}.hero-emblem{width:210px;height:210px}.logo-note{transform:scale(.88)}.logo-note.note-top{transform-origin:top right}.logo-note.note-bottom{transform-origin:bottom left}.proof-grid{grid-template-columns:1fr 1fr}.proof{min-height:86px;padding:16px 12px}.proof:first-child{padding-left:12px}.proof:nth-child(2){border-right:0}.proof:nth-child(3),.proof:nth-child(4){border-top:1px solid var(--line)}.section{padding:76px 0}.section-tight{padding-top:65px}.section-head-row{display:block;margin-bottom:28px}.section-head-row .section-intro{margin-top:14px}.capability-grid{grid-template-columns:1fr}.capability{min-height:180px}.feature,.feature.reverse{grid-template-columns:1fr;gap:34px}.feature.reverse .feature-copy,.feature.reverse .feature-media{order:initial}.media-frame img{height:280px}.media-label{left:12px;bottom:18px}.check-list,.safety-list{grid-template-columns:1fr}.workflow-grid{grid-template-columns:1fr}.workflow-step{min-height:0;padding:23px 0 25px;border-right:0;border-bottom:1px solid var(--line);margin-right:0}.workflow-step:last-child{border-bottom:0}.workflow-step h3{margin-top:26px}.download-section{padding:70px 0 82px}.download-card{padding:28px 23px}.footer-row{display:block}.footer-links{margin-top:13px;gap:14px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}.btn:hover{transform:none}}
+
+/* ===== EKRAN GÖRÜNTÜSÜ LIGHTBOX ===== */
+.media-frame img{
+  cursor:zoom-in;
+  transition:transform .22s ease, filter .22s ease;
+}
+
+.media-frame:hover img{
+  transform:scale(1.015);
+  filter:brightness(1.05);
+}
+
+.media-frame::after{
+  content:"🔍 Büyüt";
+  position:absolute;
+  right:20px;
+  top:20px;
+  z-index:5;
+  padding:8px 12px;
+  border-radius:10px;
+  background:rgba(5,11,19,.82);
+  border:1px solid rgba(93,215,245,.32);
+  color:#d8f6ff;
+  font-size:11px;
+  font-weight:800;
+  opacity:0;
+  transform:translateY(-4px);
+  transition:opacity .2s ease, transform .2s ease;
+  pointer-events:none;
+  backdrop-filter:blur(10px);
+}
+
+.media-frame:hover::after{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.image-lightbox{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+  background:rgba(0,5,10,.94);
+  backdrop-filter:blur(10px);
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .2s ease, visibility .2s ease;
+}
+
+.image-lightbox.active{
+  opacity:1;
+  visibility:visible;
+}
+
+.image-lightbox img{
+  display:block;
+  max-width:95vw;
+  max-height:92vh;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  border-radius:12px;
+  box-shadow:0 25px 80px rgba(0,0,0,.7);
+  cursor:zoom-in;
+  transition:transform .25s ease;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+.image-lightbox.zoomed{
+  overflow:auto;
+  display:block;
+  text-align:center;
+}
+
+.image-lightbox.zoomed img{
+  max-width:none;
+  max-height:none;
+  margin:30px auto;
+  cursor:zoom-out;
+}
+
+.lightbox-close{
+  position:fixed;
+  top:22px;
+  right:25px;
+  z-index:10002;
+  width:46px;
+  height:46px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:14px;
+  background:rgba(8,18,28,.85);
+  color:#fff;
+  font-size:27px;
+  line-height:1;
+  cursor:pointer;
+  backdrop-filter:blur(12px);
+  transition:background .2s ease, transform .2s ease;
+}
+
+.lightbox-close:hover{
+  background:rgba(93,215,245,.18);
+  transform:scale(1.06);
+}
+
+.lightbox-hint{
+  position:fixed;
+  left:50%;
+  bottom:22px;
+  transform:translateX(-50%);
+  z-index:10002;
+  padding:9px 14px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:999px;
+  background:rgba(7,17,29,.82);
+  color:#b8cbd8;
+  font-size:11px;
+  backdrop-filter:blur(12px);
+  pointer-events:none;
+}
+
+body.lightbox-open{
+  overflow:hidden;
+}
+
+@media(max-width:760px){
+  .image-lightbox{padding:12px}
+  .image-lightbox img{max-width:98vw;max-height:88vh}
+  .lightbox-close{top:12px;right:12px;width:42px;height:42px}
+  .lightbox-hint{bottom:12px;width:max-content;max-width:90vw;text-align:center}
+  .media-frame::after{opacity:.85;transform:none}
+}
+
 </style>
 </head>
 <body>
@@ -57,6 +195,28 @@ footer{padding:28px 0 36px;border-top:1px solid var(--line);color:var(--muted);f
 <section class="section section-tight" id="guvenlik"><div class="wrap"><div class="safety"><article class="safety-panel"><div class="safety-badge">Güvenli kullanım</div><h3>Destek yazılımı.<br>Son karar uzmanda.</h3><p>Görüntüleme, ölçüm ve AI çıktıları tek başına tanı veya tedavi kararı değildir; klinik değerlendirme yetkili sağlık profesyoneline aittir.</p></article><article class="safety-panel"><div class="safety-badge">Sürüm 1.7.8 · güvenlik</div><h3>Kontrollü, doğrulanabilir dağıtım.</h3><p>Kurulum dosyası resmi GitHub Releases alanından sunulur. Güncelleme akışında SHA-256 ve imzalı manifest doğrulaması kullanılır.</p><ul class="safety-list"><li>Windows kurulum paketi</li><li>Resmi GitHub Releases</li><li>SHA-256 özeti</li><li>İmzalı update manifest</li></ul></article></div></div></section>
 <section class="download-section" id="indir"><div class="wrap"><div class="download-card"><div><div class="section-kicker">Hazır olduğunuzda</div><h2 class="section-title">Scoliosis Follow-Up’ı Windows’a indirin.</h2><p>Görüntüleyici, Cobb ölçümü, seri karşılaştırma ve takip araçlarını tek masaüstü uygulamasında kullanmaya başlayın. 1.7.8; profesyonel İlk Kullanım Sihirbazı ve güvenli yerel tercihlerle gelir. Paket Authenticode imzası taşımadığından Windows bilinmeyen yayıncı/SmartScreen uyarısı gösterebilir.</p><div class="download-actions"><a class="btn btn-primary" id="directDownload" href="https://github.com/mryusufcan/scoliosis-followup-releases/releases/download/1.7.8/ScoliosisFollowUp_Setup_1.7.8.exe"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span>Kurulumu indir</span><b id="downloadVersion">1.7.8</b></a><a class="btn btn-secondary" href="https://github.com/mryusufcan/scoliosis-followup-releases/releases/latest" target="_blank" rel="noopener">Sürüm notları <svg viewBox="0 0 24 24"><path d="M5 12h13"/><path d="m13 6 6 6-6 6"/></svg></a></div></div><div class="download-meta"><strong id="releaseLabel">Windows · 1.7.8</strong><span id="fileValue">ScoliosisFollowUp_Setup_1.7.8.exe</span><span id="sizeValue">355.10 MB</span><code id="hashValue">SHA-256: 288bb1a54d9595dcf68f9119aa3f4bd45b5cc614eb80416938591e4af251e681</code><a class="release-link" href="https://github.com/mryusufcan/scoliosis-followup-releases" target="_blank" rel="noopener">GitHub deposunu aç ↗</a></div></div></div></section>
 </main>
+
+<div
+  class="image-lightbox"
+  id="imageLightbox"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Ekran görüntüsü önizleme"
+>
+  <button
+    class="lightbox-close"
+    id="lightboxClose"
+    type="button"
+    aria-label="Görseli kapat"
+  >×</button>
+
+  <img id="lightboxImage" src="" alt="">
+
+  <div class="lightbox-hint">
+    Görsele tıklayarak gerçek boyuta geç · ESC ile kapat
+  </div>
+</div>
+
 <footer><div class="wrap footer-row"><div><strong>Scoliosis Follow-Up</strong> · Skolyoz takip ve DICOM çalışma alanı</div><div class="footer-links"><a href="#urun">Ürün</a><a href="#guvenlik">Güvenlik</a><a href="#indir">İndir</a><span>© 2026 Yusuf Can Özdemir</span></div></div></footer>
 <script>
 (function(){
@@ -84,6 +244,71 @@ footer{padding:28px 0 36px;border-top:1px solid var(--line);color:var(--muted);f
     if(exe.digest) hashValue.textContent='SHA-256: '+exe.digest.replace(/^sha256:/i,'');
   }).catch(function(){/* GitHub API erişilemezse statik 1.7.8 fallback metni korunur. */});
 })();
+
+
+/* ===== EKRAN GÖRÜNTÜSÜ LIGHTBOX ===== */
+(function(){
+  const lightbox = document.getElementById('imageLightbox');
+  const lightboxImage = document.getElementById('lightboxImage');
+  const closeButton = document.getElementById('lightboxClose');
+  const screenshots = document.querySelectorAll('.media-frame img');
+  let lastTrigger = null;
+
+  if(!lightbox || !lightboxImage || !closeButton) return;
+
+  function openLightbox(img){
+    lastTrigger = img;
+    lightboxImage.src = img.currentSrc || img.src;
+    lightboxImage.alt = img.alt || 'Uygulama ekran görüntüsü';
+    lightbox.classList.remove('zoomed');
+    lightbox.classList.add('active');
+    document.body.classList.add('lightbox-open');
+    closeButton.focus();
+  }
+
+  function closeLightbox(){
+    lightbox.classList.remove('active','zoomed');
+    document.body.classList.remove('lightbox-open');
+    setTimeout(function(){ lightboxImage.src = ''; }, 200);
+    if(lastTrigger) lastTrigger.focus();
+  }
+
+  screenshots.forEach(function(img){
+    img.setAttribute('tabindex','0');
+    img.setAttribute('role','button');
+    img.setAttribute('aria-label',(img.alt || 'Ekran görüntüsü') + ' — büyütmek için tıklayın');
+
+    img.addEventListener('click',function(){ openLightbox(img); });
+
+    img.addEventListener('keydown',function(event){
+      if(event.key === 'Enter' || event.key === ' '){
+        event.preventDefault();
+        openLightbox(img);
+      }
+    });
+  });
+
+  lightboxImage.addEventListener('click',function(event){
+    event.stopPropagation();
+    lightbox.classList.toggle('zoomed');
+  });
+
+  closeButton.addEventListener('click',function(event){
+    event.stopPropagation();
+    closeLightbox();
+  });
+
+  lightbox.addEventListener('click',function(event){
+    if(event.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener('keydown',function(event){
+    if(event.key === 'Escape' && lightbox.classList.contains('active')){
+      closeLightbox();
+    }
+  });
+})();
+
 </script>
 </body>
 </html>
